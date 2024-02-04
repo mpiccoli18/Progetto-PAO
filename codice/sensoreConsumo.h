@@ -22,6 +22,8 @@ namespace sensore{
             const std::string& getTipoCarburante() const;
 
             void setTipoCarburante(std::string tCarburante);
+
+            virtual void accept(SensorVisitorInterface& visitor);
        };
 }
 #endif // SENSORECONSUMO_H

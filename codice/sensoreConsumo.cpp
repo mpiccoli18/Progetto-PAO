@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "sensoreConsumo.h"
-#include "sensore.h"
 
 namespace sensore{
     SensoreConsumo::SensoreConsumo(const std::string n, const std::string t, const std::string d,
@@ -12,4 +11,8 @@ namespace sensore{
     const std::string& SensoreConsumo::getTipoCarburante() const {return tipoCarburante;}
 
     void SensoreConsumo::setTipoCarburante(std::string tCarburante) { tipoCarburante = tCarburante;}
+
+    void SensoreConsumo::accept(SensorVisitorInterface& visitor){
+        visitor.visitSensorConsumo(*this);
+    }
 }

@@ -11,6 +11,7 @@ SOURCES += \
     sensorePneumatico.cpp
 
 HEADERS += \
+    SensorVisitorInterface.h \
     mainwindow.h \
     sensore.h \
     sensoreConsumo.h \

@@ -14,7 +14,7 @@ namespace sensore{
         const double vMax
     ) : name(n), type(t), description(d), values(v), valueMin(vMin), valueMax(vMax) {}
 
-    Sensore::~Sensore(){values.clear(); delete &values;}
+    Sensore::~Sensore(){ delete &values;}
     const std::string& Sensore::getName() const {return name;}
     const std::string& Sensore::getType() const {return type;}
     const std::string& Sensore::getDescription() const {return description;}

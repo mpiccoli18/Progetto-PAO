@@ -27,6 +27,8 @@ namespace sensore{
 
             void setMarca(std::string m);
             void setAnni(double a);
+
+            virtual void accept(SensorVisitorInterface& visitor);
     };
 }
 #endif // SENSOREPNEUMATICO_H

@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "SensorVisitorInterface.h"
+
 namespace sensore{
 
     class Sensore
@@ -28,7 +30,7 @@ namespace sensore{
                 const double vMin,
                 const double vMax
             );
-            virtual ~Sensore() = 0;
+            virtual ~Sensore();
 
             const std::string& getName() const;
             const std::string& getType() const;
@@ -43,6 +45,8 @@ namespace sensore{
             void setValueMin(double vMin);
             void setValueMax(double vMax);
             void setValues(std::vector<double> v);
+
+            virtual void accept(SensorVisitorInterface& visitor) = 0;
     };
 }
 
