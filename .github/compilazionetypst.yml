@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Compilazione
         run: |
-          typst compile DocsSrc/main.typ relazione.pdf --font-path=assets/fonts
+          typst compile relazione/main.typ relazione.pdf --font-path=assets/fonts
       - name: Configure Git
         run: |
           git config --global user.email "azione@azione.com"
