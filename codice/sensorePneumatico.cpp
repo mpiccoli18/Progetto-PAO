@@ -6,13 +6,13 @@
 namespace sensore{
     SensorePneumatico::SensorePneumatico(const std::string n, const std::string t, const std::string d,
                                      const std::vector<double> v, const double vMin, const double vMax,
-                                     const std::string marca, const double a): Sensore(n, t, d, v, vMin, vMax), marcaPneumatico(marca), anni(a) {}
+                                     const std::string br, const double a): Sensore(n, t, d, v, vMin, vMax), brand(br), age(a) {}
 
-    const std::string& SensorePneumatico::getMarca() const {return marcaPneumatico;}
-    const double& SensorePneumatico::getAnni() const {return anni;}
+    const std::string& SensorePneumatico::getBrand() const {return brand;}
+    double SensorePneumatico::getAge() const {return age;}
 
-    void SensorePneumatico::setMarca(std::string m) { marcaPneumatico = m;}
-    void SensorePneumatico::setAnni(double a) { anni = a;}
+    void SensorePneumatico::setBrand(std::string br) { brand = br;}
+    void SensorePneumatico::setAge(double a) { age = a;}
 
     void SensorePneumatico::accept(SensorVisitorInterface& visitor){
         visitor.visitSensorPneumatico(*this);

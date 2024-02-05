@@ -6,11 +6,11 @@
 namespace sensore{
     SensoreConsumo::SensoreConsumo(const std::string n, const std::string t, const std::string d,
                                          const std::vector<double> v, const double vMin, const double vMax,
-                                         const std::string tCarburante): Sensore(n, t, d, v, vMin, vMax), tipoCarburante(tCarburante) {}
+                                         const int ot): Sensore(n, t, d, v, vMin, vMax), ottano(ot) {}
 
-    const std::string& SensoreConsumo::getTipoCarburante() const {return tipoCarburante;}
+    int SensoreConsumo::getOttano() const {return ottano;}
 
-    void SensoreConsumo::setTipoCarburante(std::string tCarburante) { tipoCarburante = tCarburante;}
+    void SensoreConsumo::setOttano(int ot) { ottano = ot;}
 
     void SensoreConsumo::accept(SensorVisitorInterface& visitor){
         visitor.visitSensorConsumo(*this);

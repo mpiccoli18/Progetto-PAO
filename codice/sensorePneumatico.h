@@ -7,8 +7,8 @@
 namespace sensore{
     class SensorePneumatico: public Sensore{
         private:
-            std::string marcaPneumatico;
-            double anni;
+            std::string brand;
+            double age;
         public:
 
             SensorePneumatico(
@@ -18,15 +18,15 @@ namespace sensore{
                 const std::vector<double> v,
                 const double vMin,
                 const double vMax,
-                const std::string marca,
+                const std::string br,
                 const double a);
 
 
-            const std::string& getMarca() const;
-            const double& getAnni() const;
+            const std::string& getBrand() const;
+            double getAge() const;
 
-            void setMarca(std::string m);
-            void setAnni(double a);
+            void setBrand(std::string br);
+            void setAge(double a);
 
             virtual void accept(SensorVisitorInterface& visitor);
     };

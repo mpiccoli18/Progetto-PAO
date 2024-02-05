@@ -6,7 +6,7 @@
 namespace sensore{
     class SensoreConsumo: public Sensore{
         private:
-            std::string tipoCarburante;
+            int ottano;
         public:
 
             SensoreConsumo(
@@ -16,12 +16,12 @@ namespace sensore{
                 const std::vector<double> v,
                 const double vMin,
                 const double vMax,
-                const std::string tCarburante);
+                const int ot);
 
 
-            const std::string& getTipoCarburante() const;
+            int getOttano() const;
 
-            void setTipoCarburante(std::string tCarburante);
+            void setOttano(int ot);
 
             virtual void accept(SensorVisitorInterface& visitor);
        };

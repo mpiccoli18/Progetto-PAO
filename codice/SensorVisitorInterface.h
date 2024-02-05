@@ -3,15 +3,20 @@
 
 namespace sensore{
 
-    class sensoreConsumo;
-    class sensorePneumatico;
+    class SensoreConsumo;
+    class SensorePneumatico;
+    class SensoreMotore;
+    class SensoreBatteria;
+    class SensoreGas;
     class SensorVisitorInterface{
 
         public:
             virtual ~SensorVisitorInterface() = default;
-            virtual void visitSensorPneumatico(sensorePneumatico& sPneumatico) = 0;
-            virtual void visitSensorConsumo(sensoreConsumo& sConsumo) = 0;
-
+            virtual void visitSensorPneumatico(SensorePneumatico& sPneumatico) = 0;
+            virtual void visitSensorConsumo(SensoreConsumo& sConsumo) = 0;
+            virtual void visitSensorMotore(SensoreMotore& sMotore) = 0;
+            virtual void visitSensorBatteria(SensoreBatteria& sBatteria) = 0;
+            virtual void visitSensorGas(SensoreGas& sGas) = 0;
     };
 }
 #endif // SENSORVISITORINTERFACE_H
