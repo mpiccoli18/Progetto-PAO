@@ -2,13 +2,18 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "sensore.h"
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+namespace sensore{
 
-public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
-};
+    class MainWindow : public QMainWindow
+    {
+        Q_OBJECT
+
+        public:
+            MainWindow(sensore::Sensore&);
+            ~MainWindow();
+    };
+}
+
 #endif // MAINWINDOW_H

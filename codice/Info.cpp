@@ -14,23 +14,31 @@ Info::Info(Sensore& sensor, QWidget* parent)
     name_label = new QLabel();
     layout->addWidget(name_label);
 
-    hit_points_label = new QLabel();
-    layout->addWidget(hit_points_label);
+    type_label = new QLabel();
+    layout->addWidget(type_label);
 
-    strength_label = new QLabel();
-    layout->addWidget(strength_label);
+    description_label = new QLabel();
+    layout->addWidget(description_label);
 
-    CharacterInfoVisitor visitor;
-    character.accept(visitor);
+    valueMin_label = new QLabel();
+    layout->addWidget(valueMin_label);
+
+    valueMax_label = new QLabel();
+    layout->addWidget(valueMax_label);
+
+
+    SensorInfoVisitor visitor;
+    sensor.accept(visitor);
     layout->addWidget(visitor.getWidget());
-
-    character.registerObserver(this);
 }
 
 void Info::show() {
-    name_label->setText(QString::fromStdString(character.getName()));
-    hit_points_label->setText("HP: " + QString::number(character.getHitPoints()) + "/" + QString::number(character.getMaxHitPoints()));
-    strength_label->setText("Strength: " + QString::number(character.getStrength()));
+    name_label->setText(QString::fromStdString(sensore.getName()));
+    type_label->setText("Tipo: " + QString::fromStdString(sensore.getType()));
+    description_label->setText("Descrizione: " + QString::fromStdString(sensore.getDescription()));
+    valueMin_label->setText("Val. minimo: " + QString::number(sensore.getValueMin()));
+    valueMax_label->setText("Val. massimo: " + QString::number(sensore.getValueMax()));
+
 }
 
 }

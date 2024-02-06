@@ -25,7 +25,7 @@ void SensorInfoVisitor::visitSConsumo(SensoreConsumo& sConsumo) {
 }
 
 void SensorInfoVisitor::visitSMotore(SensoreMotore& sMotore) {
-    widget = new QLabel("Numero di cavalli: " +  QString::number(sMotore.getHorses()));
+    widget = new QLabel("Numero di cavalli: " +  QString::number(sMotore.getCavalli()));
 }
 
 void SensorInfoVisitor::visitSBatteria(SensoreBatteria& sBatteria) {

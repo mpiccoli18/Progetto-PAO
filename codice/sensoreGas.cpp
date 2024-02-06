@@ -13,6 +13,6 @@ double SensoreGas::getFootprint() const {return footprint;}
 void SensoreGas::setFootprint(double footp) { footprint = footp;}
 
 void SensoreGas::accept(SensorVisitorInterface& visitor){
-    visitor.visitSensorGas(*this);
+    visitor.visitSGas(*this);
 }
 }

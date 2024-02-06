@@ -15,6 +15,6 @@ namespace sensore{
     void SensorePneumatico::setAge(double a) { age = a;}
 
     void SensorePneumatico::accept(SensorVisitorInterface& visitor){
-        visitor.visitSensorPneumatico(*this);
+        visitor.visitSPneumatico(*this);
     }
 }

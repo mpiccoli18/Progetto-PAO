@@ -35,6 +35,7 @@ namespace sensore{
             const std::string& getName() const;
             const std::string& getType() const;
             const std::string& getDescription() const;
+            std::vector<double> getValues() const;
             unsigned int getMaxMesi() const;
             double getValueMin() const;
             double getValueMax() const;
@@ -47,6 +48,9 @@ namespace sensore{
             void setValues(std::vector<double> v);
 
             virtual void accept(SensorVisitorInterface& visitor) = 0;
+
+            double StartSimulation();
+
     };
 }
 

@@ -13,6 +13,6 @@ namespace sensore{
     void SensoreConsumo::setOttano(int ot) { ottano = ot;}
 
     void SensoreConsumo::accept(SensorVisitorInterface& visitor){
-        visitor.visitSensorConsumo(*this);
+        visitor.visitSConsumo(*this);
     }
 }

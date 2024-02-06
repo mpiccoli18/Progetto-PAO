@@ -18,6 +18,14 @@ namespace sensore{
     const std::string& Sensore::getName() const {return name;}
     const std::string& Sensore::getType() const {return type;}
     const std::string& Sensore::getDescription() const {return description;}
+    std::vector<double> Sensore::getValues() const{
+        std::vector<double> v2;
+        for(auto i = values.begin(); i != values.end(); i++)
+        {
+            v2.push_back(*i);
+        }
+        return v2;
+    }
     unsigned int Sensore::getMaxMesi() const {return maxMesi;}
     double Sensore::getValueMin() const {return valueMin;}
     double Sensore::getValueMax() const {return valueMax;}
@@ -32,6 +40,17 @@ namespace sensore{
         {
             values.push_back(*i);
         }
+    }
+
+    double Sensore::StartSimulation()
+    {
+        double somma = 0;
+        for(auto i = values.begin(); i != values.end(); i++)
+        {
+            somma += values[*i];
+        }
+
+        return somma / values.size();
     }
 
     const unsigned int Sensore::maxMesi=12;

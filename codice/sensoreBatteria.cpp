@@ -13,6 +13,6 @@ const std::string SensoreBatteria::getMaterials() const {return materials;}
 void SensoreBatteria::setMaterials(std::string mat) { materials = mat;}
 
 void SensoreBatteria::accept(SensorVisitorInterface& visitor){
-    visitor.visitSensorBatteria(*this);
+    visitor.visitSBatteria(*this);
 }
 }

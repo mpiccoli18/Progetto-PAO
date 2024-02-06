@@ -7,7 +7,7 @@
 namespace sensore{
 class SensoreMotore: public Sensore{
 private:
-    unsigned int horses;
+    unsigned int cavalli;
 public:
 
     SensoreMotore(
@@ -19,9 +19,9 @@ public:
         const double vMax,
         const unsigned int hor);
 
-    unsigned int getHorses() const;
+    unsigned int getCavalli() const;
 
-    void setHorses(unsigned int hor);
+    void setCavalli(unsigned int hor);
 
     virtual void accept(SensorVisitorInterface& visitor);
 };

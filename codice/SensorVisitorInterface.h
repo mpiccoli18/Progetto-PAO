@@ -12,11 +12,11 @@ namespace sensore{
 
         public:
             virtual ~SensorVisitorInterface() = default;
-            virtual void visitSensorPneumatico(SensorePneumatico& sPneumatico) = 0;
-            virtual void visitSensorConsumo(SensoreConsumo& sConsumo) = 0;
-            virtual void visitSensorMotore(SensoreMotore& sMotore) = 0;
-            virtual void visitSensorBatteria(SensoreBatteria& sBatteria) = 0;
-            virtual void visitSensorGas(SensoreGas& sGas) = 0;
+            virtual void visitSPneumatico(SensorePneumatico& sPneumatico) = 0;
+            virtual void visitSConsumo(SensoreConsumo& sConsumo) = 0;
+            virtual void visitSMotore(SensoreMotore& sMotore) = 0;
+            virtual void visitSBatteria(SensoreBatteria& sBatteria) = 0;
+            virtual void visitSGas(SensoreGas& sGas) = 0;
     };
 }
 #endif // SENSORVISITORINTERFACE_H

@@ -2,12 +2,15 @@ TEMPLATE = app
 TARGET = progettoPAO
 INCLUDEPATH += .
 QT += widgets
+QT += charts
 
 SOURCES += \
     Info.cpp \
     SensorInfoVisitor.cpp \
+    homePanel.cpp \
     main.cpp \
     mainwindow.cpp \
+    sensorPanel.cpp \
     sensore.cpp \
     sensoreBatteria.cpp \
     sensoreConsumo.cpp \
@@ -19,7 +22,9 @@ HEADERS += \
     Info.h \
     SensorInfoVisitor.h \
     SensorVisitorInterface.h \
+    homePanel.h \
     mainwindow.h \
+    sensorPanel.h \
     sensore.h \
     sensoreBatteria.h \
     sensoreConsumo.h \
