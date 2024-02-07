@@ -20,27 +20,36 @@ namespace sensore{
     }
 
     void homePanel::Simulation(){
-        double media = sensoreGenerale.StartSimulation();
+        sensoreGenerale.StartSimulation();
         QSplineSeries *series = new QSplineSeries();
         std::vector<double> valori = sensoreGenerale.getValues();
         int iteratore = 1;
         for(auto i = valori.begin(); i != valori.end(); i++){
             series -> append(iteratore, *i);
             iteratore++;
-            std::cout << *i << std::endl;
         }
 
         QChart *grafico = new QChart();
         grafico->addSeries(series);
         grafico->legend()->hide();
         grafico->setTitle("" + QString::fromStdString(sensoreGenerale.getType()) + " di: " + QString::fromStdString(sensoreGenerale.getName()));
-        grafico->createDefaultAxes();
-        grafico->axes(Qt::Vertical).first()->setRange(sensoreGenerale.getValueMin(), sensoreGenerale.getValueMax());
+
+        QValueAxis *axisX = new QValueAxis();
+        axisX->setRange(0, 12);
+        axisX->setTickCount(13);
+        grafico->addAxis(axisX, Qt::AlignBottom);
+
+        QValueAxis *axisY = new QValueAxis();
+        axisY->setRange(sensoreGenerale.getValueMin(), sensoreGenerale.getValueMax());
+        axisY->setTickCount(13);
+        axisY->applyNiceNumbers();
+        grafico->addAxis(axisY, Qt::AlignLeft);
+
 
         QChartView *chartView = new QChartView(grafico);
         chartView->setRenderHint(QPainter::Antialiasing);
-
-        chartView->show();
-
+        chartView->setFixedHeight(600);
+        chartView->setFixedWidth(600);
+        this->pannello->layout()->addWidget(chartView);
     }
 }
