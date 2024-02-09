@@ -5,15 +5,18 @@
 namespace sensore{
     SensorPanel::SensorPanel(sensore::Sensore& s, QWidget* parent) : QWidget(parent)
     {
-        QHBoxLayout* layout = new QHBoxLayout(this);
+        QVBoxLayout* layout = new QVBoxLayout(this);
         layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
+        QHBoxLayout* sensorc = new QHBoxLayout();
+        layout->addLayout(sensorc);
 
         info = new Info(s);
         info->show();
-        layout->addWidget(info);
+        sensorc->addWidget(info);
 
         QGridLayout* comandi = new QGridLayout();
-        layout->addLayout(comandi);
+        sensorc->addLayout(comandi,Qt::AlignRight);
 
         QPushButton* modify = new QPushButton("Modifica");
         QPushButton* simulation = new QPushButton("Simula");
@@ -21,5 +24,8 @@ namespace sensore{
         comandi->addWidget(simulation, 0, 1, 1, 1);
         connect(modify, &QPushButton::pressed, this, &SensorPanel::StartModify);
         connect(simulation, &QPushButton::pressed, this, &SensorPanel::StartSimulation);
+
+        QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        comandi->addItem(spacer, 0, 4, 1, 1);
     }
 }

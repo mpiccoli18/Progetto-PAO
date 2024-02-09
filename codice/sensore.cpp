@@ -42,12 +42,11 @@ namespace sensore{
         }
     }
 
-    double Sensore::StartSimulation()
-    {
+    double Sensore::StartSimulation() const{
         double somma = 0;
         for(auto i = values.begin(); i != values.end(); i++)
         {
-            somma += values[*i];
+            somma += *i;
         }
 
         return somma / values.size();

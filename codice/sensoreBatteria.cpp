@@ -15,4 +15,5 @@ void SensoreBatteria::setMaterials(std::string mat) { materials = mat;}
 void SensoreBatteria::accept(SensorVisitorInterface& visitor){
     visitor.visitSBatteria(*this);
 }
+
 }

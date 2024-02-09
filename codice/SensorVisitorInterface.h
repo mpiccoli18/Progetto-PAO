@@ -8,6 +8,7 @@ namespace sensore{
     class SensoreMotore;
     class SensoreBatteria;
     class SensoreGas;
+    class Sensore;//aggiunto
     class SensorVisitorInterface{
 
         public:

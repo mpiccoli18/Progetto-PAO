@@ -36,5 +36,4 @@ void SensorInfoVisitor::visitSGas(SensoreGas& sGas) {
     widget = new QLabel("Impronta: " +  QString::number(sGas.getFootprint()));
 }
 
-
 }
