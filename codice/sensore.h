@@ -19,6 +19,7 @@ namespace sensore{
             static const unsigned int maxMesi;
             double valueMin;
             double valueMax;
+            bool grafico = false;
 
         public:
 

@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     sensore::SensoreBatteria s("Sens-2045", "Consumo", "boh", v, 0, 100, "litio");
     sensore::MainWindow window(s);
-    window.resize(1920, 1080);
+    window.resize(1600, 1000);
     window.show();
     return app.exec();
 }

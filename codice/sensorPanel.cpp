@@ -5,20 +5,20 @@
 namespace sensore{
     SensorPanel::SensorPanel(sensore::Sensore& s, QWidget* parent) : QWidget(parent)
     {
-        QHBoxLayout* layout = new QHBoxLayout(this);
-        layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+        QVBoxLayout* layout = new QVBoxLayout(this);
+        layout->setAlignment(Qt::AlignRight | Qt::AlignTop);
+        QHBoxLayout* infoSensor = new QHBoxLayout();
 
         info = new Info(s);
         info->show();
-        layout->addWidget(info);
-
+        infoSensor->addWidget(info, Qt::AlignLeft);
         QGridLayout* comandi = new QGridLayout();
-        layout->addLayout(comandi);
-
         QPushButton* modify = new QPushButton("Modifica");
         QPushButton* simulation = new QPushButton("Simula");
         comandi->addWidget(modify, 0, 0, 1, 1);
         comandi->addWidget(simulation, 0, 1, 1, 1);
+        infoSensor->addLayout(comandi, Qt::AlignRight);
+        layout->addLayout(infoSensor);
         connect(modify, &QPushButton::pressed, this, &SensorPanel::StartModify);
         connect(simulation, &QPushButton::pressed, this, &SensorPanel::StartSimulation);
     }
