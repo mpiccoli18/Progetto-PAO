@@ -42,6 +42,7 @@ homePanel::homePanel(sensore::Sensore &s, QWidget* p):  QWidget(p), sensoreGener
 
         pannello = new SensorPanel(sensoreGenerale);//sensore
         layoutApp->addWidget(pannello,2);
+
         connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
         connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
 

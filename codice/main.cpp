@@ -12,7 +12,8 @@ int main(int argc, char *argv[])
     sensore::Sensore* p = &s;
     std::vector<sensore::Sensore*> InsiemeSensori = {p};
     sensore::MainWindow window(InsiemeSensori);
-    window.resize(1920, 1080);
+    window.resize(1600, 1000);
+
     window.show();
     return app.exec();
 }
