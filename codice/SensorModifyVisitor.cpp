@@ -1,7 +1,7 @@
-#include "SensorInfoVisitor.h"
+#include "SensorModifyVisitor.h"
 #include <QLabel>
 #include <QString>
-#include<QLineEdit> //aggiunto per test
+#include <QLineEdit>
 
 #include "sensorePneumatico.h"
 #include "sensoreConsumo.h"
@@ -12,32 +12,11 @@
 
 namespace sensore{
 
-QWidget* SensorInfoVisitor::getWidget() {
+QWidget* SensorModifyVisitor::getWidget() {
     return widget;
 }
 
-void SensorInfoVisitor::visitSPneumatico(SensorePneumatico& sPneumatico) {
-    widget = new QLabel("Marca Pneumatico: " +  QString::fromStdString(sPneumatico.getBrand()));
-    widget = new QLabel("Tempo di vita: " +  QString::number(sPneumatico.getAge()));
-}
-
-void SensorInfoVisitor::visitSConsumo(SensoreConsumo& sConsumo) {
-    widget = new QLabel("Numero di Ottano: " +  QString::number(sConsumo.getOttano()));
-}
-
-void SensorInfoVisitor::visitSMotore(SensoreMotore& sMotore) {
-    widget = new QLabel("Numero di cavalli: " +  QString::number(sMotore.getCavalli()));
-}
-
-void SensorInfoVisitor::visitSBatteria(SensoreBatteria& sBatteria) {
-    widget = new QLabel("Materiali: " +  QString::fromStdString(sBatteria.getMaterials()));
-}
-
-void SensorInfoVisitor::visitSGas(SensoreGas& sGas) {
-    widget = new QLabel("Impronta: " +  QString::number(sGas.getFootprint()));
-}
-
-void SensorInfoVisitor::modSPneumatico(SensorePneumatico& sPneumatico){
+void SensorModifyVisitor::modSPneumatico(SensorePneumatico& sPneumatico){
     widget = new QLabel("Marca:");
     QLineEdit *lineBrand = new QLineEdit();
     std::string brand = sPneumatico.getBrand();
@@ -53,7 +32,7 @@ void SensorInfoVisitor::modSPneumatico(SensorePneumatico& sPneumatico){
     widget = lineAge;
 }
 
-void SensorInfoVisitor::modSConsumo(SensoreConsumo& sConsumo){
+void SensorModifyVisitor::modSConsumo(SensoreConsumo& sConsumo){
     widget = new QLabel("Numero di Ottano:");
     QLineEdit *lineOtt = new QLineEdit();
     int ott = sConsumo.getOttano();
@@ -62,7 +41,7 @@ void SensorInfoVisitor::modSConsumo(SensoreConsumo& sConsumo){
     widget = lineOtt;
 }
 
-void SensorInfoVisitor::modSMotore(SensoreMotore& sMotore){
+void SensorModifyVisitor::modSMotore(SensoreMotore& sMotore){
     widget = new QLabel("Cavalli:");
     QLineEdit *lineCavalli = new QLineEdit();
     unsigned int cav = sMotore.getCavalli();
@@ -71,7 +50,7 @@ void SensorInfoVisitor::modSMotore(SensoreMotore& sMotore){
     widget = lineCavalli;
 }
 
-void SensorInfoVisitor::modSBatteria(SensoreBatteria& sBatteria){
+void SensorModifyVisitor::modSBatteria(SensoreBatteria& sBatteria){
     widget = new QLabel("Materiali:");
     QLineEdit *lineMat = new QLineEdit();
     std::string mat = sBatteria.getMaterials();
@@ -80,7 +59,7 @@ void SensorInfoVisitor::modSBatteria(SensoreBatteria& sBatteria){
     widget = lineMat;
 }
 
-void SensorInfoVisitor::modSGas(SensoreGas& sGas){
+void SensorModifyVisitor::modSGas(SensoreGas& sGas){
     widget = new QLabel("Impronta:");
     QLineEdit *lineFootp = new QLineEdit();
     double fp = sGas.getFootprint();

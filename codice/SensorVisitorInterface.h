@@ -18,6 +18,12 @@ namespace sensore{
             virtual void visitSMotore(SensoreMotore& sMotore) = 0;
             virtual void visitSBatteria(SensoreBatteria& sBatteria) = 0;
             virtual void visitSGas(SensoreGas& sGas) = 0;
+
+            virtual void modSPneumatico(SensorePneumatico& sPneumatico) = 0;
+            virtual void modSConsumo(SensoreConsumo& sConsumo) = 0;
+            virtual void modSMotore(SensoreMotore& sMotore) = 0;
+            virtual void modSBatteria(SensoreBatteria& sBatteria) = 0;
+            virtual void modSGas(SensoreGas& sGas) = 0;
     };
 }
 #endif // SENSORVISITORINTERFACE_H

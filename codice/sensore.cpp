@@ -30,9 +30,9 @@ namespace sensore{
     double Sensore::getValueMin() const {return valueMin;}
     double Sensore::getValueMax() const {return valueMax;}
 
-    void Sensore::setName(std::string n) { std::string name = n; }
-    void Sensore::setType(std::string t) { std::string type = t; }
-    void Sensore::setDescription(std::string d) { std::string description = d; }
+    void Sensore::setName(std::string n) { name = n; }
+    void Sensore::setType(std::string t) { type = t; }
+    void Sensore::setDescription(std::string d) { description = d; }
     void Sensore::setValueMin(double vMin) { valueMin = vMin; }
     void Sensore::setValueMax(double vMax) { valueMax = vMax; }
     void Sensore::setValues(std::vector<double> v) {
@@ -41,7 +41,7 @@ namespace sensore{
             values.push_back(*i);
         }
     }
-
+    /*
     double Sensore::StartSimulation() const{
         double somma = 0;
         for(auto i = values.begin(); i != values.end(); i++)
@@ -50,7 +50,7 @@ namespace sensore{
         }
 
         return somma / values.size();
-    }
+    }*/
 
     const unsigned int Sensore::maxMesi=12;
 }

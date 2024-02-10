@@ -50,7 +50,7 @@ namespace sensore{
 
             virtual void accept(SensorVisitorInterface& visitor) = 0;
 
-            double StartSimulation() const;
+            /*double StartSimulation() const;*/
 
     };
 }

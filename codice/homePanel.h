@@ -12,7 +12,7 @@ namespace sensore{
         private:
             sensore::Sensore& sensoreGenerale;
             QChartView *chartView;
-            QVBoxLayout *modifyView;
+            QWidget* modifyView;
             SensorPanel* pannello;
             SensorPanel* barraRicerca;
         public:
