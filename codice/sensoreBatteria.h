@@ -23,6 +23,7 @@ public:
     void setMaterials(std::string mat);
 
     virtual void accept(SensorVisitorInterface& visitor);
+    virtual void acceptModify(SensorVisitorInterface& visitor);
 };
 }
 

@@ -5,10 +5,10 @@
 #include <QSplineSeries>
 #include <QtCharts>
 #include <QLineEdit>
-#include <iostream>
+#include<iostream>
 
 namespace sensore{
-homePanel::homePanel(sensore::Sensore &s, QWidget* p):  QWidget(p), sensoreGenerale(s)
+homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p), sensoreGenerale(s)
     {
         // layout completo
         QVBoxLayout* layout = new QVBoxLayout(this);
@@ -37,14 +37,15 @@ homePanel::homePanel(sensore::Sensore &s, QWidget* p):  QWidget(p), sensoreGener
         QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         menu->addItem(spacer, 0, 4, 1, 1);
 
-        barraRicerca = new SensorPanel(sensoreGenerale);//barra
+        barraRicerca = new searchBarPanel(v);//barra
         layoutApp->addWidget(barraRicerca,1);
 
-        pannello = new SensorPanel(sensoreGenerale);//sensore
+        pannello = new SensorPanel(*sensoreGenerale);//sensore
         layoutApp->addWidget(pannello,2);
 
         connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
         connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
 
         layoutApp->setStretch(0, 1);
         layoutApp->setStretch(1, 2);
@@ -76,45 +77,93 @@ homePanel::homePanel(sensore::Sensore &s, QWidget* p):  QWidget(p), sensoreGener
 
         modifyView = new QWidget();
 
-        // Crea un layout per contenere i campi di input e il pulsante
         QVBoxLayout* modLayout = new QVBoxLayout(modifyView);
 
-        // Aggiungi label1 e input1
-        QLabel *label1 = new QLabel("Nome Sensore:");
-        QLineEdit *lineEdit1 = new QLineEdit(this->pannello);
+        QLabel *labelname = new QLabel("Nome Sensore:");
+        QLineEdit *lineName = new QLineEdit(this->pannello);
 
+        QLabel *labeltype = new QLabel("Tipologia:");
+        QLineEdit *lineType = new QLineEdit(this->pannello);
 
-        // Aggiungi label2 e input2
-        QLabel *label2 = new QLabel("Tipologia:");
-        QLineEdit *lineEdit2 = new QLineEdit(this->pannello);
+        QLabel *labeldescr = new QLabel("Descrizione:");
+        QLineEdit *lineDescr = new QLineEdit(this->pannello);
+
+        QLabel *labelmin = new QLabel("Valore Min:");
+        QLineEdit *lineMin = new QLineEdit(this->pannello);
+
+        QLabel *labelmax = new QLabel("Valore Max:");
+        QLineEdit *lineMax = new QLineEdit(this->pannello);
+
+        QLabel *labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
+        QLineEdit *lineVal = new QLineEdit(this->pannello);
 
         // Ottieni i nomi dei sensori utilizzando le funzioni getName()
-        std::string name = sensoreGenerale.getName();
-        std::string type = sensoreGenerale.getType();
+        std::string name = sensoreGenerale->getName();
+        std::string type = sensoreGenerale->getType();
+        std::string descr = sensoreGenerale->getDescription();
+        double min = sensoreGenerale->getValueMin();
+        double max = sensoreGenerale->getValueMax();
+        std::vector<double> v = sensoreGenerale->getValues();
 
         // Converti le std::string in QString
         QString qname = QString::fromStdString(name);
         QString qtype = QString::fromStdString(type);
+        QString qdescr = QString::fromStdString(descr);
+        QString qmin = QString::number(min);
+        QString qmax = QString::number(max);
+        QString qval = "";
+        for(auto i = v.begin(); i != v.end(); ++i){
+            qval += QString::number(*i) + ' ';
+        }
 
         // Imposta il testo nei campi di input
-        lineEdit1->setText(qname);
-        lineEdit2->setText(qtype);
+        lineName->setText(qname);
+        lineType->setText(qtype);
+        lineDescr->setText(qdescr);
+        lineMin->setText(qmin);
+        lineMax->setText(qmax);
+        lineVal->setText(qval);
 
-        modLayout->addWidget(lineEdit1);
-
-        modLayout->addWidget(lineEdit2);
+        modLayout->addWidget(lineName);
+        modLayout->addWidget(lineType);
+        modLayout->addWidget(lineDescr);
+        modLayout->addWidget(lineMin);
+        modLayout->addWidget(lineMax);
+        modLayout->addWidget(lineVal);
 
         // Imposta le dimensioni dei campi di input
-        int fieldWidth = this->pannello->width() / 2; // Larghezza della metà del widget padre
-        lineEdit1->setFixedWidth(fieldWidth);
-        lineEdit2->setFixedWidth(fieldWidth);
+        int fieldWidth = this->pannello->width() /3; // Larghezza della metà del widget padre
+        lineName->setFixedWidth(fieldWidth);
+        lineType->setFixedWidth(fieldWidth);
+        lineDescr->setFixedWidth(fieldWidth);
+        lineMin->setFixedWidth(fieldWidth);
+        lineMax->setFixedWidth(fieldWidth);
+        lineVal->setFixedWidth(fieldWidth);
 
         // Aggiungi i campi di input al layout
-        modLayout->addWidget(label1);
-        modLayout->addWidget(lineEdit1, 0, Qt::AlignLeft);
+        modLayout->addWidget(labelname);
+        modLayout->addWidget(lineName, 0, Qt::AlignLeft);
 
-        modLayout->addWidget(label2);
-        modLayout->addWidget(lineEdit2, 0, Qt::AlignLeft);
+        modLayout->addWidget(labeltype);
+        modLayout->addWidget(lineType, 0, Qt::AlignLeft);
+
+        modLayout->addWidget(labeldescr);
+        modLayout->addWidget(lineDescr, 0, Qt::AlignLeft);
+
+        modLayout->addWidget(labelmin);
+        modLayout->addWidget(lineMin, 0, Qt::AlignLeft);
+
+        modLayout->addWidget(labelmax);
+        modLayout->addWidget(lineMax, 0, Qt::AlignLeft);
+
+        modLayout->addWidget(labelval);
+        modLayout->addWidget(lineVal, 0, Qt::AlignLeft);
+
+
+
+        SensorInfoVisitor visitor;
+        sensoreGenerale->acceptModify(visitor);
+        modLayout->addWidget(visitor.getWidget());
 
         // Aggiungi pulsante di conferma
         QPushButton *confirmButton = new QPushButton("Conferma", this->pannello);
@@ -122,10 +171,8 @@ homePanel::homePanel(sensore::Sensore &s, QWidget* p):  QWidget(p), sensoreGener
 
         QPushButton *exitButton = new QPushButton("Annulla", this->pannello);
         modLayout->addWidget(exitButton, 0, Qt::AlignLeft);
-
-        SensorInfoVisitor visitor;
-        sensoreGenerale.accept(visitor);
-        modLayout->addWidget(visitor.getWidget());
+        connect(exitButton, &QPushButton::pressed, this, &homePanel::StartExit);
+        connect(this, &homePanel::StartExit, this, &homePanel::exit);
 
         // Aggiungi il widget con i campi di input e il pulsante al layout del pannello
         this->pannello->layout()->addWidget(modifyView);
@@ -179,7 +226,7 @@ homePanel::homePanel(sensore::Sensore &s, QWidget* p):  QWidget(p), sensoreGener
 
         /*sensoreGenerale.StartSimulation();*/
         QSplineSeries *series = new QSplineSeries();
-        std::vector<double> valori = sensoreGenerale.getValues();
+        std::vector<double> valori = sensoreGenerale->getValues();
         int iteratore = 1;
         for(auto i = valori.begin(); i != valori.end(); i++){
             series -> append(iteratore, *i);
@@ -189,7 +236,7 @@ homePanel::homePanel(sensore::Sensore &s, QWidget* p):  QWidget(p), sensoreGener
         QChart *grafico = new QChart();
         grafico->addSeries(series);
         grafico->legend()->hide();
-        grafico->setTitle("" + QString::fromStdString(sensoreGenerale.getType()) + " di: " + QString::fromStdString(sensoreGenerale.getName()));
+        grafico->setTitle("" + QString::fromStdString(sensoreGenerale->getType()) + " di: " + QString::fromStdString(sensoreGenerale->getName()));
 
         QValueAxis *axisX = new QValueAxis();
         axisX->setRange(0, 12);
@@ -197,7 +244,7 @@ homePanel::homePanel(sensore::Sensore &s, QWidget* p):  QWidget(p), sensoreGener
         grafico->addAxis(axisX, Qt::AlignBottom);
 
         QValueAxis *axisY = new QValueAxis();
-        axisY->setRange(sensoreGenerale.getValueMin(), sensoreGenerale.getValueMax());
+        axisY->setRange(sensoreGenerale->getValueMin(), sensoreGenerale->getValueMax());
         axisY->setTickCount(13);
         axisY->applyNiceNumbers();
         grafico->addAxis(axisY, Qt::AlignLeft);
@@ -207,4 +254,17 @@ homePanel::homePanel(sensore::Sensore &s, QWidget* p):  QWidget(p), sensoreGener
         chartView->setRenderHint(QPainter::Antialiasing);
         this->pannello->layout()->addWidget(chartView);
     }
+
+    void homePanel::exit(){
+        if(modifyView){
+            this->pannello->layout()->removeWidget(modifyView);
+            delete modifyView; // Libera la memoria
+            modifyView = nullptr;
+        }
+    }
+
+    void homePanel::Elimination(){
+        qDebug() << "ciao";
+    }
+
 }

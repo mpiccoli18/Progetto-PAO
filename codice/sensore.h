@@ -19,7 +19,6 @@ namespace sensore{
             static const unsigned int maxMesi;
             double valueMin;
             double valueMax;
-            bool grafico = false;
 
         public:
 
@@ -31,7 +30,7 @@ namespace sensore{
                 const double vMin,
                 const double vMax
             );
-            virtual ~Sensore();
+            virtual ~Sensore() = default;
 
             const std::string& getName() const;
             const std::string& getType() const;
@@ -49,6 +48,7 @@ namespace sensore{
             void setValues(std::vector<double> v);
 
             virtual void accept(SensorVisitorInterface& visitor) = 0;
+            virtual void acceptModify(SensorVisitorInterface& visitor) = 0;
 
             /*double StartSimulation() const;*/
 

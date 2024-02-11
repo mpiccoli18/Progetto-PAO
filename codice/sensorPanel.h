@@ -15,11 +15,12 @@ namespace sensore{
             Info* info;
 
         public:
-            SensorPanel(sensore::Sensore& sensore, QWidget* parent = 0);
+            SensorPanel(Sensore& sensore, QWidget* parent = 0);
 
         signals:
             void StartModify();
             double StartSimulation();
+            void StartElimination();
 
     };
 }

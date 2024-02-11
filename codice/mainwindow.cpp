@@ -4,7 +4,7 @@
 
 namespace sensore{
     MainWindow::MainWindow(std::vector<sensore::Sensore*> s){
-        homePanel* home = new homePanel(*s[0], this);//primo sensore nel vettore
+        homePanel* home = new homePanel(s,s[0], this);//puntatore primo sensore nel vettore
         setCentralWidget(home);
     }
 
