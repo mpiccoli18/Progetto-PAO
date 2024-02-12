@@ -3,6 +3,7 @@
 
 #include<vector>
 #include<QWidget>
+#include<QLineEdit>
 #include"sensore.h"
 
 namespace sensore{
@@ -10,6 +11,8 @@ namespace sensore{
             Q_OBJECT
         private:
             std::vector<Sensore*> vectors;
+            QLineEdit *searchLineEdit;
+            QWidget *searchResult = nullptr;
         public:
             searchBarPanel(const std::vector<Sensore*> v, QWidget *parent = nullptr);
 
@@ -17,8 +20,11 @@ namespace sensore{
 
             void setVectors(Sensore* s);
 
-        signals:
+        public slots:
+            void Search();
 
+        signals:
+            void StartSearch();
     };
 }
 

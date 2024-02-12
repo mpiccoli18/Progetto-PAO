@@ -178,9 +178,7 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         this->pannello->layout()->addWidget(modifyView);
 
 
-
-        /*
-        QString nome = nomeLine->text();
+        /*QString nome = nomeLine->text();
         QString tipo = tipoLine->text();
         QString descrizione = descrizioneLine->text();
         std::vector<double> valori;
@@ -188,7 +186,7 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         int valoreMax = valMaxLine->text().toInt();
 
         int iterator = 0;
-        /for(auto i = valoriLine->text().begin(); i != valoriLine->text().end(); i++)
+        for(auto i = valoriLine->text().begin(); i != valoriLine->text().end(); i++)
         {
             if(i == )
             {
@@ -210,7 +208,7 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
 
         this->sensoreGenerale.setName(nome.toStdString());
         this->pannello->refresh(sensoreGenerale);
-        qDebug() << "Nome cambiato: " <<this->sensoreGenerale.getName(); */
+        qDebug() << "Nome cambiato: " <<this->sensoreGenerale.getName();*/
     }
 
     void homePanel::Simulation(){
