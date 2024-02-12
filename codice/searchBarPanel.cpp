@@ -39,19 +39,19 @@ namespace sensore{
             delete searchResult;
             searchResult = nullptr;
         }
+        searchResult = new QWidget();
+        QVBoxLayout *searchLayout = new QVBoxLayout();
+        searchResult->setLayout(searchLayout);
         std::string search = (this->searchLineEdit->text()).toStdString();
         std::vector<Sensore*> searchVet = this->getVectors();
         if(searchVet.empty())
         {
             QLabel* empty = new QLabel("La lista di sensori è vuota, si prega di aggiungerne di nuovi!");
-            this->layout()->addWidget(empty);
-            qDebug() << "il vettore è vuoto!";
+            empty->setStyleSheet("font: bold 16px;");
+            searchLayout->addWidget(empty);
         }
         else
         {
-            searchResult = new QWidget();
-            QVBoxLayout *searchLayout = new QVBoxLayout();
-            searchResult->setLayout(searchLayout);
             for(int i = 0; i < searchVet.size(); i++)
             {
                 QString searchStr = QString::fromStdString(searchVet[i]->getName());
