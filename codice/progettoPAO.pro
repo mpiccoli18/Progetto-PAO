@@ -7,7 +7,6 @@ QT += charts
 SOURCES += \
     Info.cpp \
     SensorInfoVisitor.cpp \
-    SensorModifyVisitor.cpp \
     homePanel.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -23,7 +22,6 @@ SOURCES += \
 HEADERS += \
     Info.h \
     SensorInfoVisitor.h \
-    SensorModifyVisitor.h \
     SensorVisitorInterface.h \
     homePanel.h \
     mainwindow.h \

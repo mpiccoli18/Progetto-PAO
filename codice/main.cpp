@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     sensore::SensoreBatteria s("Sens-2045", "Consumo", "boh", v, 0, 100, "litio");
     sensore::Sensore* p = &s;
-    std::vector<sensore::Sensore*> InsiemeSensori = {p, p};
+    std::vector<sensore::Sensore*> InsiemeSensori = {p, p, p, p, p};
     sensore::MainWindow window(InsiemeSensori);
     window.resize(1600, 1000);
 

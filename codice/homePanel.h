@@ -12,8 +12,9 @@ namespace sensore{
         Q_OBJECT
         private:
             sensore::Sensore* sensoreGenerale;
-            QChartView *chartView = nullptr;
-            QWidget* modifyView = nullptr;
+            QHBoxLayout *layoutApp;
+            QChartView *chartView;
+            QWidget *modifyView;
             SensorPanel* pannello;
             searchBarPanel* barraRicerca;
         public:
@@ -23,20 +24,20 @@ namespace sensore{
             void Modify();
             void Simulation();
             void Elimination();
+            void Update();
+            void Save();
+            void Open();
+            void Close();
 
-            void save();
-            void open();
-            void close();
+            void Exit();
 
-            void exit();
-
-            void View();
+            void View(Sensore* sensore);
 
         signals:
             void StartSave();
             void StartOpen();
             void StartClose();
-
+            void StartUpdate();
             void StartExit();
 
     };

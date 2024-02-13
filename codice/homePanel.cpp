@@ -8,7 +8,7 @@
 #include<iostream>
 
 namespace sensore{
-homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p), sensoreGenerale(s)
+homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p), sensoreGenerale(s), chartView(nullptr), modifyView(nullptr)
     {
         // layout completo
         QVBoxLayout* layout = new QVBoxLayout(this);
@@ -16,18 +16,18 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         QGridLayout* menu = new QGridLayout();
         layout->addLayout(menu);
         // layout barra e sensore
-        QHBoxLayout* layoutApp = new QHBoxLayout();
+        layoutApp = new QHBoxLayout();
         layout->addLayout(layoutApp);
 
         QPushButton* save = new QPushButton("Salva");
         menu->addWidget(save, 0, 0, 1, 1);
         connect(save, &QPushButton::pressed, this, &homePanel::StartSave);
-        connect(this, &homePanel::StartSave, this, &homePanel::save);
+        connect(this, &homePanel::StartSave, this, &homePanel::Save);
 
         QPushButton* open = new QPushButton("Apri");
         menu->addWidget(open, 0, 2, 1, 1);
         connect(open, &QPushButton::pressed, this, &homePanel::StartOpen);
-        connect(this, &homePanel::StartOpen, this, &homePanel::open);
+        connect(this, &homePanel::StartOpen, this, &homePanel::Open);
 
         QPushButton* close = new QPushButton("Chiudi");
         menu->addWidget(close, 0, 3, 1, 1);
@@ -39,13 +39,10 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
 
         barraRicerca = new searchBarPanel(v);//barra
         layoutApp->addWidget(barraRicerca,1);
+        barraRicerca->setFixedWidth(350);
 
-        pannello = new SensorPanel(*sensoreGenerale);//sensore
+        pannello = new SensorPanel();//sensore
         layoutApp->addWidget(pannello,2);
-
-        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
 
         layoutApp->setStretch(0, 1);
         layoutApp->setStretch(1, 2);
@@ -53,15 +50,15 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
     }
 
-    void homePanel::save(){
+    void homePanel::Save(){
 
     }
 
-    void homePanel::open(){
+    void homePanel::Open(){
 
     }
 
-    void homePanel::close(){ // piu avanti
+    void homePanel::Close(){ // piu avanti
 
     }
 
@@ -176,7 +173,7 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         QPushButton *exitButton = new QPushButton("Annulla", this->pannello);
         modLayout->addWidget(exitButton, 0, Qt::AlignLeft);
         connect(exitButton, &QPushButton::pressed, this, &homePanel::StartExit);
-        connect(this, &homePanel::StartExit, this, &homePanel::exit);
+        connect(this, &homePanel::StartExit, this, &homePanel::Exit);
 
         // Aggiungi il widget con i campi di input e il pulsante al layout del pannello
         this->pannello->layout()->addWidget(modifyView);
@@ -215,6 +212,10 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         qDebug() << "Nome cambiato: " <<this->sensoreGenerale.getName();*/
     }
 
+    void homePanel::Update(){
+
+    }
+
     void homePanel::Simulation(){
         if (chartView) {
             this->pannello->layout()->removeWidget(chartView);
@@ -226,7 +227,6 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
             modifyView = nullptr;
         }
 
-        /*sensoreGenerale.StartSimulation();*/
         QSplineSeries *series = new QSplineSeries();
         std::vector<double> valori = sensoreGenerale->getValues();
         int iteratore = 1;
@@ -257,7 +257,7 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         this->pannello->layout()->addWidget(chartView);
     }
 
-    void homePanel::exit(){
+    void homePanel::Exit(){
         if(modifyView){
             this->pannello->layout()->removeWidget(modifyView);
             delete modifyView; // Libera la memoria
@@ -276,14 +276,25 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         pannello->updateSensor(sensoreGenerale);
     }
 
-    void homePanel::View(){
+    void homePanel::View(Sensore* s){
         // Rimuovi il vecchio SensorPanel
-        layoutApp->removeWidget(pannello);
-        delete pannello;
-
-        // Crea e aggiungi il nuovo SensorPanel con il sensore selezionato
-        pannello = new SensorPanel(*sensore);
-        layoutApp->addWidget(pannello, 2);
+        if(pannello)
+        {
+            this->layout()->removeWidget(pannello);
+            if(chartView)
+                chartView = nullptr;
+            if(modifyView)
+                modifyView = nullptr;
+            delete pannello;
+            // Crea e aggiungi il nuovo SensorPanel con il sensore selezionato
+            pannello = new SensorPanel(s);
+            layoutApp->addWidget(pannello, 2);
+            layoutApp->setStretch(0, 1);
+            layoutApp->setStretch(1, 2);
+            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+        }
     }
 
 }

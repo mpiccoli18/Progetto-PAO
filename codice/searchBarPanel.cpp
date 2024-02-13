@@ -3,7 +3,7 @@
 #include<QLabel>
 #include<QLineEdit>
 #include<QPushButton>
-
+#include<QScrollArea>
 namespace sensore{
     searchBarPanel::searchBarPanel(std::vector<Sensore*> v, QWidget* parent): QWidget(parent),vectors(v){
         QVBoxLayout* layout = new QVBoxLayout(this);
@@ -85,7 +85,7 @@ namespace sensore{
                     QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getName()));
                     connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i]() { emit StartView(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
-                    searchLayout->addWidget(sensorInfo);
+                    scrollLayout->addWidget(sensorInfo);
                 }
             }
         }
