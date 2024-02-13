@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "SensorVisitorInterface.h"
+#include "SensorObserverInterface.h"
 
 namespace sensore{
 
@@ -19,6 +20,7 @@ namespace sensore{
             static const unsigned int maxMesi;
             double valueMin;
             double valueMax;
+            std::vector<SensorObserverInterface*> observers;
 
         public:
 
@@ -49,6 +51,8 @@ namespace sensore{
 
             virtual void accept(SensorVisitorInterface& visitor) = 0;
             virtual void acceptModify(SensorVisitorInterface& visitor) = 0;
+
+            void registerObserver(SensorObserverInterface* sens);
 
             /*double StartSimulation() const;*/
 

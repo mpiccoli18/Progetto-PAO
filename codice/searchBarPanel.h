@@ -25,6 +25,7 @@ namespace sensore{
 
         signals:
             void StartSearch();
+            void StartView(Sensore* sensore);
     };
 }
 

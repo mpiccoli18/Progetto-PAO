@@ -49,6 +49,8 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
 
         layoutApp->setStretch(0, 1);
         layoutApp->setStretch(1, 2);
+
+        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
     }
 
     void homePanel::save(){
@@ -168,6 +170,8 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         // Aggiungi pulsante di conferma
         QPushButton *confirmButton = new QPushButton("Conferma", this->pannello);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
+        connect(confirmButton, &QPushButton::pressed, this, &homePanel::StartUpdate); // sistemare
+        connect(this, &homePanel::StartUpdate, this, &homePanel::Update);
 
         QPushButton *exitButton = new QPushButton("Annulla", this->pannello);
         modLayout->addWidget(exitButton, 0, Qt::AlignLeft);
@@ -261,8 +265,25 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         }
     }
 
-    void homePanel::Elimination(){
-        qDebug() << "ciao";
+    void homePanel::Elimination() {
+        // Rimuovi il sensore corrente
+        delete sensoreGenerale;
+    
+        // Crea un nuovo sensore vuoto (o nullo)
+        sensoreGenerale = nullptr; // oppure crea un nuovo sensore vuoto se necessario
+
+        // Aggiorna il SensorPanel con il nuovo sensore
+        pannello->updateSensor(sensoreGenerale);
+    }
+
+    void homePanel::View(){
+        // Rimuovi il vecchio SensorPanel
+        layoutApp->removeWidget(pannello);
+        delete pannello;
+
+        // Crea e aggiungi il nuovo SensorPanel con il sensore selezionato
+        pannello = new SensorPanel(*sensore);
+        layoutApp->addWidget(pannello, 2);
     }
 
 }

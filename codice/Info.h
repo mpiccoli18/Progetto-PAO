@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLabel>
 #include "sensore.h"
+#include "SensorObserverInterface.h"
 
 namespace sensore {
 
@@ -19,6 +20,7 @@ namespace sensore {
         public:
             Info(Sensore& sensore, QWidget* parent = 0);
             void show();
+            virtual void notify(Sensore& sensor);
     };
 }
 

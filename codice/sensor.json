@@ -1,0 +1,48 @@
+{
+    "SensoreConsumo": {
+        "name": "Sensore Consumo",
+        "type": "Benzina",
+        "description": "Misura il consumo di benzina di un'auto",
+        "values": [50.2, 48.9, 52.5, 49.8, 53.7, 51.3, 47.6, 50.1, 48.7, 52.2, 49.6, 51.8],
+        "valueMin": 0.0,
+        "valueMax": 100.0,
+        "ottano": 84
+    },
+    "SensoreGas": {
+        "name": "Sensore Gas",
+        "type": "CO2",
+        "description": "Misura il livello di CO2 emessa da un motore di una macchina",
+        "values": [25.3, 27.6, 29.8, 32.1, 34.3, 36.5, 38.7, 40.9, 43.2, 45.4, 47.6, 49.8],
+        "valueMin": 0.0,
+        "valueMax": 100.0,
+        "footprint": 10.5 
+    },
+    "SensoreMotore": {
+        "name": "Sensore Motore",
+        "type": "Temperatura",
+        "description": "Misura la temperatura del motore di una Ferrari",
+        "values": [90.5, 92.3, 94.0, 95.2, 97.1, 98.5, 99.8, 100.3, 99.7, 98.1, 96.9, 94.8],
+        "valueMin": 0.0,
+        "valueMax": 120.0,
+        "cavalli": 700
+    },
+    "SensorePneumatico": {
+        "name": "Sensore Pneumatico",
+        "type": "Pressione",
+        "description": "Misura la pressione degli pneumatici",
+        "values": [2.3, 2.4, 2.2, 2.1, 2.5, 2.3, 2.4, 2.2, 2.3, 2.5, 2.4, 2.3],
+        "valueMin": 0.0,
+        "valueMax": 3.5,
+        "brand": "Michelin",
+        "age": 1.5
+    },
+    "SensoreBatteria": {
+        "name": "Sensore Batteria",
+        "type": "Efficienza",
+        "description": "Misura l'efficienza della batteria di un'auto elettrica",
+        "values": [90.2, 89.8, 91.5, 91.0, 89.5, 88.7, 90.3, 91.1, 90.8, 89.9, 91.3, 90.5],
+        "valueMin": 0.0,
+        "valueMax": 100.0,
+        "materials": "Litio"
+    }
+  }

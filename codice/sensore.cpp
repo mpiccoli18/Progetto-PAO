@@ -40,6 +40,10 @@ namespace sensore{
             values.push_back(*i);
         }
     }
+
+    void Sensore::registerObserver(SensorObserverInterface* sens) {
+        observers.push_back(sens);
+    }
     /*
     double Sensore::StartSimulation() const{
         double somma = 0;

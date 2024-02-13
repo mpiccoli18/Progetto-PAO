@@ -52,6 +52,19 @@ namespace sensore{
         }
         else
         {
+            searchResult = new QWidget();
+            QVBoxLayout *searchLayout = new QVBoxLayout();
+            searchResult->setLayout(searchLayout);
+
+            // Create a scroll area
+            QScrollArea *scrollArea = new QScrollArea();
+            scrollArea->setWidgetResizable(true); // Widget can resize inside scroll area
+            QWidget *scrollWidget = new QWidget();
+            QVBoxLayout *scrollLayout = new QVBoxLayout();
+            scrollWidget->setLayout(scrollLayout);
+            scrollArea->setWidget(scrollWidget);
+            searchLayout->addWidget(scrollArea);
+
             for(int i = 0; i < searchVet.size(); i++)
             {
                 QString searchStr = QString::fromStdString(searchVet[i]->getName());
@@ -70,6 +83,7 @@ namespace sensore{
                     QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(searchVet[i]->getDescription()));
                     sensorLayout->addWidget(descrizione);
                     QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getName()));
+                    connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i]() { emit StartView(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
                     searchLayout->addWidget(sensorInfo);
                 }

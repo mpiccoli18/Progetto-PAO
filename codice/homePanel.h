@@ -30,6 +30,8 @@ namespace sensore{
 
             void exit();
 
+            void View();
+
         signals:
             void StartSave();
             void StartOpen();

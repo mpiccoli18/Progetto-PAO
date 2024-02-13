@@ -41,4 +41,14 @@ void Info::show() {
 
 }
 
+void Info::notify(Sensore& sensor, SensorInfoVisitor& visitor) {
+    name_label->setText(QString::fromStdString(sensore.getName()));
+    type_label->setText("Tipo: " + QString::fromStdString(sensore.getType()));
+    description_label->setText("Descrizione: " + QString::fromStdString(sensore.getDescription()));
+    valueMin_label->setText("Val. minimo: " + QString::number(sensore.getValueMin()));
+    valueMax_label->setText("Val. massimo: " + QString::number(sensore.getValueMax()));
+
+    sensor.accept(visitor);
+}
+
 }

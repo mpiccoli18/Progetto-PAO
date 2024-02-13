@@ -15,7 +15,8 @@ namespace sensore{
             Info* info;
 
         public:
-            SensorPanel(Sensore& sensore, QWidget* parent = 0);
+            SensorPanel(Sensore* sensore = nullptr, QWidget* parent = 0);
+            void updateSensor(Sensore* s);
 
         signals:
             void StartModify();

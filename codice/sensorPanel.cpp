@@ -3,7 +3,7 @@
 #include <QPushButton>
 
 namespace sensore{
-    SensorPanel::SensorPanel(sensore::Sensore& s, QWidget* parent) : QWidget(parent)
+    SensorPanel::SensorPanel(sensore::Sensore* s, QWidget* parent) : QWidget(parent), info(nullptr) //modificato
     {
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -11,8 +11,10 @@ namespace sensore{
         QHBoxLayout* infoSensor = new QHBoxLayout();
         layout->addLayout(infoSensor);
 
-        info = new Info(s);
+        if (s) {
+        info = new Info(*s);
         info->show();
+        }
         infoSensor->addWidget(info);
 
         QGridLayout* comandi = new QGridLayout();
@@ -33,4 +35,19 @@ namespace sensore{
         QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         comandi->addItem(spacer, 0, 4, 1, 1);
     }
+
+    void SensorPanel::updateSensor(Sensore* s) {
+    if (info) {
+        layout()->removeWidget(info); // Rimuovi il widget dal layout
+        delete info; // Elimina il widget
+        info = nullptr;
+    }
+
+    if (s) {
+        info = new Info(*s);
+        info->show();
+        layout()->addWidget(info); // Aggiungi il nuovo widget al layout
+    }
 }
+}
+
