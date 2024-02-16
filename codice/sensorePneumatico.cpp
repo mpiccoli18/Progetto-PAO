@@ -17,4 +17,7 @@ namespace sensore{
     void SensorePneumatico::accept(SensorVisitorInterface& visitor){
         visitor.visitSPneumatico(*this);
     }
+    void SensorePneumatico::acceptModify(SensorVisitorInterface& visitor){
+        visitor.modSPneumatico(*this);
+    }
 }

@@ -53,9 +53,6 @@ namespace sensore{
             virtual void acceptModify(SensorVisitorInterface& visitor) = 0;
 
             void registerObserver(SensorObserverInterface* sens);
-
-            /*double StartSimulation() const;*/
-
     };
 }
 

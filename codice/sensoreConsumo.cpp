@@ -15,4 +15,7 @@ namespace sensore{
     void SensoreConsumo::accept(SensorVisitorInterface& visitor){
         visitor.visitSConsumo(*this);
     }
+    void SensoreConsumo::acceptModify(SensorVisitorInterface& visitor){
+        visitor.modSConsumo(*this);
+    }
 }

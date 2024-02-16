@@ -29,6 +29,7 @@ namespace sensore{
             void setAge(double a);
 
             virtual void accept(SensorVisitorInterface& visitor);
+            virtual void acceptModify(SensorVisitorInterface& visitor);
     };
 }
 #endif // SENSOREPNEUMATICO_H

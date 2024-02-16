@@ -88,6 +88,11 @@ void SensorInfoVisitor::modSPneumatico(SensorePneumatico& sPneumatico){
     QWidget *widgetContainer = new QWidget();
     widgetContainer->setLayout(modLayout);
 
+    // Imposta le dimensioni fisse per il QLineEdit
+    int fieldWidth = widgetContainer->width() / 2; // Larghezza della metà del widget padre
+    lineBrand->setFixedWidth(fieldWidth);
+    lineAge->setFixedWidth(fieldWidth);
+
     // Assegnazione del widgetContainer a widget
     widget = widgetContainer;
 }

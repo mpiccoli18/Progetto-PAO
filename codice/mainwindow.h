@@ -2,8 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include<vector>
-#include "sensore.h"
 
 namespace sensore{
 
@@ -12,7 +10,7 @@ namespace sensore{
         Q_OBJECT
 
         public:
-        MainWindow(std::vector<sensore::Sensore*> s);
+        MainWindow();
         ~MainWindow();
     };
 }

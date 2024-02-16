@@ -24,6 +24,7 @@ public:
     void setFootprint(double foot);
 
     virtual void accept(SensorVisitorInterface& visitor);
+    virtual void acceptModify(SensorVisitorInterface& visitor);
 };
 }
 

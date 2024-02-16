@@ -24,6 +24,7 @@ public:
     void setCavalli(unsigned int hor);
 
     virtual void accept(SensorVisitorInterface& visitor);
+    virtual void acceptModify(SensorVisitorInterface& visitor);
 };
 }
 

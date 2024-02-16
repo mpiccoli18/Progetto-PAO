@@ -5,11 +5,17 @@
 #include <QSplineSeries>
 #include <QtCharts>
 #include <QLineEdit>
-#include<iostream>
+#include <iostream>
+#include <vector>
 
 namespace sensore{
-homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p), sensoreGenerale(s), chartView(nullptr), modifyView(nullptr)
+homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nullptr)
     {
+        /*std::vector<double> v = {16, 25, 36, 49, 64, 72, 81, 100, 121, 144, 169, 216};
+        SensoreBatteria s("Sens-2045", "Consumo", "boh", v, 0, 200, "litio");
+        SensorePneumatico w("Sensore-Pne-204578", "Pressione", "Sensore per la pressione delle gomme", v, 0, 100, "Pirelli", 7);
+        InsiemeSensori.push_back(&s);
+        InsiemeSensori.push_back(&w);*/
         // layout completo
         QVBoxLayout* layout = new QVBoxLayout(this);
         // menu
@@ -32,12 +38,12 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         QPushButton* close = new QPushButton("Chiudi");
         menu->addWidget(close, 0, 3, 1, 1);
         connect(close, &QPushButton::pressed, this, &homePanel::StartClose);
-        connect(this, &homePanel::StartClose, this, &homePanel::close);
+        connect(this, &homePanel::StartClose, this, &homePanel::Close);
 
         QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         menu->addItem(spacer, 0, 4, 1, 1);
 
-        barraRicerca = new searchBarPanel(v);//barra
+        barraRicerca = new searchBarPanel(InsiemeSensori);//barra
         layoutApp->addWidget(barraRicerca,1);
         barraRicerca->setFixedWidth(350);
 
@@ -48,6 +54,7 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         layoutApp->setStretch(1, 2);
 
         connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
     }
 
     void homePanel::Save(){
@@ -62,7 +69,7 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
 
     }
 
-    void homePanel::Modify(){
+    void homePanel::Modify(Sensore *s){
         if (chartView) {
             this->pannello->layout()->removeWidget(chartView);
             delete chartView; // Libera la memoria
@@ -97,12 +104,12 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         QLineEdit *lineVal = new QLineEdit(this->pannello);
 
         // Ottieni i nomi dei sensori utilizzando le funzioni getName()
-        std::string name = sensoreGenerale->getName();
-        std::string type = sensoreGenerale->getType();
-        std::string descr = sensoreGenerale->getDescription();
-        double min = sensoreGenerale->getValueMin();
-        double max = sensoreGenerale->getValueMax();
-        std::vector<double> v = sensoreGenerale->getValues();
+        std::string name = s->getName();
+        std::string type = s->getType();
+        std::string descr = s->getDescription();
+        double min = s->getValueMin();
+        double max = s->getValueMax();
+        std::vector<double> v = s->getValues();
 
         // Converti le std::string in QString
         QString qname = QString::fromStdString(name);
@@ -158,16 +165,15 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         modLayout->addWidget(labelval);
         modLayout->addWidget(lineVal, 0, Qt::AlignLeft);
 
-
-
         SensorInfoVisitor visitor;
-        sensoreGenerale->acceptModify(visitor);
+        s->acceptModify(visitor);
         modLayout->addWidget(visitor.getWidget());
 
         // Aggiungi pulsante di conferma
         QPushButton *confirmButton = new QPushButton("Conferma", this->pannello);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
-        connect(confirmButton, &QPushButton::pressed, this, &homePanel::StartUpdate); // sistemare
+        connect(confirmButton, &QPushButton::pressed, this, [this, s, lineName, lineType, lineDescr, lineVal, lineMin, lineMax]() {
+            emit StartUpdate(s, lineName, lineType, lineDescr, lineVal, lineMin, lineMax); }); // sistemare
         connect(this, &homePanel::StartUpdate, this, &homePanel::Update);
 
         QPushButton *exitButton = new QPushButton("Annulla", this->pannello);
@@ -177,43 +183,31 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
 
         // Aggiungi il widget con i campi di input e il pulsante al layout del pannello
         this->pannello->layout()->addWidget(modifyView);
+    }
 
-
-        /*QString nome = nomeLine->text();
-        QString tipo = tipoLine->text();
-        QString descrizione = descrizioneLine->text();
-        std::vector<double> valori;
-        int valoreMin = valMinLine->text().toInt();
-        int valoreMax = valMaxLine->text().toInt();
-
-        int iterator = 0;
-        for(auto i = valoriLine->text().begin(); i != valoriLine->text().end(); i++)
+    void homePanel::Update(Sensore *s, QLineEdit * nome, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * Max){
+        s->setName(nome->text().toStdString());
+        s->setType(tipo->text().toStdString());
+        s->setDescription(descrizione->text().toStdString());
+        QString numString = val->text();
+        std::vector<double> valArray;
+        QStringList input = numString.trimmed().split(" ");
+        foreach(QString numString, input)
         {
-            if(i == )
+            bool conversionOk;
+            int num = numString.toInt(&conversionOk);
+            if(conversionOk)
             {
-                continue;
+                valArray.push_back(num);
             }
             else
             {
-                valori = i;
+                std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in intero." << std::endl;
             }
-        }/
-
-                // Esempio di utilizzo delle variabili salvate
-                qDebug() << "Dato 1:" << nome;
-        qDebug() << "Dato 2:" << tipo;
-        qDebug() << "Dato 3:" << descrizione;
-        qDebug() << "Dato 4:" << valori;
-        qDebug() << "Dato 5:" << valoreMin;
-        qDebug() << "Dato 6:" << valoreMax;
-
-        this->sensoreGenerale.setName(nome.toStdString());
-        this->pannello->refresh(sensoreGenerale);
-        qDebug() << "Nome cambiato: " <<this->sensoreGenerale.getName();*/
-    }
-
-    void homePanel::Update(){
-
+        }
+        s->setValues(valArray);
+        s->setValueMin(min->text().toDouble());
+        s->setValueMax(Max->text().toDouble());
     }
 
     void homePanel::Simulation(){
@@ -241,13 +235,13 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         grafico->setTitle("" + QString::fromStdString(sensoreGenerale->getType()) + " di: " + QString::fromStdString(sensoreGenerale->getName()));
 
         QValueAxis *axisX = new QValueAxis();
-        axisX->setRange(0, 12);
-        axisX->setTickCount(13);
+        axisX->setRange(1, valori.size());
+        axisX->setTickCount(valori.size());
         grafico->addAxis(axisX, Qt::AlignBottom);
 
         QValueAxis *axisY = new QValueAxis();
         axisY->setRange(sensoreGenerale->getValueMin(), sensoreGenerale->getValueMax());
-        axisY->setTickCount(13);
+        axisY->setTickCount(valori.size());
         axisY->applyNiceNumbers();
         grafico->addAxis(axisY, Qt::AlignLeft);
 
@@ -265,15 +259,33 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
         }
     }
 
-    void homePanel::Elimination() {
-        // Rimuovi il sensore corrente
-        delete sensoreGenerale;
-    
-        // Crea un nuovo sensore vuoto (o nullo)
-        sensoreGenerale = nullptr; // oppure crea un nuovo sensore vuoto se necessario
-
-        // Aggiorna il SensorPanel con il nuovo sensore
-        pannello->updateSensor(sensoreGenerale);
+    void homePanel::Elimination(Sensore* s) {
+        if(modifyView)
+            modifyView = nullptr;
+        if(chartView)
+            chartView = nullptr;
+        auto j = InsiemeSensori.begin();
+        for(int i = 0; i < InsiemeSensori.size(); i++)
+        {
+            if(s->getName() == InsiemeSensori[i]->getName())
+            {
+                InsiemeSensori.erase(j);
+            }
+            j++;
+        }
+        s = nullptr;
+        //delete s;
+        if(pannello)
+        {
+            delete pannello;
+            pannello = new SensorPanel();
+            layoutApp->addWidget(pannello, 2);
+            layoutApp->setStretch(0, 1);
+            layoutApp->setStretch(1, 2);
+            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+        }
     }
 
     void homePanel::View(Sensore* s){
@@ -288,6 +300,7 @@ homePanel::homePanel(std::vector<Sensore*> v,Sensore* s, QWidget* p):  QWidget(p
             delete pannello;
             // Crea e aggiungi il nuovo SensorPanel con il sensore selezionato
             pannello = new SensorPanel(s);
+            sensoreGenerale = s;
             layoutApp->addWidget(pannello, 2);
             layoutApp->setStretch(0, 1);
             layoutApp->setStretch(1, 2);

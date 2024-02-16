@@ -19,9 +19,9 @@ namespace sensore{
             void updateSensor(Sensore* s);
 
         signals:
-            void StartModify();
-            double StartSimulation();
-            void StartElimination();
+            void StartModify(Sensore *s);
+            void StartSimulation();
+            void StartElimination(Sensore *s);
 
     };
 }

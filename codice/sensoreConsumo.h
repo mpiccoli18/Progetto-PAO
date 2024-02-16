@@ -24,6 +24,7 @@ namespace sensore{
             void setOttano(int ot);
 
             virtual void accept(SensorVisitorInterface& visitor);
+            virtual void acceptModify(SensorVisitorInterface& visitor);
        };
 }
 #endif // SENSORECONSUMO_H

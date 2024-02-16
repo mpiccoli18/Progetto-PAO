@@ -19,7 +19,7 @@ namespace sensore{
 
             QPushButton* modify = new QPushButton("Modifica");
             comandi->addWidget(modify, 0, 0, 1, 1);
-            connect(modify, &QPushButton::pressed, this, &SensorPanel::StartModify);
+            connect(modify, &QPushButton::pressed, this, [this, s]{ emit StartModify(s);});
 
             QPushButton* simulation = new QPushButton("Simula");
             comandi->addWidget(simulation, 0, 1, 1, 1);
@@ -27,8 +27,7 @@ namespace sensore{
 
             QPushButton* elimination = new QPushButton("Elimina");
             comandi->addWidget(elimination, 0, 2, 1, 1);
-            connect(elimination, &QPushButton::pressed, this, &SensorPanel::StartElimination);
-
+            connect(elimination, &QPushButton::pressed, this, [this, s]() { emit StartElimination(s); });
             QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
             comandi->addItem(spacer, 0, 4, 1, 1);
         }
