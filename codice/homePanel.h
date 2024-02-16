@@ -20,6 +20,8 @@ namespace sensore{
             std::vector<sensore::Sensore*> InsiemeSensori;
         public:
             homePanel(QWidget* parent = 0);
+            Sensore* createSensorFromJson(const QString& sensorName, const QJsonObject& sensorObject);
+            std::vector<double> parseJsonArray(const QJsonArray& jsonArray);
 
         public slots:
             void Modify(Sensore *s);

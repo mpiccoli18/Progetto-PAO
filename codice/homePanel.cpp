@@ -11,11 +11,6 @@
 namespace sensore{
 homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nullptr)
     {
-        /*std::vector<double> v = {16, 25, 36, 49, 64, 72, 81, 100, 121, 144, 169, 216};
-        SensoreBatteria s("Sens-2045", "Consumo", "boh", v, 0, 200, "litio");
-        SensorePneumatico w("Sensore-Pne-204578", "Pressione", "Sensore per la pressione delle gomme", v, 0, 100, "Pirelli", 7);
-        InsiemeSensori.push_back(&s);
-        InsiemeSensori.push_back(&w);*/
         // layout completo
         QVBoxLayout* layout = new QVBoxLayout(this);
         // menu
@@ -45,7 +40,6 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
 
         barraRicerca = new searchBarPanel(InsiemeSensori);//barra
         layoutApp->addWidget(barraRicerca,1);
-        barraRicerca->setFixedWidth(350);
 
         pannello = new SensorPanel();//sensore
         layoutApp->addWidget(pannello,2);
@@ -58,11 +52,191 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
     }
 
     void homePanel::Save(){
+        QString filePath = QFileDialog::getSaveFileName(this, tr("Salva file JSON"), "", tr("File JSON (.json)"));
 
+        if (filePath.isEmpty()) {
+            // Nessun percorso specificato per il file JSON, esci senza fare nulla
+            return;
+        }
+
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly)) {
+            // Errore nell'apertura del file per la scrittura
+            QMessageBox::warning(this, tr("Errore"), tr("Impossibile creare il file: ") + file.errorString());
+            return;
+        }
+
+        // Crea un oggetto JSON contenente i dati degli oggetti sensori
+        QJsonObject jsonObject;
+        for (Sensore* sensore : InsiemeSensori) {
+            QJsonObject sensorObject;
+            sensorObject["name"] = QString::fromStdString(sensore->getName());
+            sensorObject["type"] = QString::fromStdString(sensore->getType());
+            sensorObject["description"] = QString::fromStdString(sensore->getDescription());
+            QJsonArray valuesArray;
+            for (double value : sensore->getValues()) {
+                valuesArray.append(value);
+            }
+            sensorObject["values"] = valuesArray;
+            sensorObject["valueMin"] = sensore->getValueMin();
+            sensorObject["valueMax"] = sensore->getValueMax();
+
+            // Utilizza il SensorInfoVisitor per ottenere i dettagli aggiuntivi del sensore
+            SensorInfoVisitor visitor;
+            sensore->accept(visitor);
+            QWidget* sensorWidget = visitor.getWidget();
+            // Ottieni i dettagli aggiuntivi dal widget e aggiungili all'oggetto JSON del sensore
+            if (sensorWidget) {
+                QLayoutItem* layoutItem = sensorWidget->layout()->itemAt(1); // Assumendo che il widget contenga un layout con il dettaglio
+                if (layoutItem) {
+                    QLabel* detailLabel = qobject_cast<QLabel*>(layoutItem->widget());
+                    if (detailLabel) {
+                        QString detailText = detailLabel->text();
+                        QString detailType = detailText.split(":").first().trimmed();
+                        QString detailValue = detailText.split(":").last().trimmed();
+                        sensorObject[detailType] = detailValue;
+                    }
+                }
+            }
+
+            // Aggiungi l'oggetto sensore all'oggetto JSON principale
+            jsonObject[sensore->getName().c_str()] = sensorObject;
+        }
+
+        // Serializza l'oggetto JSON in un documento JSON
+        QJsonDocument jsonDoc(jsonObject);
+
+        // Scrivi il documento JSON nel file
+        file.write(jsonDoc.toJson());
+
+        // Chiudi il file
+        file.close();
+
+        // Informa l'utente del successo
+        QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);
     }
 
     void homePanel::Open(){
+        // Apre una finestra di dialogo per la selezione del file JSON
+        QString filePath = QFileDialog::getOpenFileName(this, tr("Apri file JSON"), "", tr("File JSON (*.json)"));
 
+        if (filePath.isEmpty()) {
+            // L'utente ha annullato la selezione del file
+            return;
+        }
+
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadOnly)) {
+            // Errore nell'apertura del file
+            QMessageBox::warning(this, tr("Errore"), tr("Impossibile aprire il file: ") + file.errorString());
+            return;
+        }
+
+        // Legge il contenuto del file JSON
+        QByteArray jsonData = file.readAll();
+        file.close();
+
+        // Converte il JSON
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
+        if (!jsonDoc.isObject()) {
+            QMessageBox::warning(this, tr("Errore"), tr("Il file non contiene un oggetto JSON valido."));
+            return;
+        }
+
+        // Ottiene l'oggetto radice del JSON
+        QJsonObject rootObject = jsonDoc.object();
+        QString sensorName;
+        QJsonObject sensorObject;
+        Sensore* s;
+            // Itera su tutti i sensori nel JSON e crea gli oggetti Sensore corrispondenti
+            for (auto it = rootObject.begin(); it != rootObject.end(); ++it)
+            {
+                sensorName = it.key();
+                sensorObject = it.value().toObject();
+                s = createSensorFromJson(sensorName, sensorObject);
+                // Aggiunge il sensore al vettore InsiemeSensori
+                if (s) {
+                    InsiemeSensori.push_back(s);
+                }
+            }
+
+        // Ora hai caricato con successo i sensori dal file JSON
+        QMessageBox::information(this, tr("Successo"), tr("Sensori caricati con successo!"));
+        if(barraRicerca)
+        {
+            delete barraRicerca;
+            delete pannello;
+            barraRicerca = new searchBarPanel(InsiemeSensori);
+            pannello = new SensorPanel();
+            layoutApp->addWidget(barraRicerca, 1);
+            layoutApp->addWidget(pannello, 2);
+            layoutApp->setStretch(0, 1);
+            layoutApp->setStretch(1, 2);
+            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+            connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+        }
+    }
+
+    Sensore* homePanel::createSensorFromJson(const QString& sensorName, const QJsonObject& sensorObject) {
+        QString name = sensorObject["name"].toString();
+        QString type = sensorObject["type"].toString();
+        QString description = sensorObject["description"].toString();
+        double valueMin = sensorObject["valueMin"].toDouble();
+        double valueMax = sensorObject["valueMax"].toDouble();
+
+        // Controlla il nome del sensore e crea l'oggetto corrispondente
+        if (sensorName == "SensoreConsumo") {
+            // Esempio di creazione di SensoreConsumo
+            double ottano = sensorObject["ottano"].toDouble();
+            std::vector<double> values = parseJsonArray(sensorObject["values"].toArray());
+            return new SensoreConsumo(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, ottano);
+        }
+
+        else if (sensorName == "SensoreGas") {
+            // Esempio di creazione di SensoreGas
+            double footprint = sensorObject["footprint"].toDouble();
+            std::vector<double> values = parseJsonArray(sensorObject["values"].toArray());
+            return new SensoreGas(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, footprint);
+        }
+
+        else if (sensorName == "SensoreMotore") {
+            // Esempio di creazione di SensoreMotore
+            double cavalli = sensorObject["cavalli"].toDouble();
+            std::vector<double> values = parseJsonArray(sensorObject["values"].toArray());
+            return new SensoreMotore(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, cavalli);
+        }
+
+        else if (sensorName == "SensorePneumatico") {
+            // Esempio di creazione di SensorePneumatico
+            QString brand = sensorObject["brand"].toString();
+            double age = sensorObject["age"].toDouble();
+            std::vector<double> values = parseJsonArray(sensorObject["values"].toArray());
+            return new SensorePneumatico(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, brand.toStdString(), age);
+        }
+
+        else if (sensorName == "SensoreBatteria"){
+            // Esempio di creazione di SensoreBatteria
+            QString materials = sensorObject["materials"].toString();
+            std::vector<double> values = parseJsonArray(sensorObject["values"].toArray());
+            return new SensoreBatteria(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, materials.toStdString());
+        }
+
+        // Se il nome del sensore non è riconosciuto, restituisci nullptr
+        return nullptr;
+    }
+
+    std::vector<double> homePanel::parseJsonArray(const QJsonArray& jsonArray) {
+        std::vector<double> values;
+        for (const QJsonValue& value : jsonArray)
+        {
+            if (value.isDouble())
+            {
+                values.push_back(value.toDouble());
+            }
+        }
+        return values;
     }
 
     void homePanel::Close(){ // piu avanti
@@ -264,27 +438,33 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
             modifyView = nullptr;
         if(chartView)
             chartView = nullptr;
-        auto j = InsiemeSensori.begin();
-        for(int i = 0; i < InsiemeSensori.size(); i++)
+        for(auto i = InsiemeSensori.begin(); i != InsiemeSensori.end();)
         {
-            if(s->getName() == InsiemeSensori[i]->getName())
+            if(*i == s)
             {
-                InsiemeSensori.erase(j);
+                delete *i;
+                InsiemeSensori.erase(i);
             }
-            j++;
+            else{
+                i++;
+            }
         }
+        sensoreGenerale = nullptr;
         s = nullptr;
-        //delete s;
         if(pannello)
         {
+            delete barraRicerca;
             delete pannello;
+            barraRicerca = new searchBarPanel(InsiemeSensori);
             pannello = new SensorPanel();
+            layoutApp->addWidget(barraRicerca, 1);
             layoutApp->addWidget(pannello, 2);
             layoutApp->setStretch(0, 1);
             layoutApp->setStretch(1, 2);
             connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
             connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
             connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+            connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
         }
     }
 
