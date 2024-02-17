@@ -643,14 +643,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         modLayout->addWidget(labelval);
         modLayout->addWidget(lineVal, 0, Qt::AlignLeft);
 
-        QPushButton *confirmButton = new QPushButton("Conferma", pannello);
+        QPushButton *confirmButton = new QPushButton("Conferma", this->pannello);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
         connect(confirmButton, &QPushButton::pressed, this, [this, s, lineType, lineDescr, lineVal, lineMin, lineMax]() {
             emit StartUpdate(s, lineType, lineDescr, lineVal, lineMin, lineMax);
         });
         connect(this, &homePanel::StartUpdate, this, &homePanel::Update);
 
-        QPushButton *exitButton = new QPushButton("Annulla", pannello);
+        QPushButton *exitButton = new QPushButton("Annulla", this->pannello);
         modLayout->addWidget(exitButton, 0, Qt::AlignLeft);
         connect(exitButton, &QPushButton::pressed, this, &homePanel::StartExit);
         connect(this, &homePanel::StartExit, this, &homePanel::Exit);
@@ -709,6 +709,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         if (chartView) {
             this->pannello->layout()->removeWidget(chartView);
             delete chartView;
+            chartView = nullptr;
         }
         if(modifyView){
             this->pannello->layout()->removeWidget(modifyView);
