@@ -9,7 +9,7 @@
 #include <vector>
 
 namespace sensore{
-homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nullptr)
+homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nullptr), createWidget(nullptr)
     {
         // layout completo
         QVBoxLayout* layout = new QVBoxLayout(this);
@@ -30,10 +30,10 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         connect(open, &QPushButton::pressed, this, &homePanel::StartOpen);
         connect(this, &homePanel::StartOpen, this, &homePanel::Open);
 
-        QPushButton* close = new QPushButton("Chiudi");
-        menu->addWidget(close, 0, 3, 1, 1);
-        connect(close, &QPushButton::pressed, this, &homePanel::StartClose);
-        connect(this, &homePanel::StartClose, this, &homePanel::Close);
+        QPushButton* create = new QPushButton("Crea");
+        menu->addWidget(create, 0, 3, 1, 1);
+        connect(create, &QPushButton::pressed, this, &homePanel::StartCreate);
+        connect(this, &homePanel::StartCreate, this, &homePanel::Create);
 
         QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         menu->addItem(spacer, 0, 4, 1, 1);
@@ -49,10 +49,11 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
 
         connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
         connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+        connect(this, &homePanel::StartSensorSelected, this, &homePanel::SensorSelected);
     }
 
     void homePanel::Save(){
-        QString filePath = QFileDialog::getSaveFileName(this, tr("Salva file JSON"), "", tr("File JSON (.json)"));
+        /*QString filePath = QFileDialog::getSaveFileName(this, tr("Salva file JSON"), "", tr("File JSON (.json)"));
 
         if (filePath.isEmpty()) {
             // Nessun percorso specificato per il file JSON, esci senza fare nulla
@@ -98,7 +99,6 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
                     }
                 }
             }
-
             // Aggiungi l'oggetto sensore all'oggetto JSON principale
             jsonObject[sensore->getName().c_str()] = sensorObject;
         }
@@ -113,7 +113,60 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         file.close();
 
         // Informa l'utente del successo
-        QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);
+        QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);*/
+
+        QString filePath = QFileDialog::getSaveFileName(this, tr("Salva file JSON"), "", tr("File JSON (*.json)")); // Aggiunto (*.json)
+
+            if (filePath.isEmpty()) {
+                // Nessun percorso specificato per il file JSON, esci senza fare nulla
+                return;
+            }
+
+            if (!filePath.endsWith(".json", Qt::CaseInsensitive)) { // Verifica se il percorso termina con ".json"
+                filePath += ".json"; // Aggiungi l'estensione .json se non è già presente
+            }
+
+            QFile file(filePath);
+            if (!file.open(QIODevice::WriteOnly)) {
+                // Errore nell'apertura del file per la scrittura
+                QMessageBox::warning(this, tr("Errore"), tr("Impossibile creare il file: ") + file.errorString());
+                return;
+            }
+
+            // Crea un oggetto JSON contenente i dati degli oggetti sensori
+            QJsonObject jsonObject;
+            for (Sensore* sensore : InsiemeSensori) {
+                QJsonObject sensorObject;
+                sensorObject["name"] = QString::fromStdString(sensore->getName());
+                sensorObject["type"] = QString::fromStdString(sensore->getType());
+                sensorObject["description"] = QString::fromStdString(sensore->getDescription());
+                QJsonArray valuesArray;
+                for (double value : sensore->getValues()) {
+                    valuesArray.append(value);
+                }
+                sensorObject["values"] = valuesArray;
+                sensorObject["valueMin"] = sensore->getValueMin();
+                sensorObject["valueMax"] = sensore->getValueMax();
+
+                SensorInfoVisitor visit;
+                QJsonObject* p = &sensorObject;
+                sensore->acceptSave(visit,p);
+
+                // Aggiungi l'oggetto sensore all'oggetto JSON principale
+                jsonObject[sensore->getName().c_str()] = sensorObject;
+            }
+
+            // Serializza l'oggetto JSON in un documento JSON
+            QJsonDocument jsonDoc(jsonObject);
+
+            // Scrivi il documento JSON nel file
+            file.write(jsonDoc.toJson());
+
+            // Chiudi il file
+            file.close();
+
+            // Informa l'utente del successo
+            QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);
     }
 
     void homePanel::Open(){
@@ -239,9 +292,159 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         return values;
     }
 
-    void homePanel::Close(){ // piu avanti
+    void homePanel::Create() {
+        if(barraRicerca){
+            layoutApp->layout()->removeWidget(barraRicerca);
+            delete pannello;
+            pannello = nullptr;
+            delete barraRicerca;
+            barraRicerca = nullptr;
+        }
+        // Crea una nuova barra di ricerca
+        barraRicerca = new searchBarPanel(InsiemeSensori);
+        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
 
+        // Crea un nuovo widget per la creazione
+        createWidget = new QWidget();
+
+        // Crea un layout verticale per il widget di creazione
+        QVBoxLayout* createLayout = new QVBoxLayout(createWidget);
+
+        QLabel* labeltitle = new QLabel("Creazione di un Sensore");
+        createLayout->addWidget(labeltitle);
+
+        // Aggiungi i widget al layout del widget di creazione
+        QLabel* labelname = new QLabel("Nome Sensore:");
+        QLineEdit* lineName = new QLineEdit(createWidget);
+
+        QLabel* labeltype = new QLabel("Tipologia:");
+        QLineEdit* lineType = new QLineEdit(createWidget);
+
+        QLabel* labeldescr = new QLabel("Descrizione:");
+        QLineEdit* lineDescr = new QLineEdit(createWidget);
+
+        QLabel* labelmin = new QLabel("Valore Min:");
+        QLineEdit* lineMin = new QLineEdit(createWidget);
+
+        QLabel* labelmax = new QLabel("Valore Max:");
+        QLineEdit* lineMax = new QLineEdit(createWidget);
+
+        QLabel* labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
+        QLineEdit* lineVal = new QLineEdit(createWidget);
+
+        // Aggiungi i widget al layout del widget di creazione
+        createLayout->addWidget(labelname);
+        createLayout->addWidget(lineName);
+        createLayout->addWidget(labeltype);
+        createLayout->addWidget(lineType);
+        createLayout->addWidget(labeldescr);
+        createLayout->addWidget(lineDescr);
+        createLayout->addWidget(labelmin);
+        createLayout->addWidget(lineMin);
+        createLayout->addWidget(labelmax);
+        createLayout->addWidget(lineMax);
+        createLayout->addWidget(labelval);
+        createLayout->addWidget(lineVal);
+
+        // Aggiungi un menu a tendina per selezionare il tipo di sensore
+        QComboBox* sensorTypeComboBox = new QComboBox();
+        sensorTypeComboBox->addItem("Sensore Consumo");
+        sensorTypeComboBox->addItem("Sensore Motore");
+        sensorTypeComboBox->addItem("Sensore Batteria");
+        sensorTypeComboBox->addItem("Sensore Gas");
+        sensorTypeComboBox->addItem("Sensore Pneumatico");
+
+        // Aggiungi il menu a tendina al layout di creazione
+        createLayout->addWidget(sensorTypeComboBox);
+
+        // Connect the signal of the combo box to a lambda function that emits a custom signal
+        connect(sensorTypeComboBox, QOverload<int>::of(&QComboBox::activated),
+                [=](int index) {
+                    // Ottieni l'opzione selezionata dal menu a tendina
+                    QString selectedOption = sensorTypeComboBox->itemText(index);
+                    // Emetti un segnale personalizzato con l'opzione selezionata e il widget creato
+                    emit StartSensorSelected(selectedOption,createLayout);
+        });
+
+        // Imposta le proporzioni del layout
+        layoutApp->addWidget(barraRicerca, 1);
+        layoutApp->addWidget(createWidget, 2); // Il widget di creazione occupa 2/3 dello spazio
+        layoutApp->setStretch(0, 1);
+        layoutApp->setStretch(1, 2);
     }
+
+    void homePanel::SensorSelected(const QString& selectedSensor,QVBoxLayout* createLayout) {// se cambi finestra aggiunge sempre i campi di nuovo
+        /*
+        // Aggiungi pulsanti di conferma e annulla
+        QPushButton* confirmButton = new QPushButton("Conferma");
+        createLayout->addWidget(confirmButton);
+        connect(confirmButton, &QPushButton::pressed, this, [this, lineName, lineType, lineDescr, lineVal, lineMin, lineMax]() {
+            // Emetti un segnale per avviare l'aggiornamento
+            emit Start(lineName->text(), lineType->text(), lineDescr->text(), lineVal->text(), lineMin->text(), lineMax->text());
+        });
+
+        QPushButton* exitButton = new QPushButton("Annulla");
+        createLayout->addWidget(exitButton);
+        connect(exitButton, &QPushButton::pressed, this, &homePanel::StartExit);
+        connect(this, &homePanel::StartExit, this, &homePanel::Exit);*/
+
+            while (createLayout->count() > 14) {
+                QLayoutItem* item = createLayout->takeAt(14);
+                delete item->widget();
+                delete item;
+            }
+
+            if (selectedSensor == "Sensore Batteria") {
+                QLabel* labelmat = new QLabel("Materiali:");
+                QLineEdit* lineMat = new QLineEdit(createWidget);
+                createLayout->addWidget(labelmat);
+                createLayout->addWidget(lineMat);
+
+                QPushButton* confirmButton = new QPushButton("Conferma");
+                createLayout->addWidget(confirmButton);
+            }
+            if (selectedSensor == "Sensore Consumo") {
+                QLabel* labelott = new QLabel("Numero di Ottano:");
+                QLineEdit* lineOtt = new QLineEdit(createWidget);
+                createLayout->addWidget(labelott);
+                createLayout->addWidget(lineOtt);
+
+                QPushButton* confirmButton = new QPushButton("Conferma");
+                createLayout->addWidget(confirmButton);
+            }
+            if (selectedSensor == "Sensore Motore") {
+                QLabel* labelcav = new QLabel("Numero di Cavalli:");
+                QLineEdit* lineCav = new QLineEdit(createWidget);
+                createLayout->addWidget(labelcav);
+                createLayout->addWidget(lineCav);
+
+                QPushButton* confirmButton = new QPushButton("Conferma");
+                createLayout->addWidget(confirmButton);
+            }
+            if (selectedSensor == "Sensore Gas") {
+                QLabel* labelfootp = new QLabel("Impronta:");
+                QLineEdit* lineFootp = new QLineEdit(createWidget);
+                createLayout->addWidget(labelfootp);
+                createLayout->addWidget(lineFootp);
+
+                QPushButton* confirmButton = new QPushButton("Conferma");
+                createLayout->addWidget(confirmButton);
+            }
+            if (selectedSensor == "Sensore Pneumatico") {
+                QLabel* labelbr = new QLabel("Marca:");
+                QLineEdit* lineBr = new QLineEdit(createWidget);
+                createLayout->addWidget(labelbr);
+                createLayout->addWidget(lineBr);
+                QLabel* labelage = new QLabel("Tempo di vita:");
+                QLineEdit* lineAge = new QLineEdit(createWidget);
+                createLayout->addWidget(labelage);
+                createLayout->addWidget(lineAge);
+
+                QPushButton* confirmButton = new QPushButton("Conferma");
+                createLayout->addWidget(confirmButton);
+            }
+    }
+
 
     void homePanel::Modify(Sensore *s){
         if (chartView) {
@@ -369,14 +572,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         foreach(QString numString, input)
         {
             bool conversionOk;
-            int num = numString.toInt(&conversionOk);
+            int num = numString.toDouble(&conversionOk);
             if(conversionOk)
             {
                 valArray.push_back(num);
             }
             else
             {
-                std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in intero." << std::endl;
+                std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in double." << std::endl;
             }
         }
         s->setValues(valArray);
@@ -393,7 +596,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
             this->pannello->layout()->removeWidget(modifyView);
             delete modifyView; // Libera la memoria
             modifyView = nullptr;
-        }
+        }/*
 
         QSplineSeries *series = new QSplineSeries();
         std::vector<double> valori = sensoreGenerale->getValues();
@@ -422,7 +625,46 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
 
         chartView = new QChartView(grafico);
         chartView->setRenderHint(QPainter::Antialiasing);
-        this->pannello->layout()->addWidget(chartView);
+        this->pannello->layout()->addWidget(chartView);*/
+
+            QSplineSeries *series = new QSplineSeries();
+            std::vector<double> valori = sensoreGenerale->getValues();
+
+            std::vector<int> xAxisValues;
+            int xValue = 1;
+            for (auto it = valori.begin(); it != valori.end(); ++it) {
+                series->append(xValue++, *it);
+            }
+
+            QChart *grafico = new QChart();
+            grafico->addSeries(series);
+            grafico->legend()->hide();
+            grafico->setTitle("" + QString::fromStdString(sensoreGenerale->getType()) + " di: " + QString::fromStdString(sensoreGenerale->getName()));
+
+            // Configura l'asse X
+            QValueAxis *axisX = new QValueAxis();
+            axisX->setRange(1, valori.size());
+            axisX->setTickCount(valori.size()); // Un tick per ogni punto
+            axisX->setLabelFormat("%d"); // Formato del tick
+            grafico->addAxis(axisX, Qt::AlignBottom);
+
+            // Configura l'asse Y
+            QValueAxis *axisY = new QValueAxis();
+            axisY->setRange(sensoreGenerale->getValueMin(), sensoreGenerale->getValueMax());
+            axisY->setTickCount(10); // Puoi regolare il numero di ticks sull'asse Y a tuo piacimento
+            axisY->applyNiceNumbers();
+            grafico->addAxis(axisY, Qt::AlignLeft);
+
+            // Collega le serie agli assi
+            grafico->addAxis(axisX, Qt::AlignBottom);
+            grafico->addAxis(axisY, Qt::AlignLeft);
+            series->attachAxis(axisX);
+            series->attachAxis(axisY);
+
+            chartView = new QChartView(grafico);
+            chartView->setRenderHint(QPainter::Antialiasing);
+            this->pannello->layout()->addWidget(chartView);
+
     }
 
     void homePanel::Exit(){

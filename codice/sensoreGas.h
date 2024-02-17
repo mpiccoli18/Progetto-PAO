@@ -25,6 +25,8 @@ public:
 
     virtual void accept(SensorVisitorInterface& visitor);
     virtual void acceptModify(SensorVisitorInterface& visitor);
+    virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob);
+
 };
 }
 

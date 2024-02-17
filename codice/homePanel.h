@@ -17,6 +17,7 @@ namespace sensore{
             QWidget *modifyView;
             SensorPanel* pannello;
             searchBarPanel* barraRicerca;
+            QWidget *createWidget;
             std::vector<sensore::Sensore*> InsiemeSensori;
         public:
             homePanel(QWidget* parent = 0);
@@ -30,16 +31,18 @@ namespace sensore{
             void Update(Sensore *s, QLineEdit * nome, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * Max);
             void Save();
             void Open();
-            void Close();
+            void Create();
             void Exit();
             void View(Sensore* sensore);
+            void SensorSelected(const QString& selectedSensor,QVBoxLayout *createLayout);
 
         signals:
             void StartSave();
             void StartOpen();
-            void StartClose();
+            void StartCreate();
             void StartUpdate(Sensore *s, QLineEdit * nome, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * Max);
             void StartExit();
+            void StartSensorSelected(const QString& selectedSensor,QVBoxLayout *createLayout);
 
     };
 }

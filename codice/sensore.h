@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-
+#include <QJsonObject>
 #include "SensorVisitorInterface.h"
 #include "SensorObserverInterface.h"
 
@@ -51,6 +51,7 @@ namespace sensore{
 
             virtual void accept(SensorVisitorInterface& visitor) = 0;
             virtual void acceptModify(SensorVisitorInterface& visitor) = 0;
+            virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob) = 0;
 
             void registerObserver(SensorObserverInterface* sens);
     };

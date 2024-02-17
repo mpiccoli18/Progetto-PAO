@@ -213,4 +213,22 @@ void SensorInfoVisitor::modSGas(SensoreGas& sGas){
     widget = widgetContainer;
 }
 
+
+void SensorInfoVisitor::saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob){
+    (*ob)["brand"] = QString::fromStdString(sPneumatico.getBrand());
+    (*ob)["age"] = QString::number(sPneumatico.getAge());
+}
+void SensorInfoVisitor::saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob){
+    (*ob)["ottano"] = QString::number(sConsumo.getOttano());
+}
+void SensorInfoVisitor::saveSMotore(SensoreMotore& sMotore,QJsonObject* ob){
+    (*ob)["cavalli"] = QString::number(sMotore.getCavalli());
+}
+void SensorInfoVisitor::saveSBatteria(SensoreBatteria& sBatteria,QJsonObject* ob){
+    (*ob)["materiali"] = QString::fromStdString(sBatteria.getMaterials());
+}
+void SensorInfoVisitor::saveSGas(SensoreGas& sGas,QJsonObject* ob){
+    (*ob)["footprint"] = QString::number(sGas.getFootprint());
+}
+
 }

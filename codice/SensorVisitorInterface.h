@@ -1,6 +1,7 @@
 #ifndef SENSORVISITORINTERFACE_H
 #define SENSORVISITORINTERFACE_H
-
+#include <string>
+#include <QJniObject>
 namespace sensore{
 
     class SensoreConsumo;
@@ -8,7 +9,7 @@ namespace sensore{
     class SensoreMotore;
     class SensoreBatteria;
     class SensoreGas;
-    class Sensore;//aggiunto
+    class Sensore;
     class SensorVisitorInterface{
 
         public:
@@ -24,6 +25,12 @@ namespace sensore{
             virtual void modSMotore(SensoreMotore& sMotore) = 0;
             virtual void modSBatteria(SensoreBatteria& sBatteria) = 0;
             virtual void modSGas(SensoreGas& sGas) = 0;
+
+            virtual void saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob) = 0;
+            virtual void saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob) = 0;
+            virtual void saveSMotore(SensoreMotore& sMotore,QJsonObject* ob) = 0;
+            virtual void saveSBatteria(SensoreBatteria& sBatteria,QJsonObject* ob) = 0;
+            virtual void saveSGas(SensoreGas& sGas,QJsonObject* ob) = 0;
     };
 }
 #endif // SENSORVISITORINTERFACE_H
