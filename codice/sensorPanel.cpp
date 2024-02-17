@@ -8,8 +8,8 @@ namespace sensore{
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-        QHBoxLayout* infoSensor = new QHBoxLayout();
         if (s) {
+            QHBoxLayout* infoSensor = new QHBoxLayout();
             info = new Info(*s);
             info->show();
             layout->addLayout(infoSensor);
@@ -30,20 +30,6 @@ namespace sensore{
             connect(elimination, &QPushButton::pressed, this, [this, s]() { emit StartElimination(s); });
             QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
             comandi->addItem(spacer, 0, 4, 1, 1);
-        }
-    }
-
-    void SensorPanel::updateSensor(Sensore* s) {
-        if (info) {
-            layout()->removeWidget(info); // Rimuovi il widget dal layout
-            delete info; // Elimina il widget
-            info = nullptr;
-        }
-
-        if (s) {
-            info = new Info(*s);
-            info->show();
-            layout()->addWidget(info); // Aggiungi il nuovo widget al layout
         }
     }
 }

@@ -1,6 +1,6 @@
 #ifndef SENSORVISITORINTERFACE_H
 #define SENSORVISITORINTERFACE_H
-#include <QLineEdit>
+
 #include <QJsonObject>
 namespace sensore{
 
@@ -19,12 +19,6 @@ namespace sensore{
             virtual void visitSMotore(SensoreMotore& sMotore) = 0;
             virtual void visitSBatteria(SensoreBatteria& sBatteria) = 0;
             virtual void visitSGas(SensoreGas& sGas) = 0;
-
-            virtual std::vector<QLineEdit*> modSPneumatico(SensorePneumatico& sPneumatico) = 0;
-            virtual std::vector<QLineEdit*> modSConsumo(SensoreConsumo& sConsumo) = 0;
-            virtual std::vector<QLineEdit*> modSMotore(SensoreMotore& sMotore) = 0;
-            virtual std::vector<QLineEdit*> modSBatteria(SensoreBatteria& sBatteria) = 0;
-            virtual std::vector<QLineEdit*> modSGas(SensoreGas& sGas) = 0;
 
             virtual void saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob) = 0;
             virtual void saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob) = 0;

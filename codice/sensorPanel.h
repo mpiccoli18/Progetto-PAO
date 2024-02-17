@@ -16,12 +16,11 @@ namespace sensore{
 
         public:
             SensorPanel(Sensore* sensore = nullptr, QWidget* parent = 0);
-            void updateSensor(Sensore* s);
 
         signals:
-            void StartModify(Sensore *s);
+            void StartModify(sensore::Sensore *s);
             void StartSimulation();
-            void StartElimination(Sensore *s);
+            void StartElimination(sensore::Sensore *s);
 
     };
 }

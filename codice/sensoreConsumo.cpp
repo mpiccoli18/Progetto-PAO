@@ -15,10 +15,6 @@ namespace sensore{
     void SensoreConsumo::accept(SensorVisitorInterface& visitor){
         visitor.visitSConsumo(*this);
     }
-    std::vector<QLineEdit*> SensoreConsumo::acceptModify(SensorVisitorInterface& visitor){
-        std::vector<QLineEdit*> aus = visitor.modSConsumo(*this);
-        return aus;
-    }
     void SensoreConsumo::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
         visitor.saveSConsumo(*this, ob);
     }

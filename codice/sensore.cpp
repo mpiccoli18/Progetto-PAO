@@ -2,7 +2,6 @@
 #include <vector>
 #include "sensore.h"
 
-
 namespace sensore{
 
     Sensore::Sensore(
@@ -40,8 +39,4 @@ namespace sensore{
             values.push_back(*i);
         }
     }
-
-   /* void Sensore::registerObserver(SensorObserverInterface* sens) {
-        observers.push_back(sens);
-    }*/
 }

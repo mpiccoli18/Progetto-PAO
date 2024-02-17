@@ -6,7 +6,6 @@
 #include <QLineEdit>
 #include <QJsonObject>
 #include "SensorVisitorInterface.h"
-#include "SensorObserverInterface.h"
 
 namespace sensore{
 
@@ -20,7 +19,6 @@ namespace sensore{
             std::vector<double> values;
             double valueMin;
             double valueMax;
-            std::vector<SensorObserverInterface*> observers;
 
         public:
 
@@ -50,10 +48,7 @@ namespace sensore{
             void setValues(std::vector<double> v);
 
             virtual void accept(SensorVisitorInterface& visitor) = 0;
-            virtual std::vector<QLineEdit*> acceptModify(SensorVisitorInterface& visitor) = 0;
             virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob) = 0;
-
-            void registerObserver(SensorObserverInterface* sens);
     };
 }
 

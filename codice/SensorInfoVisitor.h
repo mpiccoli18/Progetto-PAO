@@ -9,7 +9,6 @@ namespace sensore{
     class SensorInfoVisitor: public sensore::SensorVisitorInterface {
         private:
             QWidget* widget;
-            std::vector<QLineEdit*> aus;
 
         public:
             QWidget* getWidget();
@@ -18,12 +17,6 @@ namespace sensore{
             virtual void visitSMotore(SensoreMotore& sMotore);
             virtual void visitSBatteria(SensoreBatteria& sBatteria);
             virtual void visitSGas(SensoreGas& sGas);
-
-            virtual std::vector<QLineEdit*> modSPneumatico(SensorePneumatico& sPneumatico);
-            virtual std::vector<QLineEdit*> modSConsumo(SensoreConsumo& sConsumo);
-            virtual std::vector<QLineEdit*> modSMotore(SensoreMotore& sMotore);
-            virtual std::vector<QLineEdit*> modSBatteria(SensoreBatteria& sBatteria);
-            virtual std::vector<QLineEdit*> modSGas(SensoreGas& sGas);
 
             virtual void saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob);
             virtual void saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob);

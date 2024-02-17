@@ -15,9 +15,6 @@ namespace sensore{
     void SensoreMotore::accept(SensorVisitorInterface& visitor){
         visitor.visitSMotore(*this);
     }
-    std::vector<QLineEdit*> SensoreMotore::acceptModify(SensorVisitorInterface& visitor){
-        return visitor.modSMotore(*this);
-    }
     void SensoreMotore::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
         visitor.saveSMotore(*this, ob);
     }

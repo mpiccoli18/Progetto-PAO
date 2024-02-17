@@ -15,9 +15,6 @@ namespace sensore{
     void SensoreBatteria::accept(SensorVisitorInterface& visitor){
         visitor.visitSBatteria(*this);
     }
-    std::vector<QLineEdit*> SensoreBatteria::acceptModify(SensorVisitorInterface& visitor){
-        return visitor.modSBatteria(*this);
-    }
     void SensoreBatteria::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
         visitor.saveSBatteria(*this, ob);
     }

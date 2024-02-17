@@ -68,8 +68,7 @@ namespace sensore{
             scrollArea->setWidget(scrollWidget);
             searchLayout->addWidget(scrollArea);
             bool trovato = false;
-            for(int i = 0; i < searchVet.size(); i++) // cambiare usando iterator per sistemare condizione!!!!
-            {
+            for(int i = 0; i < searchVet.size(); i++) {
                 QString searchStr = QString::fromStdString(searchVet[i]->getName());
                 if(searchVet[i]->getName() == search || (searchStr.contains(QString::fromStdString(search), Qt::CaseInsensitive) && search != ""))
                 {
