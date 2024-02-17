@@ -15,8 +15,8 @@ namespace sensore{
     void SensoreGas::accept(SensorVisitorInterface& visitor){
         visitor.visitSGas(*this);
     }
-    void SensoreGas::acceptModify(SensorVisitorInterface& visitor){
-        visitor.modSGas(*this);
+    std::vector<QLineEdit*> SensoreGas::acceptModify(SensorVisitorInterface& visitor){
+        return visitor.modSGas(*this);
     }
     void SensoreGas::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
         visitor.saveSGas(*this, ob);

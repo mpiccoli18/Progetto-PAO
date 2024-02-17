@@ -25,7 +25,6 @@ namespace sensore{
         }
         return v2;
     }
-    unsigned int Sensore::getMaxMesi() const {return maxMesi;}
     double Sensore::getValueMin() const {return valueMin;}
     double Sensore::getValueMax() const {return valueMax;}
 
@@ -45,6 +44,4 @@ namespace sensore{
    /* void Sensore::registerObserver(SensorObserverInterface* sens) {
         observers.push_back(sens);
     }*/
-
-    const unsigned int Sensore::maxMesi=12;
 }

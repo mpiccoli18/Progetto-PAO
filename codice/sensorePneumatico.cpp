@@ -17,8 +17,8 @@ namespace sensore{
     void SensorePneumatico::accept(SensorVisitorInterface& visitor){
         visitor.visitSPneumatico(*this);
     }
-    void SensorePneumatico::acceptModify(SensorVisitorInterface& visitor){
-        visitor.modSPneumatico(*this);
+    std::vector<QLineEdit*> SensorePneumatico::acceptModify(SensorVisitorInterface& visitor){
+        return visitor.modSPneumatico(*this);
     }
     void SensorePneumatico::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
         visitor.saveSPneumatico(*this, ob);

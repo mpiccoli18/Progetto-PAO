@@ -1,10 +1,9 @@
-#include "SensorInfoVisitor.h"
 #include <QLabel>
 #include <QString>
-#include<QVBoxLayout>
-#include<QLineEdit> //aggiunto per test
-#include<iostream>
-
+#include <QVBoxLayout>
+#include <QLineEdit>
+#include <QPushButton>
+#include "SensorInfoVisitor.h"
 #include "sensorePneumatico.h"
 #include "sensoreConsumo.h"
 #include "sensoreMotore.h"
@@ -14,221 +13,232 @@
 
 namespace sensore{
 
-QWidget* SensorInfoVisitor::getWidget() {
-    return widget;
-}
+    QWidget* SensorInfoVisitor::getWidget() {
+        return widget;
+    }
 
-void SensorInfoVisitor::visitSPneumatico(SensorePneumatico& sPneumatico) {
-    QLabel *labelMarca = new QLabel("Marca Pneumatico: " + QString::fromStdString(sPneumatico.getBrand()));
-    QLabel *labelAge = new QLabel("Tempo di vita: " + QString::number(sPneumatico.getAge()));
+    void SensorInfoVisitor::visitSPneumatico(SensorePneumatico& sPneumatico) {
+        QLabel *labelMarca = new QLabel("Marca Pneumatico: " + QString::fromStdString(sPneumatico.getBrand()));
+        QLabel *labelAge = new QLabel("Tempo di vita: " + QString::number(sPneumatico.getAge()));
 
-    QVBoxLayout *layout = new QVBoxLayout();
-    layout->addWidget(labelMarca);
-    layout->addWidget(labelAge);
+        QVBoxLayout *layout = new QVBoxLayout();
+        layout->addWidget(labelMarca);
+        layout->addWidget(labelAge);
 
-    QWidget *widgetContainer = new QWidget();
-    widgetContainer->setLayout(layout);
+        QWidget *widgetContainer = new QWidget();
+        widgetContainer->setLayout(layout);
 
-    widget = widgetContainer;
-}
+        widget = widgetContainer;
+    }
 
-void SensorInfoVisitor::visitSConsumo(SensoreConsumo& sConsumo) {
-    widget = new QLabel("Numero di Ottano: " +  QString::number(sConsumo.getOttano()));
-}
+    void SensorInfoVisitor::visitSConsumo(SensoreConsumo& sConsumo) {
+        widget = new QLabel("Numero di Ottano: " +  QString::number(sConsumo.getOttano()));
+    }
 
-void SensorInfoVisitor::visitSMotore(SensoreMotore& sMotore) {
-    widget = new QLabel("Numero di cavalli: " +  QString::number(sMotore.getCavalli()));
-}
+    void SensorInfoVisitor::visitSMotore(SensoreMotore& sMotore) {
+        widget = new QLabel("Numero di cavalli: " +  QString::number(sMotore.getCavalli()));
+    }
 
-void SensorInfoVisitor::visitSBatteria(SensoreBatteria& sBatteria) {
-    widget = new QLabel("Materiali: " +  QString::fromStdString(sBatteria.getMaterials()));
-}
+    void SensorInfoVisitor::visitSBatteria(SensoreBatteria& sBatteria) {
+        widget = new QLabel("Materiali: " +  QString::fromStdString(sBatteria.getMaterials()));
+    }
 
-void SensorInfoVisitor::visitSGas(SensoreGas& sGas) {
-    widget = new QLabel("Impronta: " +  QString::number(sGas.getFootprint()));
-}
+    void SensorInfoVisitor::visitSGas(SensoreGas& sGas) {
+        widget = new QLabel("Impronta: " +  QString::number(sGas.getFootprint()));
+    }
 
-void SensorInfoVisitor::modSPneumatico(SensorePneumatico& sPneumatico){
-    // Creazione di un QLabel per la marca
-    QLabel *labelMarca = new QLabel("Marca:");
-    // Creazione di un QLineEdit per visualizzare la marca
-    QLineEdit *lineBrand = new QLineEdit();
+    std::vector<QLineEdit*> SensorInfoVisitor::modSPneumatico(SensorePneumatico& sPneumatico){
+        // Creazione di un QLabel per la marca
+        QLabel *labelMarca = new QLabel("Marca:");
+        // Creazione di un QLineEdit per visualizzare la marca
+        QLineEdit *lineBrand = new QLineEdit();
 
-    // Ottieni la marca utilizzando la funzione getBrand()
-    std::string brand = sPneumatico.getBrand();
+        // Ottieni la marca utilizzando la funzione getBrand()
+        std::string brand = sPneumatico.getBrand();
 
-    // Converti la marca in una QString
-    QString qbrand = QString::fromStdString(brand);
+        // Converti la marca in una QString
+        QString qbrand = QString::fromStdString(brand);
 
-    // Imposta il testo nel QLineEdit con la marca
-    lineBrand->setText(qbrand);
+        // Imposta il testo nel QLineEdit con la marca
+        lineBrand->setText(qbrand);
 
-    // Creazione di un QLabel per il tempo di vita
-    QLabel *labelAge = new QLabel("Tempo di vita:");
-    // Creazione di un QLineEdit per visualizzare il tempo di vita
-    QLineEdit *lineAge = new QLineEdit();
+        // Creazione di un QLabel per il tempo di vita
+        QLabel *labelAge = new QLabel("Tempo di vita:");
+        // Creazione di un QLineEdit per visualizzare il tempo di vita
+        QLineEdit *lineAge = new QLineEdit();
 
-    // Ottieni il tempo di vita utilizzando la funzione getAge()
-    double age = sPneumatico.getAge();
+        // Ottieni il tempo di vita utilizzando la funzione getAge()
+        double age = sPneumatico.getAge();
 
-    // Converti il tempo di vita in una QString
-    QString qage = QString::number(age);
+        // Converti il tempo di vita in una QString
+        QString qage = QString::number(age);
 
-    // Imposta il testo nel QLineEdit con il tempo di vita
-    lineAge->setText(qage);
+        // Imposta il testo nel QLineEdit con il tempo di vita
+        lineAge->setText(qage);
 
-    // Creazione di un layout per organizzare i widget
-    QVBoxLayout *modLayout = new QVBoxLayout();
-    modLayout->addWidget(labelMarca);
-    modLayout->addWidget(lineBrand);
-    modLayout->addWidget(labelAge);
-    modLayout->addWidget(lineAge);
+        // Creazione di un layout per organizzare i widget
+        QVBoxLayout *modLayout = new QVBoxLayout();
+        modLayout->addWidget(labelMarca);
+        modLayout->addWidget(lineBrand);
+        modLayout->addWidget(labelAge);
+        modLayout->addWidget(lineAge);
 
-    // Creazione di un QWidget per contenere il layout
-    QWidget *widgetContainer = new QWidget();
-    widgetContainer->setLayout(modLayout);
+        // Creazione di un QWidget per contenere il layout
+        QWidget *widgetContainer = new QWidget();
+        widgetContainer->setLayout(modLayout);
 
-    // Imposta le dimensioni fisse per il QLineEdit
-    int fieldWidth = widgetContainer->width() / 2; // Larghezza della metà del widget padre
-    lineBrand->setFixedWidth(fieldWidth);
-    lineAge->setFixedWidth(fieldWidth);
+        // Imposta le dimensioni fisse per il QLineEdit
+        int fieldWidth = widgetContainer->width() / 2; // Larghezza della metà del widget padre
+        lineBrand->setFixedWidth(fieldWidth);
+        lineAge->setFixedWidth(fieldWidth);
 
-    // Assegnazione del widgetContainer a widget
-    widget = widgetContainer;
-}
+        // Assegnazione del widgetContainer a widget
+        widget = widgetContainer;
+        aus.push_back(lineBrand);
+        aus.push_back(lineAge);
+        return aus;
+    }
 
-void SensorInfoVisitor::modSConsumo(SensoreConsumo& sConsumo){
-    // Creazione di un QLabel per il numero di ottano
-    QLabel *labelOttano = new QLabel("Numero di Ottano:");
-    // Creazione di un QLineEdit per visualizzare il numero di ottano
-    QLineEdit *lineOtt = new QLineEdit();
+    std::vector<QLineEdit*> SensorInfoVisitor::modSConsumo(SensoreConsumo& sConsumo){
+        // Creazione di un QLabel per il numero di ottano
+        QLabel *labelOttano = new QLabel("Numero di Ottano:");
+        // Creazione di un QLineEdit per visualizzare il numero di ottano
+        QLineEdit *lineOtt = new QLineEdit();
 
-    // Ottenere il numero di ottano utilizzando la funzione getOttano()
-    int ott = sConsumo.getOttano();
+        // Ottenere il numero di ottano utilizzando la funzione getOttano()
+        int ott = sConsumo.getOttano();
 
-    // Converti il numero di ottano in una QString
-    QString qott = QString::number(ott);
+        // Converti il numero di ottano in una QString
+        QString qott = QString::number(ott);
 
-    // Imposta il testo nel QLineEdit con il numero di ottano
-    lineOtt->setText(qott);
+        // Imposta il testo nel QLineEdit con il numero di ottano
+        lineOtt->setText(qott);
 
-    // Creazione di un layout per organizzare i widget
-    QVBoxLayout *modLayout = new QVBoxLayout();
-    modLayout->addWidget(labelOttano);
-    modLayout->addWidget(lineOtt);
+        // Creazione di un layout per organizzare i widget
+        QVBoxLayout *modLayout = new QVBoxLayout();
+        modLayout->addWidget(labelOttano);
+        modLayout->addWidget(lineOtt);
 
-    // Creazione di un QWidget per contenere il layout
-    QWidget *widgetContainer = new QWidget();
-    widgetContainer->setLayout(modLayout);
+        // Creazione di un QWidget per contenere il layout
+        QWidget *widgetContainer = new QWidget();
+        widgetContainer->setLayout(modLayout);
 
-    // Imposta le dimensioni fisse per il QLineEdit
-    int fieldWidth = widgetContainer->width() / 2; // Larghezza della metà del widget padre
-    lineOtt->setFixedWidth(fieldWidth);
+        // Imposta le dimensioni fisse per il QLineEdit
+        int fieldWidth = widgetContainer->width() / 2; // Larghezza della metà del widget padre
+        lineOtt->setFixedWidth(fieldWidth);
 
-    // Assegnazione del widgetContainer a widget
-    widget = widgetContainer;
-}
+        // Assegnazione del widgetContainer a widget
+        widget = widgetContainer;
+        aus.push_back(lineOtt);
+        return aus;
+    }
 
-void SensorInfoVisitor::modSMotore(SensoreMotore& sMotore){
-    // Creazione di un QLabel per i cavalli
-    QLabel *labelCavalli = new QLabel("Cavalli:");
-    // Creazione di un QLineEdit per visualizzare il numero di cavalli
-    QLineEdit *lineCavalli = new QLineEdit();
+    std::vector<QLineEdit*> SensorInfoVisitor::modSMotore(SensoreMotore& sMotore){
+        // Creazione di un QLabel per i cavalli
+        QLabel *labelCavalli = new QLabel("Cavalli:");
+        // Creazione di un QLineEdit per visualizzare il numero di cavalli
+        QLineEdit *lineCavalli = new QLineEdit();
 
-    // Ottenere il numero di cavalli utilizzando la funzione getCavalli()
-    unsigned int cav = sMotore.getCavalli();
+        // Ottenere il numero di cavalli utilizzando la funzione getCavalli()
+        unsigned int cav = sMotore.getCavalli();
 
-    // Converti il numero di cavalli in una QString
-    QString qcav = QString::number(cav);
+        // Converti il numero di cavalli in una QString
+        QString qcav = QString::number(cav);
 
-    // Imposta il testo nel QLineEdit con il numero di cavalli
-    lineCavalli->setText(qcav);
+        // Imposta il testo nel QLineEdit con il numero di cavalli
+        lineCavalli->setText(qcav);
 
-    // Creazione di un layout per organizzare i widget
-    QVBoxLayout *modLayout = new QVBoxLayout();
-    modLayout->addWidget(labelCavalli);
-    modLayout->addWidget(lineCavalli);
+        // Creazione di un layout per organizzare i widget
+        QVBoxLayout *modLayout = new QVBoxLayout();
+        modLayout->addWidget(labelCavalli);
+        modLayout->addWidget(lineCavalli);
 
-    // Creazione di un QWidget per contenere il layout
-    QWidget *widgetContainer = new QWidget();
-    widgetContainer->setLayout(modLayout);
+        // Creazione di un QWidget per contenere il layout
+        QWidget *widgetContainer = new QWidget();
+        widgetContainer->setLayout(modLayout);
 
-    // Imposta le dimensioni fisse per il QLineEdit
-    int fieldWidth = widgetContainer->width() / 2; // Larghezza della metà del widget padre
-    lineCavalli->setFixedWidth(fieldWidth);
+        // Imposta le dimensioni fisse per il QLineEdit
+        int fieldWidth = widgetContainer->width() / 2; // Larghezza della metà del widget padre
+        lineCavalli->setFixedWidth(fieldWidth);
 
-    // Assegnazione del widgetContainer a widget
-    widget = widgetContainer;
-}
+        // Assegnazione del widgetContainer a widget
+        widget = widgetContainer;
+        aus.push_back(lineCavalli);
+        return aus;
+    }
 
-void SensorInfoVisitor::modSBatteria(SensoreBatteria& sBatteria){
-    QLabel *label = new QLabel("Materiali:");
-    QLineEdit* lineMat = new QLineEdit();
-    std::string mat = sBatteria.getMaterials();
+    std::vector<QLineEdit*> SensorInfoVisitor::modSBatteria(SensoreBatteria& sBatteria){
+        QLabel *label = new QLabel("Materiali:");
+        QLineEdit* lineMat = new QLineEdit();
+        std::string mat = sBatteria.getMaterials();
 
-    // Converti le std::string in QString
-    QString qmat = QString::fromStdString(mat);
+        // Converti le std::string in QString
+        QString qmat = QString::fromStdString(mat);
 
-    // Imposta il testo nei campi di input
-    lineMat->setText(qmat);
+        // Imposta il testo nei campi di input
+        lineMat->setText(qmat);
 
-    // Creazione di un layout per organizzare i widget
-    QVBoxLayout *modLayout = new QVBoxLayout();
-    modLayout->addWidget(label);
-    modLayout->addWidget(lineMat);
+        // Creazione di un layout per organizzare i widget
+        QVBoxLayout *modLayout = new QVBoxLayout();
+        modLayout->addWidget(label);
+        modLayout->addWidget(lineMat);
 
-    // Creazione di un QWidget per contenere il layout
-    QWidget *widgetContainer = new QWidget();
-    widgetContainer->setLayout(modLayout);
+        // Creazione di un QWidget per contenere il layout
+        QWidget *widgetContainer = new QWidget();
+        widgetContainer->setLayout(modLayout);
 
-    // Imposta le dimensioni dei campi di input
-    int fieldWidth = widgetContainer->width() / 2;
-    lineMat->setFixedWidth(fieldWidth);
+        // Imposta le dimensioni dei campi di input
+        int fieldWidth = widgetContainer->width() / 2;
+        lineMat->setFixedWidth(fieldWidth);
 
-    // Assegnazione del widgetContainer a widget
-    widget = widgetContainer;
-}
+        // Assegnazione del widgetContainer a widget
+        widget = widgetContainer;
+        aus.push_back(lineMat);
+        return aus;
+    }
 
-void SensorInfoVisitor::modSGas(SensoreGas& sGas){
-    QLabel *label = new QLabel("Impronta:");
-    QLineEdit *lineFootp = new QLineEdit();
-    double fp = sGas.getFootprint();
-    QString qfp = QString::number(fp);
-    lineFootp->setText(qfp);
+    std::vector<QLineEdit*> SensorInfoVisitor::modSGas(SensoreGas& sGas){
+        QLabel *label = new QLabel("Impronta:");
+        QLineEdit *lineFootp = new QLineEdit();
+        double fp = sGas.getFootprint();
+        QString qfp = QString::number(fp);
+        lineFootp->setText(qfp);
 
-    // Creazione di un layout per organizzare i widget
-    QVBoxLayout *modLayout = new QVBoxLayout();
-    modLayout->addWidget(label);
-    modLayout->addWidget(lineFootp);
+        // Creazione di un layout per organizzare i widget
+        QVBoxLayout *modLayout = new QVBoxLayout();
+        modLayout->addWidget(label);
+        modLayout->addWidget(lineFootp);
 
-    // Creazione di un QWidget per contenere il layout
-    QWidget *widgetContainer = new QWidget();
-    widgetContainer->setLayout(modLayout);
+        // Creazione di un QWidget per contenere il layout
+        QWidget *widgetContainer = new QWidget();
+        widgetContainer->setLayout(modLayout);
 
-    // Imposta le dimensioni dei campi di input
-    int fieldWidth = widgetContainer->width() / 2;
-    lineFootp->setFixedWidth(fieldWidth);
+        // Imposta le dimensioni dei campi di input
+        int fieldWidth = widgetContainer->width() / 2;
+        lineFootp->setFixedWidth(fieldWidth);
 
-    // Assegnazione del widgetContainer a widget
-    widget = widgetContainer;
-}
+        // Assegnazione del widgetContainer a widget
+        widget = widgetContainer;
+        aus.push_back(lineFootp);
+        return aus;
+    }
 
 
-void SensorInfoVisitor::saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob){
-    (*ob)["brand"] = QString::fromStdString(sPneumatico.getBrand());
-    (*ob)["age"] = QString::number(sPneumatico.getAge());
-}
-void SensorInfoVisitor::saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob){
-    (*ob)["ottano"] = QString::number(sConsumo.getOttano());
-}
-void SensorInfoVisitor::saveSMotore(SensoreMotore& sMotore,QJsonObject* ob){
-    (*ob)["cavalli"] = QString::number(sMotore.getCavalli());
-}
-void SensorInfoVisitor::saveSBatteria(SensoreBatteria& sBatteria,QJsonObject* ob){
-    (*ob)["materiali"] = QString::fromStdString(sBatteria.getMaterials());
-}
-void SensorInfoVisitor::saveSGas(SensoreGas& sGas,QJsonObject* ob){
-    (*ob)["footprint"] = QString::number(sGas.getFootprint());
-}
+    void SensorInfoVisitor::saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob){
+        (*ob)["brand"] = QString::fromStdString(sPneumatico.getBrand());
+        (*ob)["age"] = QString::number(sPneumatico.getAge());
+    }
+    void SensorInfoVisitor::saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob){
+        (*ob)["ottano"] = QString::number(sConsumo.getOttano());
+    }
+    void SensorInfoVisitor::saveSMotore(SensoreMotore& sMotore,QJsonObject* ob){
+        (*ob)["cavalli"] = QString::number(sMotore.getCavalli());
+    }
+    void SensorInfoVisitor::saveSBatteria(SensoreBatteria& sBatteria,QJsonObject* ob){
+        (*ob)["materiali"] = QString::fromStdString(sBatteria.getMaterials());
+    }
+    void SensorInfoVisitor::saveSGas(SensoreGas& sGas,QJsonObject* ob){
+        (*ob)["footprint"] = QString::number(sGas.getFootprint());
+    }
 
 }

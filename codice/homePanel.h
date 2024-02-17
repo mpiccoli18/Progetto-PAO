@@ -28,21 +28,21 @@ namespace sensore{
             void Modify(Sensore *s);
             void Simulation();
             void Elimination(Sensore* s);
-            void Update(Sensore *s, QLineEdit * nome, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * Max);
+            void Update(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * Max);
             void Save();
             void Open();
             void Create();
             void Exit();
             void View(Sensore* sensore);
-            void SensorSelected(const QString& selectedSensor,QVBoxLayout *createLayout);
+            void SensorSelected(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor,QVBoxLayout* createLayout);
 
         signals:
             void StartSave();
             void StartOpen();
             void StartCreate();
-            void StartUpdate(Sensore *s, QLineEdit * nome, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * Max);
+            void StartUpdate(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * Max);
             void StartExit();
-            void StartSensorSelected(const QString& selectedSensor,QVBoxLayout *createLayout);
+            void StartSensorSelected(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor,QVBoxLayout* createLayout);
 
     };
 }

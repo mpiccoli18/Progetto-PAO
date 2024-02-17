@@ -24,7 +24,7 @@ namespace sensore{
             void setOttano(int ot);
 
             virtual void accept(SensorVisitorInterface& visitor);
-            virtual void acceptModify(SensorVisitorInterface& visitor);
+            virtual std::vector<QLineEdit*> acceptModify(SensorVisitorInterface& visitor);
             virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob);
 
        };
