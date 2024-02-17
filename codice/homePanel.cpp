@@ -588,7 +588,6 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         }
         if(modifyView){
             this->pannello->layout()->removeWidget(modifyView);
-            delete modifyView; // Libera la memoria
             modifyView = nullptr;
         }
 
@@ -666,23 +665,24 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         modLayout->addWidget(labelval);
         modLayout->addWidget(lineVal, 0, Qt::AlignLeft);
 
-        QPushButton *confirmButton = new QPushButton("Conferma", pannello);
+        QPushButton *confirmButton = new QPushButton("Conferma", this->pannello);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
         connect(confirmButton, &QPushButton::pressed, this, [this, s, lineType, lineDescr, lineVal, lineMin, lineMax]() {
             emit StartUpdate(s, lineType, lineDescr, lineVal, lineMin, lineMax);
         });
         connect(this, &homePanel::StartUpdate, this, &homePanel::Update);
 
-        QPushButton *exitButton = new QPushButton("Annulla", pannello);
+        QPushButton *exitButton = new QPushButton("Annulla", this->pannello);
         modLayout->addWidget(exitButton, 0, Qt::AlignLeft);
         connect(exitButton, &QPushButton::pressed, this, &homePanel::StartExit);
         connect(this, &homePanel::StartExit, this, &homePanel::Exit);
 
         // Aggiungi il widget con i campi di input e il pulsante al layout del pannello
-        pannello->layout()->addWidget(modifyView);
+        this->pannello->layout()->addWidget(modifyView);
     }
 
-    void homePanel::Update(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * Max){
+    void homePanel::Update(Sensore* s, QLineEdit* tipo, QLineEdit* descrizione, QLineEdit* val, QLineEdit * min, QLineEdit * Max){
+        qDebug() << s;
         s->setType(tipo->text().toStdString());
         s->setDescription(descrizione->text().toStdString());
         QString numString = val->text();
@@ -704,16 +704,17 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         s->setValues(valArray);
         s->setValueMin(min->text().toDouble());
         s->setValueMax(Max->text().toDouble());
+
         if(modifyView){
             this->pannello->layout()->removeWidget(modifyView);
             delete modifyView; // Libera la memoria
             modifyView = nullptr;
-        }
-        if(pannello)
-        {
+
+            delete barraRicerca;
+            barraRicerca = new searchBarPanel(InsiemeSensori);
             delete pannello;
-            pannello = nullptr;
-            pannello = new SensorPanel(s);
+            pannello = new SensorPanel();
+            layoutApp->addWidget(barraRicerca, 1);
             layoutApp->addWidget(pannello, 2);
             layoutApp->setStretch(0, 1);
             layoutApp->setStretch(1, 2);
@@ -728,10 +729,11 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         if (chartView) {
             this->pannello->layout()->removeWidget(chartView);
             delete chartView; // Libera la memoria
+            chartView = nullptr;
         }
         if(modifyView){
             this->pannello->layout()->removeWidget(modifyView);
-            delete modifyView; // Libera la memoria
+            delete modifyView;
             modifyView = nullptr;
         }
         QSplineSeries *series = new QSplineSeries();
@@ -775,7 +777,6 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
     void homePanel::Exit(){
         if(modifyView){
             this->pannello->layout()->removeWidget(modifyView);
-            delete modifyView; // Libera la memoria
             modifyView = nullptr;
         }
     }

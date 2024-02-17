@@ -8,8 +8,8 @@ namespace sensore{
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-        QHBoxLayout* infoSensor = new QHBoxLayout();
         if (s) {
+            QHBoxLayout* infoSensor = new QHBoxLayout();
             info = new Info(*s);
             info->show();
             layout->addLayout(infoSensor);
