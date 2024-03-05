@@ -6,11 +6,11 @@
 namespace sensore{
     SensoreGas::SensoreGas(const std::string n, const std::string t, const std::string d,
                                      const std::vector<double> v, const double vMin, const double vMax,
-                                     const double footp): Sensore(n, t, d, v, vMin, vMax), footprint(footp) {}
+                                     const double footp): Sensore(n, t, d, v, vMin, vMax), impronta(footp) {}
 
-    double SensoreGas::getFootprint() const {return footprint;}
+    double SensoreGas::getImpronta() const {return impronta;}
 
-    void SensoreGas::setFootprint(double footp) { footprint = footp;}
+    void SensoreGas::setImpronta(double footp) { impronta = footp;}
 
     void SensoreGas::accept(SensorVisitorInterface& visitor){
         visitor.visitSGas(*this);

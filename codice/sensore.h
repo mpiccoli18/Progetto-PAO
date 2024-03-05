@@ -13,12 +13,12 @@ namespace sensore{
     {
         private:
 
-            std::string name;
-            std::string type;
-            std::string description;
-            std::vector<double> values;
-            double valueMin;
-            double valueMax;
+            std::string nome;
+            std::string tipo;
+            std::string descrizione;
+            std::vector<double> valori;
+            double min;
+            double max;
 
         public:
 
@@ -32,20 +32,19 @@ namespace sensore{
             );
             virtual ~Sensore() = default;
 
-            const std::string& getName() const;
-            const std::string& getType() const;
-            const std::string& getDescription() const;
-            std::vector<double> getValues() const;
-            unsigned int getMaxMesi() const;
-            double getValueMin() const;
-            double getValueMax() const;
+            const std::string& getNome() const;
+            const std::string& getTipo() const;
+            const std::string& getDescrizione() const;
+            std::vector<double> getValori() const;
+            double getMin() const;
+            double getMax() const;
 
-            void setName(std::string n);
-            void setType(std::string t);
-            void setDescription(std::string d);
-            void setValueMin(double vMin);
-            void setValueMax(double vMax);
-            void setValues(std::vector<double> v);
+            void setNome(std::string n);
+            void setTipo(std::string t);
+            void setDescrizione(std::string d);
+            void setMin(double vMin);
+            void setMax(double vMax);
+            void setValori(std::vector<double> v);
 
             virtual void accept(SensorVisitorInterface& visitor) = 0;
             virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob) = 0;

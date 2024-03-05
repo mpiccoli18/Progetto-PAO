@@ -6,7 +6,7 @@
 namespace sensore{
 class SensoreGas: public Sensore{
 private:
-    double footprint;
+    double impronta;
 public:
 
     SensoreGas(
@@ -19,9 +19,9 @@ public:
         const double footp);
 
 
-    double getFootprint() const;
+    double getImpronta() const;
 
-    void setFootprint(double foot);
+    void setImpronta(double foot);
 
     virtual void accept(SensorVisitorInterface& visitor);
     virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob);

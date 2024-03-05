@@ -10,6 +10,7 @@ SOURCES += \
     homePanel.cpp \
     main.cpp \
     mainwindow.cpp \
+    modello.cpp \
     searchBarPanel.cpp \
     sensorPanel.cpp \
     sensore.cpp \
@@ -25,6 +26,7 @@ HEADERS += \
     SensorVisitorInterface.h \
     homePanel.h \
     mainwindow.h \
+    modello.h \
     searchBarPanel.h \
     sensorPanel.h \
     sensore.h \

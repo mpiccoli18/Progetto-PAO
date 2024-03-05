@@ -12,11 +12,11 @@ namespace sensore {
         Q_OBJECT
         private:
             Sensore& sensore;
-            QLabel* name_label;
-            QLabel* type_label;
-            QLabel* description_label;
-            QLabel* valueMin_label;
-            QLabel* valueMax_label;
+            QLabel* nome_label;
+            QLabel* tipo_label;
+            QLabel* descrizione_label;
+            QLabel* min_label;
+            QLabel* max_label;
         public:
             Info(Sensore& sensore, QWidget* parent = 0);
             void show();

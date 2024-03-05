@@ -6,6 +6,7 @@
 #include "sensore.h"
 #include "sensorPanel.h"
 #include "searchBarPanel.h"
+#include "modello.h"
 
 namespace sensore{
     class homePanel : public QWidget{
@@ -13,11 +14,12 @@ namespace sensore{
         private:
             sensore::Sensore* sensoreGenerale;
             QHBoxLayout *layoutApp;
-            QChartView *chartView;
-            QWidget *modifyView;
+            QChartView *grafico;
+            QWidget *modifica;
             SensorPanel* pannello;
             searchBarPanel* barraRicerca;
-            QWidget *createWidget;
+            QWidget *creazione;
+            modello* mod;
             std::vector<sensore::Sensore*> InsiemeSensori;
         public:
             homePanel(QWidget* parent = 0);
@@ -29,8 +31,8 @@ namespace sensore{
             void Simulation();
             void Elimination(Sensore* s);
             void Update(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * max);
-            void Save();
             void Open();
+            void Save();
             void Create();
             void Exit();
             void View(Sensore* sensore);

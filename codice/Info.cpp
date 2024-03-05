@@ -11,20 +11,20 @@ Info::Info(Sensore& sensor, QWidget* parent)
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
-    name_label = new QLabel();
-    layout->addWidget(name_label);
+    nome_label = new QLabel();
+    layout->addWidget(nome_label);
 
-    type_label = new QLabel();
-    layout->addWidget(type_label);
+    tipo_label = new QLabel();
+    layout->addWidget(tipo_label);
 
-    description_label = new QLabel();
-    layout->addWidget(description_label);
+    descrizione_label = new QLabel();
+    layout->addWidget(descrizione_label);
 
-    valueMin_label = new QLabel();
-    layout->addWidget(valueMin_label);
+    min_label = new QLabel();
+    layout->addWidget(min_label);
 
-    valueMax_label = new QLabel();
-    layout->addWidget(valueMax_label);
+    max_label = new QLabel();
+    layout->addWidget(max_label);
 
     SensorInfoVisitor visitor;
     sensor.accept(visitor);
@@ -32,11 +32,11 @@ Info::Info(Sensore& sensor, QWidget* parent)
 }
 
 void Info::show() {
-    name_label->setText(QString::fromStdString(sensore.getName()));
-    type_label->setText("Tipo: " + QString::fromStdString(sensore.getType()));
-    description_label->setText("Descrizione: " + QString::fromStdString(sensore.getDescription()));
-    valueMin_label->setText("Val. minimo: " + QString::number(sensore.getValueMin()));
-    valueMax_label->setText("Val. massimo: " + QString::number(sensore.getValueMax()));
+    nome_label->setText(QString::fromStdString(sensore.getNome()));
+    tipo_label->setText("Tipo: " + QString::fromStdString(sensore.getTipo()));
+    descrizione_label->setText("Descrizione: " + QString::fromStdString(sensore.getDescrizione()));
+    min_label->setText("Val. minimo: " + QString::number(sensore.getMin()));
+    max_label->setText("Val. massimo: " + QString::number(sensore.getMax()));
 }
 
 }

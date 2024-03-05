@@ -7,7 +7,7 @@ namespace sensore{
     class SensoreBatteria: public Sensore
     {
         private:
-            std::string materials;
+            std::string materiale;
         public:
 
             SensoreBatteria(
@@ -19,9 +19,9 @@ namespace sensore{
                 const double vMax,
                 const std::string mat);
 
-            const std::string getMaterials() const;
+            const std::string getMateriale() const;
 
-            void setMaterials(std::string mat);
+            void setMateriale(std::string mat);
 
             virtual void accept(SensorVisitorInterface& visitor);
             virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob);

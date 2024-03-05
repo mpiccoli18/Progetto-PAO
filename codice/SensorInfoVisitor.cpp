@@ -17,8 +17,8 @@ namespace sensore{
     }
 
     void SensorInfoVisitor::visitSPneumatico(SensorePneumatico& sPneumatico) {
-        QLabel *labelMarca = new QLabel("Marca Pneumatico: " + QString::fromStdString(sPneumatico.getBrand()));
-        QLabel *labelAge = new QLabel("Tempo di vita: " + QString::number(sPneumatico.getAge()));
+        QLabel *labelMarca = new QLabel("Marca Pneumatico: " + QString::fromStdString(sPneumatico.getMarcaPneu()));
+        QLabel *labelAge = new QLabel("Tempo di vita: " + QString::number(sPneumatico.getEta()));
 
         QVBoxLayout *layout = new QVBoxLayout();
         layout->addWidget(labelMarca);
@@ -39,17 +39,17 @@ namespace sensore{
     }
 
     void SensorInfoVisitor::visitSBatteria(SensoreBatteria& sBatteria) {
-        widget = new QLabel("Materiali: " +  QString::fromStdString(sBatteria.getMaterials()));
+        widget = new QLabel("Materiali: " +  QString::fromStdString(sBatteria.getMateriale()));
     }
 
     void SensorInfoVisitor::visitSGas(SensoreGas& sGas) {
-        widget = new QLabel("Impronta: " +  QString::number(sGas.getFootprint()));
+        widget = new QLabel("Impronta: " +  QString::number(sGas.getImpronta()));
     }
 
 
     void SensorInfoVisitor::saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob){
-        (*ob)["brand"] = QString::fromStdString(sPneumatico.getBrand());
-        (*ob)["age"] = QString::number(sPneumatico.getAge());
+        (*ob)["brand"] = QString::fromStdString(sPneumatico.getMarcaPneu());
+        (*ob)["age"] = QString::number(sPneumatico.getEta());
     }
     void SensorInfoVisitor::saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob){
         (*ob)["ottano"] = QString::number(sConsumo.getOttano());
@@ -58,10 +58,10 @@ namespace sensore{
         (*ob)["cavalli"] = QString::number(sMotore.getCavalli());
     }
     void SensorInfoVisitor::saveSBatteria(SensoreBatteria& sBatteria,QJsonObject* ob){
-        (*ob)["materiali"] = QString::fromStdString(sBatteria.getMaterials());
+        (*ob)["materiali"] = QString::fromStdString(sBatteria.getMateriale());
     }
     void SensorInfoVisitor::saveSGas(SensoreGas& sGas,QJsonObject* ob){
-        (*ob)["footprint"] = QString::number(sGas.getFootprint());
+        (*ob)["footprint"] = QString::number(sGas.getImpronta());
     }
 
 }

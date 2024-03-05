@@ -1,5 +1,6 @@
 #include "homePanel.h"
 #include "SensorInfoVisitor.h"
+#include "modello.h"
 #include <QString>
 #include <QVBoxLayout>
 #include <QSplineSeries>
@@ -9,7 +10,7 @@
 #include <vector>
 
 namespace sensore{
-homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nullptr), createWidget(nullptr)
+    homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr)
     {
         QVBoxLayout* layout = new QVBoxLayout(this);
         QGridLayout* menu = new QGridLayout();
@@ -36,7 +37,8 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         menu->addItem(spacer, 0, 4, 1, 1);
 
-        barraRicerca = new searchBarPanel(InsiemeSensori);// barra di ricerca
+        mod = new modello();
+        barraRicerca = new searchBarPanel(mod->getInsiemeSens());// barra di ricerca
         layoutApp->addWidget(barraRicerca,1);
 
         pannello = new SensorPanel();// sensore
@@ -50,62 +52,15 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         connect(this, &homePanel::StartSensorSelected, this, &homePanel::SensorSelected);
     }
 
-
-
-    void homePanel::Save(){
-
-        QString filePath = QFileDialog::getSaveFileName(this, tr("Salva file JSON"), "", tr("File JSON (*.json)"));
-
-            if (filePath.isEmpty()) {
-                return;
-            }
-            if (!filePath.endsWith(".json", Qt::CaseInsensitive)) {
-                filePath += ".json";
-            }
-
-            QFile file(filePath);
-            if (!file.open(QIODevice::WriteOnly)) {
-                QMessageBox::warning(this, tr("Errore"), tr("Impossibile creare il file: ") + file.errorString());
-                return;
-            }
-
-            QJsonObject jsonObject;
-            for (Sensore* sensore : InsiemeSensori) {
-                QJsonObject sensorObject;
-                sensorObject["name"] = QString::fromStdString(sensore->getName());
-                sensorObject["type"] = QString::fromStdString(sensore->getType());
-                sensorObject["description"] = QString::fromStdString(sensore->getDescription());
-                QJsonArray valuesArray;
-                for (double value : sensore->getValues()) {
-                    valuesArray.append(value);
-                }
-                sensorObject["values"] = valuesArray;
-                sensorObject["valueMin"] = sensore->getValueMin();
-                sensorObject["valueMax"] = sensore->getValueMax();
-
-                SensorInfoVisitor visit;
-                QJsonObject* p = &sensorObject;
-                sensore->acceptSave(visit,p);
-
-                jsonObject[sensore->getName().c_str()] = sensorObject;
-            }
-            QJsonDocument jsonDoc(jsonObject);
-
-            file.write(jsonDoc.toJson());
-            file.close();
-
-            QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);
-    }
-
     void homePanel::Open(){
-        if(createWidget){
-            layoutApp->layout()->removeWidget(createWidget);
-            delete createWidget;
-            createWidget = nullptr;
+        if(creazione){
+            layoutApp->layout()->removeWidget(creazione);
+            delete creazione;
+            creazione = nullptr;
 
             delete barraRicerca;
             delete pannello;
-            barraRicerca = new searchBarPanel(InsiemeSensori);
+            barraRicerca = new searchBarPanel(mod->getInsiemeSens());
             pannello = new SensorPanel();
             layoutApp->addWidget(barraRicerca, 1);
             layoutApp->addWidget(pannello, 2);
@@ -148,7 +103,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
                 s = createSensorFromJson(sensorName, sensorObject);
 
                 if (s) {
-                    InsiemeSensori.push_back(s);
+                    mod->aggiungiSens(s);
                 }
             }
         QMessageBox::information(this, tr("Successo"), tr("Sensori caricati con successo!"));
@@ -156,7 +111,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         {
             delete barraRicerca;
             delete pannello;
-            barraRicerca = new searchBarPanel(InsiemeSensori);
+            barraRicerca = new searchBarPanel(mod->getInsiemeSens());
             pannello = new SensorPanel();
             layoutApp->addWidget(barraRicerca, 1);
             layoutApp->addWidget(pannello, 2);
@@ -169,7 +124,50 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         }
     }
 
+    void homePanel::Save(){
 
+        QString filePath = QFileDialog::getSaveFileName(this, tr("Salva file JSON"), "", tr("File JSON (*.json)"));
+
+        if (filePath.isEmpty()) {
+            return;
+        }
+        if (!filePath.endsWith(".json", Qt::CaseInsensitive)) {
+            filePath += ".json";
+        }
+
+        QFile file(filePath);
+        if (!file.open(QIODevice::WriteOnly)) {
+            QMessageBox::warning(this, tr("Errore"), tr("Impossibile creare il file: ") + file.errorString());
+            return;
+        }
+
+        QJsonObject jsonObject;
+        for (Sensore* sensore : mod->getInsiemeSens()) {
+            QJsonObject sensorObject;
+            sensorObject["name"] = QString::fromStdString(sensore->getNome());
+            sensorObject["type"] = QString::fromStdString(sensore->getTipo());
+            sensorObject["description"] = QString::fromStdString(sensore->getDescrizione());
+            QJsonArray valuesArray;
+            for (double value : sensore->getValori()) {
+                valuesArray.append(value);
+            }
+            sensorObject["values"] = valuesArray;
+            sensorObject["valueMin"] = sensore->getMin();
+            sensorObject["valueMax"] = sensore->getMax();
+
+            SensorInfoVisitor visit;
+            QJsonObject* p = &sensorObject;
+            sensore->acceptSave(visit,p);
+
+            jsonObject[sensore->getNome().c_str()] = sensorObject;
+        }
+        QJsonDocument jsonDoc(jsonObject);
+
+        file.write(jsonDoc.toJson());
+        file.close();
+
+        QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);
+    }
 
     Sensore* homePanel::createSensorFromJson(const QString& sensorName, const QJsonObject& sensorObject) {
         QString name = sensorObject["name"].toString();
@@ -235,17 +233,17 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
             delete barraRicerca;
             barraRicerca = nullptr;
         }
-        if(createWidget)
+        if(creazione)
         {
-            layoutApp->layout()->removeWidget(createWidget);
-            delete createWidget;
-            createWidget = nullptr;
+            layoutApp->layout()->removeWidget(creazione);
+            delete creazione;
+            creazione = nullptr;
         }
-        barraRicerca = new searchBarPanel(InsiemeSensori);
+        barraRicerca = new searchBarPanel(mod->getInsiemeSens());
         connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
 
-        createWidget = new QWidget();
-        QVBoxLayout* createLayout = new QVBoxLayout(createWidget);
+        creazione = new QWidget();
+        QVBoxLayout* createLayout = new QVBoxLayout(creazione);
 
         QLabel* labeltitle = new QLabel("Creazione di un Sensore");
         labeltitle->setAlignment(Qt::AlignCenter);
@@ -253,19 +251,19 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         createLayout->addWidget(labeltitle);
 
         QLabel* labeltype = new QLabel("Tipologia:");
-        QLineEdit* lineType = new QLineEdit(createWidget);
+        QLineEdit* lineType = new QLineEdit(creazione);
 
         QLabel* labeldescr = new QLabel("Descrizione:");
-        QLineEdit* lineDescr = new QLineEdit(createWidget);
+        QLineEdit* lineDescr = new QLineEdit(creazione);
 
         QLabel* labelmin = new QLabel("Valore Min:");
-        QLineEdit* lineMin = new QLineEdit(createWidget);
+        QLineEdit* lineMin = new QLineEdit(creazione);
 
         QLabel* labelmax = new QLabel("Valore Max:");
-        QLineEdit* lineMax = new QLineEdit(createWidget);
+        QLineEdit* lineMax = new QLineEdit(creazione);
 
         QLabel* labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
-        QLineEdit* lineVal = new QLineEdit(createWidget);
+        QLineEdit* lineVal = new QLineEdit(creazione);
 
         createLayout->addWidget(labeltype);
         createLayout->addWidget(lineType);
@@ -295,7 +293,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
                 emit StartSensorSelected(lineType, lineDescr, lineMin, lineMax, lineVal, selectedOption, createLayout); });
 
         layoutApp->addWidget(barraRicerca, 1);
-        layoutApp->addWidget(createWidget, 2);
+        layoutApp->addWidget(creazione, 2);
         layoutApp->setStretch(0, 1);
         layoutApp->setStretch(1, 2);
     }
@@ -313,7 +311,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
 
         if (selectedSensor == "Sensore Batteria") {
             QLabel* labelmat = new QLabel("Materiali:");
-            QLineEdit* lineMat = new QLineEdit(createWidget);
+            QLineEdit* lineMat = new QLineEdit(creazione);
             createLayout->addWidget(labelmat);
             createLayout->addWidget(lineMat);
             QPushButton* confirmButton = new QPushButton("Conferma");
@@ -339,14 +337,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
                 Sensore* sensore = new SensoreBatteria(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
                                                            lineMin->text().toDouble(), lineMax->text().toDouble(), lineMat->text().toStdString());
 
-                InsiemeSensori.push_back(sensore);
+                mod->aggiungiSens(sensore);
 
                 if(barraRicerca)
                 {
                     delete barraRicerca;
-                    delete createWidget;
-                    createWidget = nullptr;
-                    barraRicerca = new searchBarPanel(InsiemeSensori);
+                    delete creazione;
+                    creazione = nullptr;
+                    barraRicerca = new searchBarPanel(mod->getInsiemeSens());
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
                     layoutApp->addWidget(pannello, 2);
@@ -361,7 +359,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         }
         if (selectedSensor == "Sensore Consumo") {
             QLabel* labelott = new QLabel("Numero di Ottano:");
-            QLineEdit* lineOtt = new QLineEdit(createWidget);
+            QLineEdit* lineOtt = new QLineEdit(creazione);
             createLayout->addWidget(labelott);
             createLayout->addWidget(lineOtt);
 
@@ -388,13 +386,13 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
                 Sensore* sensore = new SensoreConsumo(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
                                                                lineMin->text().toDouble(), lineMax->text().toDouble(), lineOtt->text().toInt());
 
-                InsiemeSensori.push_back(sensore);
+                mod->aggiungiSens(sensore);
 
                 if(barraRicerca)
                 {
                     delete barraRicerca;
-                    delete createWidget;
-                    createWidget = nullptr;
+                    delete creazione;
+                    creazione = nullptr;
                     barraRicerca = new searchBarPanel(InsiemeSensori);
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
@@ -410,7 +408,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         }
         if (selectedSensor == "Sensore Motore") {
             QLabel* labelcav = new QLabel("Numero di Cavalli:");
-            QLineEdit* lineCav = new QLineEdit(createWidget);
+            QLineEdit* lineCav = new QLineEdit(creazione);
             createLayout->addWidget(labelcav);
             createLayout->addWidget(lineCav);
 
@@ -437,14 +435,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
                 Sensore* sensore = new SensoreMotore(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
                                                                lineMin->text().toDouble(), lineMax->text().toDouble(), lineCav->text().toUInt());
 
-                InsiemeSensori.push_back(sensore);
+                mod->aggiungiSens(sensore);
 
                 if(barraRicerca)
                 {
                     delete barraRicerca;
-                    delete createWidget;
-                    createWidget = nullptr;
-                    barraRicerca = new searchBarPanel(InsiemeSensori);
+                    delete creazione;
+                    creazione = nullptr;
+                    barraRicerca = new searchBarPanel(mod->getInsiemeSens());
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
                     layoutApp->addWidget(pannello, 2);
@@ -459,7 +457,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         }
         if (selectedSensor == "Sensore Gas") {
             QLabel* labelfootp = new QLabel("Impronta:");
-            QLineEdit* lineFootp = new QLineEdit(createWidget);
+            QLineEdit* lineFootp = new QLineEdit(creazione);
             createLayout->addWidget(labelfootp);
             createLayout->addWidget(lineFootp);
 
@@ -486,14 +484,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
                 Sensore* sensore = new SensoreGas(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
                                                                lineMin->text().toDouble(), lineMax->text().toDouble(), lineFootp->text().toDouble());
 
-                InsiemeSensori.push_back(sensore);
+                mod->aggiungiSens(sensore);
 
                 if(barraRicerca)
                 {
                     delete barraRicerca;
-                    delete createWidget;
-                    createWidget = nullptr;
-                    barraRicerca = new searchBarPanel(InsiemeSensori);
+                    delete creazione;
+                    creazione = nullptr;
+                    barraRicerca = new searchBarPanel(mod->getInsiemeSens());
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
                     layoutApp->addWidget(pannello, 2);
@@ -508,11 +506,11 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         }
         if (selectedSensor == "Sensore Pneumatico") {
             QLabel* labelbr = new QLabel("Marca:");
-            QLineEdit* lineBr = new QLineEdit(createWidget);
+            QLineEdit* lineBr = new QLineEdit(creazione);
             createLayout->addWidget(labelbr);
             createLayout->addWidget(lineBr);
             QLabel* labelage = new QLabel("Tempo di vita:");
-            QLineEdit* lineAge = new QLineEdit(createWidget);
+            QLineEdit* lineAge = new QLineEdit(creazione);
             createLayout->addWidget(labelage);
             createLayout->addWidget(lineAge);
 
@@ -539,14 +537,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
                 Sensore* sensore = new SensorePneumatico(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
                                                                lineMin->text().toDouble(), lineMax->text().toDouble(), lineBr->text().toStdString(), lineAge->text().toDouble());
 
-                InsiemeSensori.push_back(sensore);
+                mod->aggiungiSens(sensore);
 
                 if(barraRicerca)
                 {
                     delete barraRicerca;
-                    delete createWidget;
-                    createWidget = nullptr;
-                    barraRicerca = new searchBarPanel(InsiemeSensori);
+                    delete creazione;
+                    creazione = nullptr;
+                    barraRicerca = new searchBarPanel(mod->getInsiemeSens());
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
                     layoutApp->addWidget(pannello, 2);
@@ -564,20 +562,20 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
 
 
     void homePanel::Modify(Sensore *s){
-        if (chartView) {
-            this->pannello->layout()->removeWidget(chartView);
-            delete chartView;
-            chartView = nullptr;
+        if (grafico) {
+            this->pannello->layout()->removeWidget(grafico);
+            delete grafico;
+            grafico = nullptr;
         }
-        if(modifyView){
-            this->pannello->layout()->removeWidget(modifyView);
-            delete modifyView;
-            modifyView = nullptr;
+        if(modifica){
+            this->pannello->layout()->removeWidget(modifica);
+            delete modifica;
+            modifica = nullptr;
         }
 
-        modifyView = new QWidget();
+        modifica = new QWidget();
 
-        QVBoxLayout* modLayout = new QVBoxLayout(modifyView);
+        QVBoxLayout* modLayout = new QVBoxLayout(modifica);
 
         QLabel *labeltype = new QLabel("Tipologia:");
         QLineEdit *lineType = new QLineEdit(this->pannello);
@@ -594,11 +592,11 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         QLabel *labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
         QLineEdit *lineVal = new QLineEdit(this->pannello);
 
-        std::string type = s->getType();
-        std::string descr = s->getDescription();
-        double min = s->getValueMin();
-        double max = s->getValueMax();
-        std::vector<double> v = s->getValues();
+        std::string type = s->getTipo();
+        std::string descr = s->getDescrizione();
+        double min = s->getMin();
+        double max = s->getMax();
+        std::vector<double> v = s->getValori();
 
         QString qtype = QString::fromStdString(type);
         QString qdescr = QString::fromStdString(descr);
@@ -655,14 +653,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         connect(exitButton, &QPushButton::pressed, this, &homePanel::StartExit);
         connect(this, &homePanel::StartExit, this, &homePanel::Exit);
 
-        pannello->layout()->addWidget(modifyView);
+        pannello->layout()->addWidget(modifica);
     }
 
 
 
     void homePanel::Update(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * max){
-        s->setType(tipo->text().toStdString());
-        s->setDescription(descrizione->text().toStdString());
+        s->setTipo(tipo->text().toStdString());
+        s->setDescrizione(descrizione->text().toStdString());
         QString numString = val->text();
         std::vector<double> valArray;
         QStringList input = numString.trimmed().split(" ");
@@ -679,17 +677,17 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
                 std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in double." << std::endl;
             }
         }
-        s->setValues(valArray);
-        s->setValueMin(min->text().toDouble());
-        s->setValueMax(max->text().toDouble());
+        s->setValori(valArray);
+        s->setMin(min->text().toDouble());
+        s->setMax(max->text().toDouble());
 
-        if(modifyView){
-            this->pannello->layout()->removeWidget(modifyView);
-            delete modifyView;
-            modifyView = nullptr;
+        if(modifica){
+            this->pannello->layout()->removeWidget(modifica);
+            delete modifica;
+            modifica = nullptr;
 
             delete barraRicerca;
-            barraRicerca = new searchBarPanel(InsiemeSensori);
+            barraRicerca = new searchBarPanel(mod->getInsiemeSens());
             delete pannello;
             pannello = new SensorPanel();
             layoutApp->addWidget(barraRicerca, 1);
@@ -706,18 +704,18 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
 
 
     void homePanel::Simulation(){
-        if (chartView) {
-            this->pannello->layout()->removeWidget(chartView);
-            delete chartView;
-            chartView = nullptr;
+        if (grafico) {
+            this->pannello->layout()->removeWidget(grafico);
+            delete grafico;
+            grafico = nullptr;
         }
-        if(modifyView){
-            this->pannello->layout()->removeWidget(modifyView);
-            delete modifyView;
-            modifyView = nullptr;
+        if(modifica){
+            this->pannello->layout()->removeWidget(modifica);
+            delete modifica;
+            modifica = nullptr;
         }
         QSplineSeries *series = new QSplineSeries();
-        std::vector<double> valori = sensoreGenerale->getValues();
+        std::vector<double> valori = sensoreGenerale->getValori();
 
         std::vector<int> xAxisValues;
         int xValue = 1;
@@ -725,58 +723,59 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
             series->append(xValue++, *it);
         }
 
-        QChart *grafico = new QChart();
-        grafico->addSeries(series);
-        grafico->legend()->hide();
-        grafico->setTitle("" + QString::fromStdString(sensoreGenerale->getType()) + " di: " + QString::fromStdString(sensoreGenerale->getName()));
+        QChart *chart = new QChart();
+        chart->addSeries(series);
+        chart->legend()->hide();
+        chart->setTitle("" + QString::fromStdString(sensoreGenerale->getTipo()) + " di: " + QString::fromStdString(sensoreGenerale->getNome()));
 
         // Asse X
         QValueAxis *axisX = new QValueAxis();
         axisX->setRange(1, valori.size());
         axisX->setTickCount(valori.size());
         axisX->setLabelFormat("%d");
-        grafico->addAxis(axisX, Qt::AlignBottom);
+        chart->addAxis(axisX, Qt::AlignBottom);
 
         // Asse Y
         QValueAxis *axisY = new QValueAxis();
-        axisY->setRange(sensoreGenerale->getValueMin(), sensoreGenerale->getValueMax());
+        axisY->setRange(sensoreGenerale->getMin(), sensoreGenerale->getMax());
         axisY->setTickCount(10);
         axisY->applyNiceNumbers();
-        grafico->addAxis(axisY, Qt::AlignLeft);
+        chart->addAxis(axisY, Qt::AlignLeft);
 
         series->attachAxis(axisX);
         series->attachAxis(axisY);
 
-        chartView = new QChartView(grafico);
-        chartView->setRenderHint(QPainter::Antialiasing);
-        this->pannello->layout()->addWidget(chartView);
+        grafico = new QChartView(chart);
+        grafico->setRenderHint(QPainter::Antialiasing);
+        this->pannello->layout()->addWidget(grafico);
 
     }
 
 
 
     void homePanel::Exit(){
-        if(modifyView){
-            this->pannello->layout()->removeWidget(modifyView);
-            delete modifyView;
-            modifyView = nullptr;
+        if(modifica){
+            this->pannello->layout()->removeWidget(modifica);
+            delete modifica;
+            modifica = nullptr;
         }
     }
 
 
 
     void homePanel::Elimination(Sensore* s) {
-        if(modifyView)
-            modifyView = nullptr;
-        if(chartView)
-            chartView = nullptr;
-        auto i = InsiemeSensori.begin();
-        while(i != InsiemeSensori.end())
+        if(modifica)
+            modifica = nullptr;
+        if(grafico)
+            grafico = nullptr;
+        std::vector<Sensore*> v = mod->getInsiemeSens();
+        auto i = v.begin();
+        while(i != v.end())
         {
             if(*i == s)
             {
                 delete *i;
-                InsiemeSensori.erase(i);
+                mod->eliminaSens(i);
             }
             else{
                 i++;
@@ -788,7 +787,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         {
             delete barraRicerca;
             delete pannello;
-            barraRicerca = new searchBarPanel(InsiemeSensori);
+            barraRicerca = new searchBarPanel(mod->getInsiemeSens());
             pannello = new SensorPanel();
             layoutApp->addWidget(barraRicerca, 1);
             layoutApp->addWidget(pannello, 2);
@@ -807,10 +806,10 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
         if(pannello)
         {
             this->layout()->removeWidget(pannello);
-            if(chartView)
-                chartView = nullptr;
-            if(modifyView)
-                modifyView = nullptr;
+            if(grafico)
+                grafico = nullptr;
+            if(modifica)
+                modifica = nullptr;
 
             delete pannello;
             pannello = new SensorPanel(s);
@@ -823,9 +822,9 @@ homePanel::homePanel(QWidget* p):  QWidget(p), chartView(nullptr), modifyView(nu
             connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
             connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
         }
-        if(createWidget)
+        if(creazione)
         {
-            delete createWidget;
+            delete creazione;
 
             pannello = new SensorPanel(s);
             sensoreGenerale = s;

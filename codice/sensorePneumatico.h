@@ -7,8 +7,8 @@
 namespace sensore{
     class SensorePneumatico: public Sensore{
         private:
-            std::string brand;
-            double age;
+            std::string marcaPneu;
+            double eta;
         public:
 
             SensorePneumatico(
@@ -22,11 +22,11 @@ namespace sensore{
                 const double a);
 
 
-            const std::string& getBrand() const;
-            double getAge() const;
+            const std::string& getMarcaPneu() const;
+            double getEta() const;
 
-            void setBrand(std::string br);
-            void setAge(double a);
+            void setMarcaPneu(std::string br);
+            void setEta(double a);
 
             virtual void accept(SensorVisitorInterface& visitor);
             virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob);

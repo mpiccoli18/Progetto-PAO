@@ -5,13 +5,13 @@
 #include<QPushButton>
 #include<QScrollArea>
 namespace sensore{
-    searchBarPanel::searchBarPanel(std::vector<Sensore*> v, QWidget* parent): QWidget(parent), vectors(v){
+    searchBarPanel::searchBarPanel(std::vector<Sensore*> v, QWidget* parent): QWidget(parent), vettore(v){
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
         // Campo di testo per la ricerca
-        searchLineEdit = new QLineEdit(this);
-        layout->addWidget(searchLineEdit);
+        ricerca = new QLineEdit(this);
+        layout->addWidget(ricerca);
 
         // Pulsante per confermare la ricerca
         QPushButton* searchButton = new QPushButton("Cerca", this);
@@ -21,29 +21,29 @@ namespace sensore{
         connect(this, &searchBarPanel::StartSearch, this, &searchBarPanel::Search);
     }
 
-    std::vector<Sensore*> searchBarPanel::getVectors() const{
-        std::vector<Sensore*> vettore;
+    std::vector<Sensore*> searchBarPanel::getVettore() const{
+        std::vector<Sensore*> v;
 
-        for(auto i = vectors.begin(); i != vectors.end(); i++)
+        for(auto i = vettore.begin(); i != vettore.end(); i++)
         {
-            vettore.push_back(*i);
+            v.push_back(*i);
         }
-        return vettore;
+        return v;
     }
 
     void searchBarPanel::Search()
     {
-        if(searchResult)
+        if(risultati)
         {
-            this->layout()->removeWidget(searchResult);
-            delete searchResult;
-            searchResult = nullptr;
+            this->layout()->removeWidget(risultati);
+            delete risultati;
+            risultati = nullptr;
         }
-        searchResult = new QWidget();
+        risultati = new QWidget();
         QVBoxLayout *searchLayout = new QVBoxLayout();
-        searchResult->setLayout(searchLayout);
-        std::string search = (this->searchLineEdit->text()).toStdString();
-        std::vector<Sensore*> searchVet = this->getVectors();
+        risultati->setLayout(searchLayout);
+        std::string search = (this->ricerca->text()).toStdString();
+        std::vector<Sensore*> searchVet = this->getVettore();
         if(searchVet.empty())
         {
             QWidget *sensorInfo = new QWidget();
@@ -69,22 +69,22 @@ namespace sensore{
             searchLayout->addWidget(scrollArea);
             bool trovato = false;
             for(int i = 0; i < searchVet.size(); i++) {
-                QString searchStr = QString::fromStdString(searchVet[i]->getName());
-                if(searchVet[i]->getName() == search || (searchStr.contains(QString::fromStdString(search), Qt::CaseInsensitive) && search != ""))
+                QString searchStr = QString::fromStdString(searchVet[i]->getNome());
+                if(searchVet[i]->getNome() == search || (searchStr.contains(QString::fromStdString(search), Qt::CaseInsensitive) && search != ""))
                 {
                     QWidget *sensorInfo = new QWidget();
                     sensorInfo->setObjectName("sensorInfo");
                     sensorInfo->setStyleSheet("QWidget#sensorInfo {border-bottom: 1px solid black;}");
                     QVBoxLayout *sensorLayout = new QVBoxLayout();
                     sensorInfo->setLayout(sensorLayout);
-                    QLabel *nome = new QLabel("Nome: " + QString::fromStdString(searchVet[i]->getName()));
+                    QLabel *nome = new QLabel("Nome: " + QString::fromStdString(searchVet[i]->getNome()));
                     nome->setStyleSheet("font: bold 14px;");
                     sensorLayout->addWidget(nome);
-                    QLabel *tipo = new QLabel("Tipo: " + QString::fromStdString(searchVet[i]->getType()));
+                    QLabel *tipo = new QLabel("Tipo: " + QString::fromStdString(searchVet[i]->getTipo()));
                     sensorLayout->addWidget(tipo);
-                    QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(searchVet[i]->getDescription()));
+                    QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(searchVet[i]->getDescrizione()));
                     sensorLayout->addWidget(descrizione);
-                    QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getName()));
+                    QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
                     connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i]() { emit StartView(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
                     scrollLayout->addWidget(sensorInfo);
@@ -102,6 +102,6 @@ namespace sensore{
                 scrollLayout->addWidget(sensorInfo);
             }
         }
-        this->layout()->addWidget(searchResult);
+        this->layout()->addWidget(risultati);
     }
 }

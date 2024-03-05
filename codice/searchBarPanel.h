@@ -10,15 +10,15 @@ namespace sensore{
     class searchBarPanel: public QWidget{
             Q_OBJECT
         private:
-            std::vector<Sensore*> vectors;
-            QLineEdit *searchLineEdit;
-            QWidget *searchResult = nullptr;
+            std::vector<Sensore*> vettore;
+            QLineEdit *ricerca;
+            QWidget *risultati = nullptr;
         public:
             searchBarPanel(const std::vector<Sensore*> v, QWidget *parent = nullptr);
 
-            std::vector<Sensore*> getVectors() const;
+            std::vector<Sensore*> getVettore() const;
 
-            void setVectors(Sensore* s);
+            void setVettore(Sensore* s);
 
         public slots:
             void Search();
