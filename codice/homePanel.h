@@ -7,7 +7,6 @@
 #include "sensorPanel.h"
 #include "searchBarPanel.h"
 #include "modello.h"
-
 namespace sensore{
     class homePanel : public QWidget{
         Q_OBJECT
@@ -20,7 +19,6 @@ namespace sensore{
             searchBarPanel* barraRicerca;
             QWidget *creazione;
             modello* mod;
-            std::vector<sensore::Sensore*> InsiemeSensori;
         public:
             homePanel(QWidget* parent = 0);
             Sensore* createSensorFromJson(const QString& sensorName, const QJsonObject& sensorObject);

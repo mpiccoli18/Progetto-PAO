@@ -16,7 +16,20 @@ namespace sensore{
         // Pulsante per confermare la ricerca
         QPushButton* searchButton = new QPushButton("Cerca", this);
         layout->addWidget(searchButton);
-
+        visualizzazione = new QScrollArea();
+        visualizzazione->setWidgetResizable(true);
+        scrollVisua = new QWidget();
+        scrollayout = new QVBoxLayout();
+        scrollVisua->setLayout(scrollayout);
+        visualizzazione->setWidget(scrollVisua);
+        layout->addWidget(visualizzazione);
+        QLabel* empty;
+        if(this->getVettore().empty())
+        {
+            empty = new QLabel("La lista di sensori è vuota, si prega di aggiungerne di nuovi!");
+            empty->setStyleSheet("font: bold 16px; color:red;");
+            scrollayout->addWidget(empty, 0, Qt::AlignTop);
+        }
         connect(searchButton, &QPushButton::pressed, this, &searchBarPanel::StartSearch);
         connect(this, &searchBarPanel::StartSearch, this, &searchBarPanel::Search);
     }

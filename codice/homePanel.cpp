@@ -1,6 +1,6 @@
-#include "homePanel.h"
 #include "SensorInfoVisitor.h"
 #include "modello.h"
+#include "homePanel.h"
 #include <QString>
 #include <QVBoxLayout>
 #include <QSplineSeries>
@@ -96,16 +96,16 @@ namespace sensore{
         QString sensorName;
         QJsonObject sensorObject;
         Sensore* s;
-            for(auto it = rootObject.begin(); it != rootObject.end(); ++it)
-            {
-                sensorName = it.key();
-                sensorObject = it.value().toObject();
-                s = createSensorFromJson(sensorName, sensorObject);
+        for(auto it = rootObject.begin(); it != rootObject.end(); ++it)
+        {
+            sensorName = it.key();
+            sensorObject = it.value().toObject();
+            s = createSensorFromJson(sensorName, sensorObject);
 
-                if (s) {
-                    mod->aggiungiSens(s);
-                }
+            if (s) {
+                mod->aggiungiSens(s);
             }
+        }
         QMessageBox::information(this, tr("Successo"), tr("Sensori caricati con successo!"));
         if(barraRicerca)
         {
@@ -209,8 +209,6 @@ namespace sensore{
         return nullptr;
     }
 
-
-
     std::vector<double> homePanel::parseJsonArray(const QJsonArray& jsonArray) {
         std::vector<double> values;
         for (const QJsonValue& value : jsonArray)
@@ -222,8 +220,6 @@ namespace sensore{
         }
         return values;
     }
-
-
 
     void homePanel::Create() {
         if(barraRicerca){
@@ -297,8 +293,6 @@ namespace sensore{
         layoutApp->setStretch(0, 1);
         layoutApp->setStretch(1, 2);
     }
-
-
 
     void homePanel::SensorSelected(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor, QVBoxLayout* createLayout)
     {
@@ -393,7 +387,7 @@ namespace sensore{
                     delete barraRicerca;
                     delete creazione;
                     creazione = nullptr;
-                    barraRicerca = new searchBarPanel(InsiemeSensori);
+                    barraRicerca = new searchBarPanel(mod->getInsiemeSens());
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
                     layoutApp->addWidget(pannello, 2);
@@ -559,8 +553,6 @@ namespace sensore{
         }
     }
 
-
-
     void homePanel::Modify(Sensore *s){
         if (grafico) {
             this->pannello->layout()->removeWidget(grafico);
@@ -656,8 +648,6 @@ namespace sensore{
         pannello->layout()->addWidget(modifica);
     }
 
-
-
     void homePanel::Update(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * max){
         s->setTipo(tipo->text().toStdString());
         s->setDescrizione(descrizione->text().toStdString());
@@ -700,8 +690,6 @@ namespace sensore{
             connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
         }
     }
-
-
 
     void homePanel::Simulation(){
         if (grafico) {
@@ -751,8 +739,6 @@ namespace sensore{
 
     }
 
-
-
     void homePanel::Exit(){
         if(modifica){
             this->pannello->layout()->removeWidget(modifica);
@@ -761,26 +747,13 @@ namespace sensore{
         }
     }
 
-
-
     void homePanel::Elimination(Sensore* s) {
         if(modifica)
             modifica = nullptr;
         if(grafico)
             grafico = nullptr;
         std::vector<Sensore*> v = mod->getInsiemeSens();
-        auto i = v.begin();
-        while(i != v.end())
-        {
-            if(*i == s)
-            {
-                delete *i;
-                mod->eliminaSens(i);
-            }
-            else{
-                i++;
-            }
-        }
+        mod->eliminaSens(s);
         sensoreGenerale = nullptr;
         s = nullptr;
         if(pannello)
@@ -799,7 +772,6 @@ namespace sensore{
             connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
         }
     }
-
 
 
     void homePanel::View(Sensore* s){ 

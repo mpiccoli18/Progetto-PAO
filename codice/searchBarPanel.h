@@ -3,7 +3,9 @@
 
 #include<vector>
 #include<QWidget>
+#include<QScrollArea>
 #include<QLineEdit>
+#include<QVBoxLayout>
 #include"sensore.h"
 
 namespace sensore{
@@ -13,6 +15,10 @@ namespace sensore{
             std::vector<Sensore*> vettore;
             QLineEdit *ricerca;
             QWidget *risultati = nullptr;
+            QScrollArea* visualizzazione;
+            QVBoxLayout* layoutV;
+            QVBoxLayout* scrollayout;
+            QWidget* scrollVisua;
         public:
             searchBarPanel(const std::vector<Sensore*> v, QWidget *parent = nullptr);
 

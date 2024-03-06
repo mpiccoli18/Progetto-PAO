@@ -3,9 +3,11 @@
 
 namespace sensore{
     MainWindow::MainWindow(){
-        homePanel* home = new homePanel(this);
+        home = new homePanel(this);
         setCentralWidget(home);
     }
 
-    MainWindow::~MainWindow() {}
+    MainWindow::~MainWindow() {
+        delete home;
+    }
 }

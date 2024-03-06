@@ -25,7 +25,18 @@ namespace sensore{
         InsiemeSensori.push_back(s);
     };
 
-    void modello::eliminaSens(std::vector<Sensore*>::iterator s){
-        InsiemeSensori.erase(s);
+    void modello::eliminaSens(Sensore* s){
+        auto j = InsiemeSensori.begin();
+        for(int i = 0; i < InsiemeSensori.size(); i++)
+        {
+            if(InsiemeSensori[i] == s)
+            {
+                InsiemeSensori.erase(j);
+            }
+            else
+            {
+                j++;
+            }
+        }
     };
 }

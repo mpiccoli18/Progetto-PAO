@@ -11,7 +11,7 @@ namespace sensore{
             modello();
             std::vector<sensore::Sensore*> getInsiemeSens() const;
             void aggiungiSens(Sensore* s);
-            void eliminaSens(std::vector<Sensore*>::iterator s);
+            void eliminaSens(Sensore* s);
     };
 }
 #endif // MODELLO_H
