@@ -38,7 +38,7 @@ namespace sensore{
         menu->addItem(spacer, 0, 4, 1, 1);
 
         mod = new modello();
-        barraRicerca = new searchBarPanel(mod->getInsiemeSens());// barra di ricerca
+        barraRicerca = new searchBarPanel(mod);// barra di ricerca
         layoutApp->addWidget(barraRicerca,1);
 
         pannello = new SensorPanel();// sensore
@@ -60,7 +60,7 @@ namespace sensore{
 
             delete barraRicerca;
             delete pannello;
-            barraRicerca = new searchBarPanel(mod->getInsiemeSens());
+            barraRicerca = new searchBarPanel(mod);
             pannello = new SensorPanel();
             layoutApp->addWidget(barraRicerca, 1);
             layoutApp->addWidget(pannello, 2);
@@ -111,7 +111,7 @@ namespace sensore{
         {
             delete barraRicerca;
             delete pannello;
-            barraRicerca = new searchBarPanel(mod->getInsiemeSens());
+            barraRicerca = new searchBarPanel(mod);
             pannello = new SensorPanel();
             layoutApp->addWidget(barraRicerca, 1);
             layoutApp->addWidget(pannello, 2);
@@ -235,7 +235,7 @@ namespace sensore{
             delete creazione;
             creazione = nullptr;
         }
-        barraRicerca = new searchBarPanel(mod->getInsiemeSens());
+        barraRicerca = new searchBarPanel(mod);
         connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
 
         creazione = new QWidget();
@@ -338,7 +338,7 @@ namespace sensore{
                     delete barraRicerca;
                     delete creazione;
                     creazione = nullptr;
-                    barraRicerca = new searchBarPanel(mod->getInsiemeSens());
+                    barraRicerca = new searchBarPanel(mod);
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
                     layoutApp->addWidget(pannello, 2);
@@ -387,7 +387,7 @@ namespace sensore{
                     delete barraRicerca;
                     delete creazione;
                     creazione = nullptr;
-                    barraRicerca = new searchBarPanel(mod->getInsiemeSens());
+                    barraRicerca = new searchBarPanel(mod);
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
                     layoutApp->addWidget(pannello, 2);
@@ -436,7 +436,7 @@ namespace sensore{
                     delete barraRicerca;
                     delete creazione;
                     creazione = nullptr;
-                    barraRicerca = new searchBarPanel(mod->getInsiemeSens());
+                    barraRicerca = new searchBarPanel(mod);
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
                     layoutApp->addWidget(pannello, 2);
@@ -485,7 +485,7 @@ namespace sensore{
                     delete barraRicerca;
                     delete creazione;
                     creazione = nullptr;
-                    barraRicerca = new searchBarPanel(mod->getInsiemeSens());
+                    barraRicerca = new searchBarPanel(mod);
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
                     layoutApp->addWidget(pannello, 2);
@@ -538,7 +538,7 @@ namespace sensore{
                     delete barraRicerca;
                     delete creazione;
                     creazione = nullptr;
-                    barraRicerca = new searchBarPanel(mod->getInsiemeSens());
+                    barraRicerca = new searchBarPanel(mod);
                     pannello = new SensorPanel();
                     layoutApp->addWidget(barraRicerca, 1);
                     layoutApp->addWidget(pannello, 2);
@@ -677,7 +677,7 @@ namespace sensore{
             modifica = nullptr;
 
             delete barraRicerca;
-            barraRicerca = new searchBarPanel(mod->getInsiemeSens());
+            barraRicerca = new searchBarPanel(mod);
             delete pannello;
             pannello = new SensorPanel();
             layoutApp->addWidget(barraRicerca, 1);
@@ -760,7 +760,7 @@ namespace sensore{
         {
             delete barraRicerca;
             delete pannello;
-            barraRicerca = new searchBarPanel(mod->getInsiemeSens());
+            barraRicerca = new searchBarPanel(mod);
             pannello = new SensorPanel();
             layoutApp->addWidget(barraRicerca, 1);
             layoutApp->addWidget(pannello, 2);

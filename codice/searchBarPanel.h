@@ -1,30 +1,27 @@
 #ifndef SEARCHBARPANEL_H
 #define SEARCHBARPANEL_H
 
-#include<vector>
-#include<QWidget>
-#include<QScrollArea>
-#include<QLineEdit>
-#include<QVBoxLayout>
-#include"sensore.h"
+#include <vector>
+#include <QWidget>
+#include <QScrollArea>
+#include <QLineEdit>
+#include <QVBoxLayout>
+#include "sensore.h"
+#include "modello.h"
 
 namespace sensore{
     class searchBarPanel: public QWidget{
             Q_OBJECT
         private:
-            std::vector<Sensore*> vettore;
             QLineEdit *ricerca;
             QWidget *risultati = nullptr;
             QScrollArea* visualizzazione;
             QVBoxLayout* layoutV;
             QVBoxLayout* scrollayout;
             QWidget* scrollVisua;
+            modello* mod;
         public:
-            searchBarPanel(const std::vector<Sensore*> v, QWidget *parent = nullptr);
-
-            std::vector<Sensore*> getVettore() const;
-
-            void setVettore(Sensore* s);
+            searchBarPanel(modello* m, QWidget *parent = nullptr);
 
         public slots:
             void Search();
