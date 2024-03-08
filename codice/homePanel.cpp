@@ -1,4 +1,4 @@
-#include "SensorInfoVisitor.h"
+
 #include "modello.h"
 #include "homePanel.h"
 #include <QString>
@@ -6,7 +6,6 @@
 #include <QSplineSeries>
 #include <QtCharts>
 #include <QLineEdit>
-#include <iostream>
 #include <vector>
 
 namespace sensore{
@@ -72,39 +71,22 @@ namespace sensore{
             connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
         }
 
-        QString filePath = QFileDialog::getOpenFileName(this, tr("Apri file JSON"), "", tr("File JSON (*.json)"));
-
-        if (filePath.isEmpty()) {
+        QString filePath = QFileDialog::getOpenFileName(this, tr("Apri file JSON"), "", tr("File JSON (*, *.json)"));
+        int warning = mod->apriSens(filePath);
+        if(warning == 1)
+        {
+            QMessageBox::warning(this, tr("Errore"), tr("Il file selezionato è vuoto!"));
             return;
         }
-
-        QFile file(filePath);
-        if (!file.open(QIODevice::ReadOnly)) {
-            QMessageBox::warning(this, tr("Errore"), tr("Impossibile aprire il file: ") + file.errorString());
+        if(warning == 2)
+        {
+            QMessageBox::warning(this, tr("Errore"), tr("Impossibile aprire il file"));
             return;
         }
-        QByteArray jsonData = file.readAll();
-        file.close();
-
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
-        if (!jsonDoc.isObject()) {
+        if(warning == 3)
+        {
             QMessageBox::warning(this, tr("Errore"), tr("Il file non contiene un oggetto JSON valido."));
             return;
-        }
-
-        QJsonObject rootObject = jsonDoc.object();
-        QString sensorName;
-        QJsonObject sensorObject;
-        Sensore* s;
-        for(auto it = rootObject.begin(); it != rootObject.end(); ++it)
-        {
-            sensorName = it.key();
-            sensorObject = it.value().toObject();
-            s = createSensorFromJson(sensorName, sensorObject);
-
-            if (s) {
-                mod->aggiungiSens(s);
-            }
         }
         QMessageBox::information(this, tr("Successo"), tr("Sensori caricati con successo!"));
         if(barraRicerca)
@@ -128,97 +110,14 @@ namespace sensore{
 
         QString filePath = QFileDialog::getSaveFileName(this, tr("Salva file JSON"), "", tr("File JSON (*.json)"));
 
-        if (filePath.isEmpty()) {
-            return;
-        }
-        if (!filePath.endsWith(".json", Qt::CaseInsensitive)) {
-            filePath += ".json";
-        }
+        int warning = mod->salvaSens(filePath);
 
-        QFile file(filePath);
-        if (!file.open(QIODevice::WriteOnly)) {
-            QMessageBox::warning(this, tr("Errore"), tr("Impossibile creare il file: ") + file.errorString());
-            return;
-        }
-
-        QJsonObject jsonObject;
-        for (Sensore* sensore : mod->getInsiemeSens()) {
-            QJsonObject sensorObject;
-            sensorObject["name"] = QString::fromStdString(sensore->getNome());
-            sensorObject["type"] = QString::fromStdString(sensore->getTipo());
-            sensorObject["description"] = QString::fromStdString(sensore->getDescrizione());
-            QJsonArray valuesArray;
-            for (double value : sensore->getValori()) {
-                valuesArray.append(value);
-            }
-            sensorObject["values"] = valuesArray;
-            sensorObject["valueMin"] = sensore->getMin();
-            sensorObject["valueMax"] = sensore->getMax();
-
-            SensorInfoVisitor visit;
-            QJsonObject* p = &sensorObject;
-            sensore->acceptSave(visit,p);
-
-            jsonObject[sensore->getNome().c_str()] = sensorObject;
-        }
-        QJsonDocument jsonDoc(jsonObject);
-
-        file.write(jsonDoc.toJson());
-        file.close();
-
-        QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);
-    }
-
-    Sensore* homePanel::createSensorFromJson(const QString& sensorName, const QJsonObject& sensorObject) {
-        QString name = sensorObject["name"].toString();
-        QString type = sensorObject["type"].toString();
-        QString description = sensorObject["description"].toString();
-        double valueMin = sensorObject["valueMin"].toDouble();
-        double valueMax = sensorObject["valueMax"].toDouble();
-
-        if (sensorName == "SensoreConsumo" || sensorName == "Sensore Consumo") {
-            double ottano = sensorObject["ottano"].toDouble();
-            std::vector<double> values = parseJsonArray(sensorObject["values"].toArray());
-            return new SensoreConsumo(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, ottano);
-        }
-
-        else if (sensorName == "SensoreGas" || sensorName == "Sensore Gas") {
-            double footprint = sensorObject["footprint"].toDouble();
-            std::vector<double> values = parseJsonArray(sensorObject["values"].toArray());
-            return new SensoreGas(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, footprint);
-        }
-
-        else if (sensorName == "SensoreMotore" || sensorName == "Sensore Motore") {
-            double cavalli = sensorObject["cavalli"].toDouble();
-            std::vector<double> values = parseJsonArray(sensorObject["values"].toArray());
-            return new SensoreMotore(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, cavalli);
-        }
-
-        else if (sensorName == "SensorePneumatico" || sensorName == "Sensore Pneumatico") {
-            QString brand = sensorObject["brand"].toString();
-            double age = sensorObject["age"].toDouble();
-            std::vector<double> values = parseJsonArray(sensorObject["values"].toArray());
-            return new SensorePneumatico(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, brand.toStdString(), age);
-        }
-
-        else if (sensorName == "SensoreBatteria" || sensorName == "Sensore Batteria"){
-            QString materials = sensorObject["materials"].toString();
-            std::vector<double> values = parseJsonArray(sensorObject["values"].toArray());
-            return new SensoreBatteria(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, materials.toStdString());
-        }
-        return nullptr;
-    }
-
-    std::vector<double> homePanel::parseJsonArray(const QJsonArray& jsonArray) {
-        std::vector<double> values;
-        for (const QJsonValue& value : jsonArray)
+        if(warning == 2)
         {
-            if (value.isDouble())
-            {
-                values.push_back(value.toDouble());
-            }
+            QMessageBox::warning(this, tr("Errore"), tr("Impossibile creare il file!"));
+            return;
         }
-        return values;
+        QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);
     }
 
     void homePanel::Create() {
@@ -261,16 +160,16 @@ namespace sensore{
         QLabel* labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
         QLineEdit* lineVal = new QLineEdit(creazione);
 
-        createLayout->addWidget(labeltype);
-        createLayout->addWidget(lineType);
-        createLayout->addWidget(labeldescr);
-        createLayout->addWidget(lineDescr);
-        createLayout->addWidget(labelmin);
-        createLayout->addWidget(lineMin);
-        createLayout->addWidget(labelmax);
-        createLayout->addWidget(lineMax);
-        createLayout->addWidget(labelval);
-        createLayout->addWidget(lineVal);
+        createLayout->addWidget(labeltype, 0, Qt::AlignTop);
+        createLayout->addWidget(lineType, 0, Qt::AlignTop);
+        createLayout->addWidget(labeldescr, 0, Qt::AlignTop);
+        createLayout->addWidget(lineDescr, 0, Qt::AlignTop);
+        createLayout->addWidget(labelmin, 0, Qt::AlignTop);
+        createLayout->addWidget(lineMin, 0, Qt::AlignTop);
+        createLayout->addWidget(labelmax, 0, Qt::AlignTop);
+        createLayout->addWidget(lineMax, 0, Qt::AlignTop);
+        createLayout->addWidget(labelval, 0, Qt::AlignTop);
+        createLayout->addWidget(lineVal, 0, Qt::AlignTop);
 
         QLabel* labelbox = new QLabel("Scegli il tipo del Sensore:");
         createLayout->addWidget(labelbox);
@@ -302,7 +201,6 @@ namespace sensore{
             delete item;
         }
 
-
         if (selectedSensor == "Sensore Batteria") {
             QLabel* labelmat = new QLabel("Materiali:");
             QLineEdit* lineMat = new QLineEdit(creazione);
@@ -311,28 +209,7 @@ namespace sensore{
             QPushButton* confirmButton = new QPushButton("Conferma");
             createLayout->addWidget(confirmButton);
             connect(confirmButton, &QPushButton::pressed, this, [this, selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineMat]() {
-
-                QString numString = lineVal->text();
-                std::vector<double> valArray;
-                QStringList input = numString.trimmed().split(" ");
-                foreach(QString numString, input)
-                {
-                    bool conversionOk;
-                    int num = numString.toDouble(&conversionOk);
-                    if(conversionOk)
-                    {
-                        valArray.push_back(num);
-                    }
-                    else
-                    {
-                        std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in double." << std::endl;
-                    }
-                }
-                Sensore* sensore = new SensoreBatteria(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
-                                                           lineMin->text().toDouble(), lineMax->text().toDouble(), lineMat->text().toStdString());
-
-                mod->aggiungiSens(sensore);
-
+                mod->creaSensBatteria(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineMat);
                 if(barraRicerca)
                 {
                     delete barraRicerca;
@@ -349,6 +226,7 @@ namespace sensore{
                     connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
                     connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
                 }
+                QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
         if (selectedSensor == "Sensore Consumo") {
@@ -360,28 +238,7 @@ namespace sensore{
             QPushButton* confirmButton = new QPushButton("Conferma");
             createLayout->addWidget(confirmButton);
             connect(confirmButton, &QPushButton::pressed, this, [this, selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt]() {
-
-                QString numString = lineVal->text();
-                std::vector<double> valArray;
-                QStringList input = numString.trimmed().split(" ");
-                foreach(QString numString, input)
-                {
-                    bool conversionOk;
-                    int num = numString.toDouble(&conversionOk);
-                    if(conversionOk)
-                    {
-                        valArray.push_back(num);
-                    }
-                    else
-                    {
-                        std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in double." << std::endl;
-                    }
-                }
-                Sensore* sensore = new SensoreConsumo(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
-                                                               lineMin->text().toDouble(), lineMax->text().toDouble(), lineOtt->text().toInt());
-
-                mod->aggiungiSens(sensore);
-
+                mod->creaSensConsumo(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt);
                 if(barraRicerca)
                 {
                     delete barraRicerca;
@@ -398,6 +255,7 @@ namespace sensore{
                     connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
                     connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
                 }
+                QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
         if (selectedSensor == "Sensore Motore") {
@@ -409,28 +267,7 @@ namespace sensore{
             QPushButton* confirmButton = new QPushButton("Conferma");
             createLayout->addWidget(confirmButton);
             connect(confirmButton, &QPushButton::pressed, this, [this, selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineCav]() {
-
-                QString numString = lineVal->text();
-                std::vector<double> valArray;
-                QStringList input = numString.trimmed().split(" ");
-                foreach(QString numString, input)
-                {
-                    bool conversionOk;
-                    int num = numString.toDouble(&conversionOk);
-                    if(conversionOk)
-                    {
-                        valArray.push_back(num);
-                    }
-                    else
-                    {
-                        std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in double." << std::endl;
-                    }
-                }
-                Sensore* sensore = new SensoreMotore(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
-                                                               lineMin->text().toDouble(), lineMax->text().toDouble(), lineCav->text().toUInt());
-
-                mod->aggiungiSens(sensore);
-
+                mod->creaSensMotore(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineCav);
                 if(barraRicerca)
                 {
                     delete barraRicerca;
@@ -447,6 +284,7 @@ namespace sensore{
                     connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
                     connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
                 }
+                QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
         if (selectedSensor == "Sensore Gas") {
@@ -458,28 +296,7 @@ namespace sensore{
             QPushButton* confirmButton = new QPushButton("Conferma");
             createLayout->addWidget(confirmButton);
             connect(confirmButton, &QPushButton::pressed, this, [this, selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineFootp]() {
-
-                QString numString = lineVal->text();
-                std::vector<double> valArray;
-                QStringList input = numString.trimmed().split(" ");
-                foreach(QString numString, input)
-                {
-                    bool conversionOk;
-                    int num = numString.toDouble(&conversionOk);
-                    if(conversionOk)
-                    {
-                        valArray.push_back(num);
-                    }
-                    else
-                    {
-                        std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in double." << std::endl;
-                    }
-                }
-                Sensore* sensore = new SensoreGas(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
-                                                               lineMin->text().toDouble(), lineMax->text().toDouble(), lineFootp->text().toDouble());
-
-                mod->aggiungiSens(sensore);
-
+                mod->creaSensConsumo(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineFootp);
                 if(barraRicerca)
                 {
                     delete barraRicerca;
@@ -496,6 +313,7 @@ namespace sensore{
                     connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
                     connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
                 }
+                QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
         if (selectedSensor == "Sensore Pneumatico") {
@@ -511,28 +329,7 @@ namespace sensore{
             QPushButton* confirmButton = new QPushButton("Conferma");
             createLayout->addWidget(confirmButton);
             connect(confirmButton, &QPushButton::pressed, this, [this, selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineBr, lineAge]() {
-
-                QString numString = lineVal->text();
-                std::vector<double> valArray;
-                QStringList input = numString.trimmed().split(" ");
-                foreach(QString numString, input)
-                {
-                    bool conversionOk;
-                    int num = numString.toDouble(&conversionOk);
-                    if(conversionOk)
-                    {
-                        valArray.push_back(num);
-                    }
-                    else
-                    {
-                        std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in double." << std::endl;
-                    }
-                }
-                Sensore* sensore = new SensorePneumatico(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
-                                                               lineMin->text().toDouble(), lineMax->text().toDouble(), lineBr->text().toStdString(), lineAge->text().toDouble());
-
-                mod->aggiungiSens(sensore);
-
+                mod->creaSensPneumatico(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineAge, lineBr);
                 if(barraRicerca)
                 {
                     delete barraRicerca;
@@ -548,7 +345,9 @@ namespace sensore{
                     connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
                     connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
                     connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+
                 }
+                QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
     }
@@ -584,16 +383,12 @@ namespace sensore{
         QLabel *labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
         QLineEdit *lineVal = new QLineEdit(this->pannello);
 
-        std::string type = s->getTipo();
-        std::string descr = s->getDescrizione();
-        double min = s->getMin();
-        double max = s->getMax();
         std::vector<double> v = s->getValori();
 
-        QString qtype = QString::fromStdString(type);
-        QString qdescr = QString::fromStdString(descr);
-        QString qmin = QString::number(min);
-        QString qmax = QString::number(max);
+        QString qtype = QString::fromStdString(s->getTipo());
+        QString qdescr = QString::fromStdString(s->getDescrizione());
+        QString qmin = QString::number(s->getMin());
+        QString qmax = QString::number(s->getMax());
         QString qval = "";
         for(auto i = v.begin(); i != v.end(); ++i){
             qval += QString::number(*i) + ' ';
@@ -649,7 +444,7 @@ namespace sensore{
     }
 
     void homePanel::Update(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * max){
-        s->setTipo(tipo->text().toStdString());
+        /*s->setTipo(tipo->text().toStdString());
         s->setDescrizione(descrizione->text().toStdString());
         QString numString = val->text();
         std::vector<double> valArray;
@@ -669,7 +464,7 @@ namespace sensore{
         }
         s->setValori(valArray);
         s->setMin(min->text().toDouble());
-        s->setMax(max->text().toDouble());
+        s->setMax(max->text().toDouble());*/
 
         if(modifica){
             this->pannello->layout()->removeWidget(modifica);
@@ -752,7 +547,6 @@ namespace sensore{
             modifica = nullptr;
         if(grafico)
             grafico = nullptr;
-        std::vector<Sensore*> v = mod->getInsiemeSens();
         mod->eliminaSens(s);
         sensoreGenerale = nullptr;
         s = nullptr;

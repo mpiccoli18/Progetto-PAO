@@ -1,0 +1,101 @@
+{
+    "Sensore Batteria": {
+        "description": "Misura l'efficienza della batteria di un'auto elettrica",
+        "materiali": "Litio",
+        "name": "Sensore Batteria",
+        "type": "Efficienza",
+        "valueMax": 100,
+        "valueMin": 0,
+        "values": [
+            90.2,
+            89.8,
+            91.5,
+            91,
+            89.5,
+            88.7,
+            90.3,
+            91.1,
+            90.8,
+            89.9,
+            91.3,
+            90.5
+        ]
+    },
+    "Sensore Consumo": {
+        "description": "Misura il consumo di benzina di un'auto",
+        "name": "Sensore Consumo",
+        "ottano": "84",
+        "type": "Benzina",
+        "valueMax": 100,
+        "valueMin": 0,
+        "values": [
+            50.2,
+            48.9,
+            52.5,
+            49.8,
+            53.7,
+            51.3,
+            47.6,
+            50.1,
+            48.7,
+            52.2,
+            49.6,
+            51.8
+        ]
+    },
+    "Sensore Gas": {
+        "description": "sasdasda",
+        "footprint": "51",
+        "name": "Sensore Gas",
+        "type": "Efficienza",
+        "valueMax": 10,
+        "valueMin": 0,
+        "values": [
+        ]
+    },
+    "Sensore Motore": {
+        "cavalli": "700",
+        "description": "Misura la temperatura del motore di una Ferrari",
+        "name": "Sensore Motore",
+        "type": "Temperatura",
+        "valueMax": 120,
+        "valueMin": 0,
+        "values": [
+            90.5,
+            92.3,
+            94,
+            95.2,
+            97.1,
+            98.5,
+            99.8,
+            100.3,
+            99.7,
+            98.1,
+            96.9,
+            94.8
+        ]
+    },
+    "Sensore Pneumatico": {
+        "age": "1.5",
+        "brand": "Michelin",
+        "description": "Misura la pressione degli pneumatici",
+        "name": "Sensore Pneumatico",
+        "type": "Pressione",
+        "valueMax": 3.5,
+        "valueMin": 0,
+        "values": [
+            2.3,
+            2.4,
+            2.2,
+            2.1,
+            2.5,
+            2.3,
+            2.4,
+            2.2,
+            2.3,
+            2.5,
+            2.4,
+            2.3
+        ]
+    }
+}
