@@ -17,11 +17,12 @@ namespace sensore{
             void eliminaSens(Sensore* s);
             int apriSens(QString doc);
             int salvaSens(QString doc);
-            void creaSensGas(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, QLineEdit* lineImp);
-            void creaSensMotore(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, QLineEdit* lineCav);
-            void creaSensPneumatico(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, QLineEdit* lineEta, QLineEdit* lineMarca);
-            void creaSensBatteria(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, QLineEdit* lineMat);
-            void creaSensConsumo(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, QLineEdit* lineOtt);
+            void creaSensGas(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineImp);
+            void creaSensMotore(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineCav);
+            void creaSensPneumatico(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineEta, QLineEdit* lineMarca);
+            void creaSensBatteria(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineMat);
+            void creaSensConsumo(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineOtt);
+            void aggiornaSens(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * max);
     };
 }
 #endif // MODELLO_H

@@ -2,11 +2,6 @@
 #define SENSORPANEL_H
 
 #include "Info.h"
-#include "sensoreBatteria.h"
-#include "sensoreConsumo.h"
-#include "sensoreGas.h"
-#include "sensorePneumatico.h"
-#include "sensoreMotore.h"
 
 namespace sensore{
     class SensorPanel: public QWidget{

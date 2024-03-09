@@ -48,20 +48,20 @@ namespace sensore{
 
 
     void SensorInfoVisitor::saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob){
-        (*ob)["brand"] = QString::fromStdString(sPneumatico.getMarcaPneu());
-        (*ob)["age"] = QString::number(sPneumatico.getEta());
+        (*ob)["Materiale Pneumatico"] = QString::fromStdString(sPneumatico.getMarcaPneu());
+        (*ob)["Eta Pneumatico"] = QString::number(sPneumatico.getEta());
     }
     void SensorInfoVisitor::saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob){
-        (*ob)["ottano"] = QString::number(sConsumo.getOttano());
+        (*ob)["Ottano"] = QString::number(sConsumo.getOttano());
     }
     void SensorInfoVisitor::saveSMotore(SensoreMotore& sMotore,QJsonObject* ob){
-        (*ob)["cavalli"] = QString::number(sMotore.getCavalli());
+        (*ob)["Cavalli"] = QString::number(sMotore.getCavalli());
     }
     void SensorInfoVisitor::saveSBatteria(SensoreBatteria& sBatteria,QJsonObject* ob){
-        (*ob)["materiali"] = QString::fromStdString(sBatteria.getMateriale());
+        (*ob)["Materiale"] = QString::fromStdString(sBatteria.getMateriale());
     }
     void SensorInfoVisitor::saveSGas(SensoreGas& sGas,QJsonObject* ob){
-        (*ob)["footprint"] = QString::number(sGas.getImpronta());
+        (*ob)["Impronta"] = QString::number(sGas.getImpronta());
     }
 
 }

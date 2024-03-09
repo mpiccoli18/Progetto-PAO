@@ -83,40 +83,40 @@ namespace sensore{
     }
 
     Sensore* modello::creaSensDaJson(const QString& sensorName, const QJsonObject& sensorObject) {
-        QString name = sensorObject["nome"].toString();
-        QString type = sensorObject["tipo"].toString();
-        QString description = sensorObject["descrizione"].toString();
-        double valueMin = sensorObject["minimo"].toDouble();
-        double valueMax = sensorObject["massimo"].toDouble();
+        QString name = sensorObject["Nome"].toString();
+        QString type = sensorObject["Tipo"].toString();
+        QString description = sensorObject["Descrizione"].toString();
+        double valueMin = sensorObject["Minimo"].toDouble();
+        double valueMax = sensorObject["Massimo"].toDouble();
 
         if (sensorName == "SensoreConsumo" || sensorName == "Sensore Consumo") {
-            double ottano = sensorObject["ottano"].toDouble();
-            std::vector<double> values = daJsonAdArray(sensorObject["valori"].toArray());
+            double ottano = sensorObject["Ottano"].toDouble();
+            std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensoreConsumo(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, ottano);
         }
 
         else if (sensorName == "SensoreGas" || sensorName == "Sensore Gas") {
-            double footprint = sensorObject["impronta"].toDouble();
-            std::vector<double> values = daJsonAdArray(sensorObject["valori"].toArray());
+            double footprint = sensorObject["Impronta"].toDouble();
+            std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensoreGas(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, footprint);
         }
 
         else if (sensorName == "SensoreMotore" || sensorName == "Sensore Motore") {
-            double cavalli = sensorObject["cavalli"].toDouble();
-            std::vector<double> values = daJsonAdArray(sensorObject["valori"].toArray());
+            double cavalli = sensorObject["Cavalli"].toDouble();
+            std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensoreMotore(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, cavalli);
         }
 
         else if (sensorName == "SensorePneumatico" || sensorName == "Sensore Pneumatico") {
-            QString brand = sensorObject["marca pneumatico"].toString();
-            double age = sensorObject["eta"].toDouble();
-            std::vector<double> values = daJsonAdArray(sensorObject["valori"].toArray());
+            QString brand = sensorObject["Marca Pneumatico"].toString();
+            double age = sensorObject["Eta Pneumatico"].toDouble();
+            std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensorePneumatico(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, brand.toStdString(), age);
         }
 
         else if (sensorName == "SensoreBatteria" || sensorName == "Sensore Batteria"){
-            QString materials = sensorObject["materiale"].toString();
-            std::vector<double> values = daJsonAdArray(sensorObject["valori"].toArray());
+            QString materials = sensorObject["Materiale"].toString();
+            std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensoreBatteria(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, materials.toStdString());
         }
         return nullptr;
@@ -151,16 +151,16 @@ namespace sensore{
         QJsonObject jsonObject;
         for (Sensore* sensore : getInsiemeSens()) {
             QJsonObject sensorObject;
-            sensorObject["nome"] = QString::fromStdString(sensore->getNome());
-            sensorObject["tipo"] = QString::fromStdString(sensore->getTipo());
-            sensorObject["descrizione"] = QString::fromStdString(sensore->getDescrizione());
+            sensorObject["Nome"] = QString::fromStdString(sensore->getNome());
+            sensorObject["Tipo"] = QString::fromStdString(sensore->getTipo());
+            sensorObject["Descrizione"] = QString::fromStdString(sensore->getDescrizione());
             QJsonArray valuesArray;
             for (double value : sensore->getValori()) {
                 valuesArray.append(value);
             }
-            sensorObject["valori"] = valuesArray;
-            sensorObject["minimo"] = sensore->getMin();
-            sensorObject["massimo"] = sensore->getMax();
+            sensorObject["Valori"] = valuesArray;
+            sensorObject["Minimo"] = sensore->getMin();
+            sensorObject["Massimo"] = sensore->getMax();
 
             SensorInfoVisitor visit;
             QJsonObject* p = &sensorObject;
@@ -175,14 +175,14 @@ namespace sensore{
         return 3;
     }
 
-    void modello::creaSensGas(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, QLineEdit* lineImp){
+    void modello::creaSensGas(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineImp){
         QString numString = lineVal->text();
         std::vector<double> valArray;
         QStringList input = numString.trimmed().split(" ");
         foreach(QString numString, input)
         {
             bool conversionOk;
-            int num = numString.toDouble(&conversionOk);
+            double num = numString.toDouble(&conversionOk);
             if(conversionOk)
             {
                 valArray.push_back(num);
@@ -197,14 +197,14 @@ namespace sensore{
         aggiungiSens(sensore);
     }
 
-    void modello::creaSensMotore(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, QLineEdit* lineCav){
+    void modello::creaSensMotore(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineCav){
         QString numString = lineVal->text();
         std::vector<double> valArray;
         QStringList input = numString.trimmed().split(" ");
         foreach(QString numString, input)
         {
             bool conversionOk;
-            int num = numString.toDouble(&conversionOk);
+            double num = numString.toDouble(&conversionOk);
             if(conversionOk)
             {
                 valArray.push_back(num);
@@ -219,14 +219,14 @@ namespace sensore{
         aggiungiSens(sensore);
     }
 
-    void modello::creaSensPneumatico(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, QLineEdit* lineEta, QLineEdit* lineMarca){
+    void modello::creaSensPneumatico(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineEta, QLineEdit* lineMarca){
         QString numString = lineVal->text();
         std::vector<double> valArray;
         QStringList input = numString.trimmed().split(" ");
         foreach(QString numString, input)
         {
             bool conversionOk;
-            int num = numString.toDouble(&conversionOk);
+            double num = numString.toDouble(&conversionOk);
             if(conversionOk)
             {
                 valArray.push_back(num);
@@ -241,14 +241,14 @@ namespace sensore{
         aggiungiSens(sensore);
     }
 
-    void modello::creaSensBatteria(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, QLineEdit* lineMat){
+    void modello::creaSensBatteria(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineMat){
         QString numString = lineVal->text();
         std::vector<double> valArray;
         QStringList input = numString.trimmed().split(" ");
         foreach(QString numString, input)
         {
             bool conversionOk;
-            int num = numString.toDouble(&conversionOk);
+            double num = numString.toDouble(&conversionOk);
             if(conversionOk)
             {
                 valArray.push_back(num);
@@ -263,14 +263,14 @@ namespace sensore{
         aggiungiSens(sensore);
     }
 
-    void modello::creaSensConsumo(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, QLineEdit* lineOtt){
+    void modello::creaSensConsumo(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineOtt){
         QString numString = lineVal->text();
         std::vector<double> valArray;
         QStringList input = numString.trimmed().split(" ");
         foreach(QString numString, input)
         {
             bool conversionOk;
-            int num = numString.toDouble(&conversionOk);
+            double num = numString.toDouble(&conversionOk);
             if(conversionOk)
             {
                 valArray.push_back(num);
@@ -283,6 +283,30 @@ namespace sensore{
         Sensore* sensore = new SensoreConsumo(selectedSensor.toStdString(), lineType->text().toStdString(), lineDescr->text().toStdString(), valArray,
                                              lineMin->text().toDouble(), lineMax->text().toDouble(), lineOtt->text().toUInt());
         aggiungiSens(sensore);
+    }
+
+    void modello::aggiornaSens(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * max){
+        s->setTipo(tipo->text().toStdString());
+        s->setDescrizione(descrizione->text().toStdString());
+        QString numString = val->text();
+        std::vector<double> valArray;
+        QStringList input = numString.trimmed().split(" ");
+        foreach(QString numString, input)
+        {
+            bool conversionOk;
+            double num = numString.toDouble(&conversionOk);
+            if(conversionOk)
+            {
+                valArray.push_back(num);
+            }
+            else
+            {
+                std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in double." << std::endl;
+            }
+        }
+        s->setValori(valArray);
+        s->setMin(min->text().toDouble());
+        s->setMax(max->text().toDouble());
     }
 }
 

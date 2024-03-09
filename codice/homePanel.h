@@ -26,7 +26,6 @@ namespace sensore{
             void Modify(Sensore *s);
             void Simulation();
             void Elimination(Sensore* s);
-            void Update(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * max);
             void Open();
             void Save();
             void Create();
@@ -38,7 +37,6 @@ namespace sensore{
             void StartSave();
             void StartOpen();
             void StartCreate();
-            void StartUpdate(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * max);
             void StartExit();
             void StartSensorSelected(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor,QVBoxLayout* createLayout);
 

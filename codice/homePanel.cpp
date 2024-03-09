@@ -41,6 +41,8 @@ namespace sensore{
         layoutApp->addWidget(barraRicerca,1);
 
         pannello = new SensorPanel();// sensore
+        pannello->setStyleSheet("border: 1px solid black;");
+        qDebug() << pannello->styleSheet();
         layoutApp->addWidget(pannello,2);
 
         layoutApp->setStretch(0, 1);
@@ -431,9 +433,27 @@ namespace sensore{
         QPushButton *confirmButton = new QPushButton("Conferma", this->pannello);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
         connect(confirmButton, &QPushButton::pressed, this, [this, s, lineType, lineDescr, lineVal, lineMin, lineMax]() {
-            emit StartUpdate(s, lineType, lineDescr, lineVal, lineMin, lineMax);
+            mod->aggiornaSens(s, lineType, lineDescr, lineVal, lineMin, lineMax);
+            if(modifica){
+                this->pannello->layout()->removeWidget(modifica);
+                delete modifica;
+                modifica = nullptr;
+
+                delete barraRicerca;
+                barraRicerca = new searchBarPanel(mod);
+                delete pannello;
+                pannello = new SensorPanel();
+                layoutApp->addWidget(barraRicerca, 1);
+                layoutApp->addWidget(pannello, 2);
+                layoutApp->setStretch(0, 1);
+                layoutApp->setStretch(1, 2);
+                connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+                connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+                connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+                connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+            }
+            QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato aggiornato!"));
         });
-        connect(this, &homePanel::StartUpdate, this, &homePanel::Update);
 
         QPushButton *exitButton = new QPushButton("Annulla", this->pannello);
         modLayout->addWidget(exitButton, 0, Qt::AlignLeft);
@@ -441,49 +461,6 @@ namespace sensore{
         connect(this, &homePanel::StartExit, this, &homePanel::Exit);
 
         pannello->layout()->addWidget(modifica);
-    }
-
-    void homePanel::Update(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * max){
-        /*s->setTipo(tipo->text().toStdString());
-        s->setDescrizione(descrizione->text().toStdString());
-        QString numString = val->text();
-        std::vector<double> valArray;
-        QStringList input = numString.trimmed().split(" ");
-        foreach(QString numString, input)
-        {
-            bool conversionOk;
-            int num = numString.toDouble(&conversionOk);
-            if(conversionOk)
-            {
-                valArray.push_back(num);
-            }
-            else
-            {
-                std::cerr << "Errore durante la conversione di " << numString.toStdString() << " in double." << std::endl;
-            }
-        }
-        s->setValori(valArray);
-        s->setMin(min->text().toDouble());
-        s->setMax(max->text().toDouble());*/
-
-        if(modifica){
-            this->pannello->layout()->removeWidget(modifica);
-            delete modifica;
-            modifica = nullptr;
-
-            delete barraRicerca;
-            barraRicerca = new searchBarPanel(mod);
-            delete pannello;
-            pannello = new SensorPanel();
-            layoutApp->addWidget(barraRicerca, 1);
-            layoutApp->addWidget(pannello, 2);
-            layoutApp->setStretch(0, 1);
-            layoutApp->setStretch(1, 2);
-            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-            connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
-        }
     }
 
     void homePanel::Simulation(){
@@ -531,7 +508,6 @@ namespace sensore{
         grafico = new QChartView(chart);
         grafico->setRenderHint(QPainter::Antialiasing);
         this->pannello->layout()->addWidget(grafico);
-
     }
 
     void homePanel::Exit(){
