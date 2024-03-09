@@ -41,8 +41,6 @@ namespace sensore{
         layoutApp->addWidget(barraRicerca,1);
 
         pannello = new SensorPanel();// sensore
-        pannello->setStyleSheet("border: 1px solid black;");
-        qDebug() << pannello->styleSheet();
         layoutApp->addWidget(pannello,2);
 
         layoutApp->setStretch(0, 1);
@@ -140,8 +138,8 @@ namespace sensore{
         connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
 
         creazione = new QWidget();
-        QVBoxLayout* createLayout = new QVBoxLayout(creazione);
-
+        QVBoxLayout* createLayout = new QVBoxLayout();
+        creazione->setLayout(createLayout);
         QLabel* labeltitle = new QLabel("Creazione di un Sensore");
         labeltitle->setAlignment(Qt::AlignCenter);
         labeltitle->setStyleSheet("font: bold 14px;");
@@ -173,6 +171,7 @@ namespace sensore{
         createLayout->addWidget(labelval, 0, Qt::AlignTop);
         createLayout->addWidget(lineVal, 0, Qt::AlignTop);
 
+
         QLabel* labelbox = new QLabel("Scegli il tipo del Sensore:");
         createLayout->addWidget(labelbox);
 
@@ -184,6 +183,7 @@ namespace sensore{
         sensorTypeComboBox->addItem("Sensore Pneumatico");
 
         createLayout->addWidget(sensorTypeComboBox);
+        creazione->setFixedHeight(500);
 
         connect(sensorTypeComboBox, QOverload<int>::of(&QComboBox::activated), [=](int index) {
                 QString selectedOption = sensorTypeComboBox->itemText(index);
@@ -387,19 +387,15 @@ namespace sensore{
 
         std::vector<double> v = s->getValori();
 
-        QString qtype = QString::fromStdString(s->getTipo());
-        QString qdescr = QString::fromStdString(s->getDescrizione());
-        QString qmin = QString::number(s->getMin());
-        QString qmax = QString::number(s->getMax());
         QString qval = "";
         for(auto i = v.begin(); i != v.end(); ++i){
             qval += QString::number(*i) + ' ';
         }
 
-        lineType->setText(qtype);
-        lineDescr->setText(qdescr);
-        lineMin->setText(qmin);
-        lineMax->setText(qmax);
+        lineType->setText(QString::fromStdString(s->getTipo()));
+        lineDescr->setText(QString::fromStdString(s->getDescrizione()));
+        lineMin->setText(QString::number(s->getMin()));
+        lineMax->setText(QString::number(s->getMax()));
         lineVal->setText(qval);
 
         modLayout->addWidget(lineType);
