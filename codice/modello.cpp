@@ -298,6 +298,10 @@ namespace sensore{
         s->setMin(min->text().toDouble());
         s->setMax(max->text().toDouble());
     }
+
+    void modello::pulisciInsieme(){
+        InsiemeSensori.clear();
+    }
 }
 
 

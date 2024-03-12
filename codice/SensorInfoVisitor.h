@@ -27,6 +27,12 @@ namespace sensore{
             virtual void visitSBatteria(SensoreBatteria& sBatteria);
             virtual void visitSGas(SensoreGas& sGas);
 
+            virtual void modSPneumatico(SensorePneumatico& sPneumatico, modello* m);
+            virtual void modSConsumo(SensoreConsumo& sConsumo, modello* m);
+            virtual void modSMotore(SensoreMotore& sMotore, modello* m);
+            virtual void modSBatteria(SensoreBatteria& sBatteria, modello* m);
+            virtual void modSGas(SensoreGas& sGas, modello* m);
+
             virtual void saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob);
             virtual void saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob);
             virtual void saveSMotore(SensoreMotore& sMotore,QJsonObject* ob);

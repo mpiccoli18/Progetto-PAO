@@ -68,26 +68,78 @@ namespace sensore{
             connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
             connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
         }
+        if(modificato == true && !(nomeFile.isEmpty()))
+        {
+            QWidget *noModifiche = new QWidget();
+            QVBoxLayout *modificheLayout = new QVBoxLayout();
+            noModifiche->setLayout(modificheLayout);
+            QLabel* mod = new QLabel("Attenzione: hai delle modifiche non salvate!");
+            mod->setStyleSheet("font: bold 16px");
+            modificheLayout->addWidget(mod);
+            QPushButton* salva = new QPushButton("Salva");
+            QPushButton* annulla = new QPushButton("Annulla");
+            modificheLayout->addWidget(salva);
+            modificheLayout->addWidget(annulla);
+            connect(salva, &QPushButton::pressed, this, [=]{
+                SaveStessoFile();
+                noModifiche->close();
+                modificato = false;
+            });
+            connect(annulla, &QPushButton::pressed, this, [=] {
+                noModifiche->close();
+            });
+            noModifiche->show();
+        }
+        else if(modificato == true)
+        {
+            QWidget *noModifiche = new QWidget();
+            QVBoxLayout *modificheLayout = new QVBoxLayout();
+            noModifiche->setLayout(modificheLayout);
+            QLabel* mod = new QLabel("Attenzione: hai delle modifiche non salvate!");
+            mod->setStyleSheet("font: bold 16px");
+            modificheLayout->addWidget(mod);
+            QPushButton* salva = new QPushButton("Salva con nome");
+            QPushButton* annulla = new QPushButton("Annulla");
+            modificheLayout->addWidget(salva);
+            modificheLayout->addWidget(annulla);
+            connect(salva, &QPushButton::pressed, this, [=]{
+                Save();
+                noModifiche->close();
+                modificato = false;
+            });
+            connect(annulla, &QPushButton::pressed, this, [=] {
+                noModifiche->close();
+            });
+            noModifiche->show();
+        }
+        else
+        {
 
-        QString filePath = QFileDialog::getOpenFileName(this, tr("Apri file JSON"), "", tr("File JSON (*.json)"));
-        nomeFile = filePath;
-        int warning = mod->apriSens(filePath);
-        if(warning == 1)
-        {
-            QMessageBox::warning(this, tr("Errore"), tr("Il file selezionato è vuoto!"));
-            return;
+            QString filePath = QFileDialog::getOpenFileName(this, tr("Apri file JSON"), "", tr("File JSON (*.json)"));
+            nomeFile = filePath;
+            if(!(nomeFile.isEmpty()))
+            {
+                mod->pulisciInsieme();
+            }
+            int warning = mod->apriSens(filePath);
+            if(warning == 1)
+            {
+                QMessageBox::warning(this, tr("Errore"), tr("Il file selezionato è vuoto!"));
+                return;
+            }
+            if(warning == 2)
+            {
+                QMessageBox::warning(this, tr("Errore"), tr("Impossibile aprire il file"));
+                return;
+            }
+            if(warning == 3)
+            {
+                QMessageBox::warning(this, tr("Errore"), tr("Il file non contiene un oggetto JSON valido."));
+                return;
+            }
+            QMessageBox::information(this, tr("Successo"), tr("Sensori caricati con successo!"));
+
         }
-        if(warning == 2)
-        {
-            QMessageBox::warning(this, tr("Errore"), tr("Impossibile aprire il file"));
-            return;
-        }
-        if(warning == 3)
-        {
-            QMessageBox::warning(this, tr("Errore"), tr("Il file non contiene un oggetto JSON valido."));
-            return;
-        }
-        QMessageBox::information(this, tr("Successo"), tr("Sensori caricati con successo!"));
         if(barraRicerca)
         {
             delete barraRicerca;
@@ -121,6 +173,10 @@ namespace sensore{
             QMessageBox::warning(this, tr("Errore"), tr("Impossibile creare il file!"));
             return;
         }
+        if(!(filePath.isEmpty()))
+        {
+            modificato = false;
+        }
         QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);
     }
 
@@ -140,6 +196,7 @@ namespace sensore{
         }
         QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + nomeFile);
         saveStessoFile->setEnabled(false);
+        modificato = false;
     }
 
     void homePanel::Create() {
@@ -255,6 +312,7 @@ namespace sensore{
                 {
                     saveStessoFile->setEnabled(true);
                 }
+                modificato = true;
                 QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
@@ -288,6 +346,7 @@ namespace sensore{
                 {
                     saveStessoFile->setEnabled(true);
                 }
+                modificato = true;
                 QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
@@ -321,6 +380,7 @@ namespace sensore{
                 {
                     saveStessoFile->setEnabled(true);
                 }
+                modificato = true;
                 QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
@@ -354,6 +414,7 @@ namespace sensore{
                 {
                     saveStessoFile->setEnabled(true);
                 }
+                modificato = true;
                 QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
@@ -392,6 +453,7 @@ namespace sensore{
                 {
                     saveStessoFile->setEnabled(true);
                 }
+                modificato = true;
                 QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
@@ -408,11 +470,12 @@ namespace sensore{
             delete modifica;
             modifica = nullptr;
         }
+        SensorInfoVisitor visitor;
+        s->acceptMod(visitor);
+        modifica = visitor.getWidget();
 
-        modifica = new QWidget();
-
-        QVBoxLayout* modLayout = new QVBoxLayout(modifica);
-
+        //QVBoxLayout* modLayout = new QVBoxLayout(visitor.getWidget());
+/*
         QLabel *labeltype = new QLabel("Tipologia:");
         QLineEdit *lineType = new QLineEdit(this->pannello);
 
@@ -493,10 +556,12 @@ namespace sensore{
             }
             QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato aggiornato!"));
             saveStessoFile->setEnabled(true);
+            modificato = true;
         });
+*/
 
-        QPushButton *exitButton = new QPushButton("Annulla", this->pannello);
-        modLayout->addWidget(exitButton, 0, Qt::AlignLeft);
+        QPushButton *exitButton = new QPushButton("Annulla", modifica);
+        modifica->layout()->addWidget(exitButton);
         connect(exitButton, &QPushButton::pressed, this, &homePanel::StartExit);
         connect(this, &homePanel::StartExit, this, &homePanel::Exit);
 
@@ -581,6 +646,11 @@ namespace sensore{
             connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
             connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
         }
+        if(!(nomeFile.isEmpty()))
+        {
+            saveStessoFile->setEnabled(true);
+        }
+        modificato = true;
     }
 
 

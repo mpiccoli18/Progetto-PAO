@@ -3,7 +3,7 @@
 namespace sensore{
     searchBarPanel::searchBarPanel(modello* m, QWidget* parent): QWidget(parent){
         QVBoxLayout* layout = new QVBoxLayout(this);
-        layout->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+        layout->setAlignment(Qt::AlignTop);
 
         // Campo di testo per la ricerca
         ricerca = new QLineEdit(this);
@@ -12,6 +12,7 @@ namespace sensore{
         // Pulsante per confermare la ricerca
         QPushButton* searchButton = new QPushButton("Cerca", this);
         layout->addWidget(searchButton);
+
         visualizzazione = new QScrollArea();
         visualizzazione->setWidgetResizable(true);
         scrollVisua = new QWidget();
@@ -29,6 +30,7 @@ namespace sensore{
         }
         else
         {
+            QVBoxLayout* sensorContainerLayout = new QVBoxLayout();
             std::vector<Sensore*> searchVet = mod->getInsiemeSens();
             for(int i = 0; i < searchVet.size(); i++) {
                 QWidget *sensorInfo = new QWidget();
@@ -37,6 +39,7 @@ namespace sensore{
                                           "QWidget#sensorInfo:hover {background-color: lightgrey;}");
                 sensorInfo->setFixedHeight(150);
                 QVBoxLayout *sensorLayout = new QVBoxLayout();
+                sensorLayout->setContentsMargins(10, 10, 10, 10);
                 sensorInfo->setLayout(sensorLayout);
                 QLabel *nome = new QLabel("Nome: " + QString::fromStdString(searchVet[i]->getNome()));
                 nome->setStyleSheet("font: bold 14px;");
@@ -48,8 +51,10 @@ namespace sensore{
                 QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
                 connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                 sensorLayout->addWidget(visualizza);
-                scrollayout->addWidget(sensorInfo, 1, Qt::AlignTop);
+                sensorContainerLayout->addWidget(sensorInfo);
             }
+            scrollayout->addLayout(sensorContainerLayout);
+            scrollayout->addStretch();
         }
         connect(searchButton, &QPushButton::pressed, this, &searchBarPanel::StartSearch);
         connect(this, &searchBarPanel::StartSearch, this, &searchBarPanel::Search);
@@ -105,7 +110,7 @@ namespace sensore{
                     QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
                     connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
-                    scrollayout->addWidget(sensorInfo, 1, Qt::AlignTop);
+                    scrollayout->addWidget(sensorInfo, 0, Qt::AlignTop);
                     trovato = true;
                 }
                 if(search == "")
@@ -127,7 +132,7 @@ namespace sensore{
                     QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
                     connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
-                    scrollayout->addWidget(sensorInfo, 1, Qt::AlignTop);
+                    scrollayout->addWidget(sensorInfo, 0, Qt::AlignTop);
                     trovato = true;
                 }
             }

@@ -4,7 +4,6 @@
 #include "sensore.h"
 #include "sensorPanel.h"
 #include "searchBarPanel.h"
-#include "modello.h"
 #include <QString>
 #include <QVBoxLayout>
 #include <QSplineSeries>
@@ -28,6 +27,7 @@ namespace sensore{
             modello* mod;
             QString nomeFile;
             QPushButton* saveStessoFile;
+            bool modificato = false;
         public:
             homePanel(QWidget* parent = 0);
 

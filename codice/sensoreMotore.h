@@ -22,6 +22,7 @@ namespace sensore{
         void setCavalli(unsigned int hor);
 
         virtual void accept(SensorVisitorInterface& visitor);
+        virtual void acceptMod(SensorVisitorInterface& visitor);
         virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob);
 
     };

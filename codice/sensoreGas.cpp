@@ -12,6 +12,11 @@ namespace sensore{
     void SensoreGas::accept(SensorVisitorInterface& visitor){
         visitor.visitSGas(*this);
     }
+
+    void SensoreGas::acceptMod(SensorVisitorInterface& visitor){
+        visitor.modSGas(*this);
+    }
+
     void SensoreGas::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
         visitor.saveSGas(*this, ob);
     }

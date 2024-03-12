@@ -24,6 +24,7 @@ namespace sensore{
             void setMateriale(std::string mat);
 
             virtual void accept(SensorVisitorInterface& visitor);
+            virtual void acceptMod(SensorVisitorInterface& visitor);
             virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob);
 
     };

@@ -1,12 +1,6 @@
 #ifndef MODELLO_H
 #define MODELLO_H
 
-#include "sensore.h"
-#include "sensoreBatteria.h"
-#include "sensoreConsumo.h"
-#include "sensorePneumatico.h"
-#include "sensoreGas.h"
-#include "sensoreMotore.h"
 #include "SensorInfoVisitor.h"
 #include <vector>
 #include <iostream>
@@ -37,6 +31,7 @@ namespace sensore{
             void creaSensBatteria(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineMat);
             void creaSensConsumo(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineOtt);
             void aggiornaSens(Sensore *s, QLineEdit * tipo, QLineEdit *descrizione, QLineEdit * val, QLineEdit * min, QLineEdit * max);
+            void pulisciInsieme();
     };
 }
 #endif // MODELLO_H

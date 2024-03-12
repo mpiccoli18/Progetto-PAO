@@ -2,8 +2,6 @@
 #define SENSORECONSUMO_H
 
 #include "sensore.h"
-#include <string>
-#include <vector>
 
 namespace sensore{
     class SensoreConsumo: public Sensore{
@@ -26,6 +24,7 @@ namespace sensore{
             void setOttano(int ot);
 
             virtual void accept(SensorVisitorInterface& visitor);
+            virtual void acceptMod(SensorVisitorInterface& visitor);
             virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob);
 
        };
