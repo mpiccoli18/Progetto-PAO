@@ -1,5 +1,3 @@
-#include <string>
-#include <vector>
 #include "sensore.h"
 
 namespace sensore{

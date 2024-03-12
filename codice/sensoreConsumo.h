@@ -2,6 +2,8 @@
 #define SENSORECONSUMO_H
 
 #include "sensore.h"
+#include <string>
+#include <vector>
 
 namespace sensore{
     class SensoreConsumo: public Sensore{

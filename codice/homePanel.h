@@ -1,12 +1,19 @@
 #ifndef HOMEPANEL_H
 #define HOMEPANEL_H
 
-#include <QWidget>
-#include <QtCharts>
 #include "sensore.h"
 #include "sensorPanel.h"
 #include "searchBarPanel.h"
 #include "modello.h"
+#include <QString>
+#include <QVBoxLayout>
+#include <QSplineSeries>
+#include <QtCharts>
+#include <QLineEdit>
+#include <vector>
+#include <QWidget>
+#include <QtCharts>
+
 namespace sensore{
     class homePanel : public QWidget{
         Q_OBJECT
@@ -19,6 +26,8 @@ namespace sensore{
             searchBarPanel* barraRicerca;
             QWidget *creazione;
             modello* mod;
+            QString nomeFile;
+            QPushButton* saveStessoFile;
         public:
             homePanel(QWidget* parent = 0);
 
@@ -28,6 +37,7 @@ namespace sensore{
             void Elimination(Sensore* s);
             void Open();
             void Save();
+            void SaveStessoFile();
             void Create();
             void Exit();
             void View(Sensore* sensore);
@@ -35,6 +45,7 @@ namespace sensore{
 
         signals:
             void StartSave();
+            void StartSaveStessoFile();
             void StartOpen();
             void StartCreate();
             void StartExit();

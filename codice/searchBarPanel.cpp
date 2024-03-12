@@ -1,9 +1,5 @@
 #include "searchBarPanel.h"
-#include<QVBoxLayout>
-#include<QLabel>
-#include<QLineEdit>
-#include<QPushButton>
-#include<QScrollArea>
+
 namespace sensore{
     searchBarPanel::searchBarPanel(modello* m, QWidget* parent): QWidget(parent){
         QVBoxLayout* layout = new QVBoxLayout(this);
@@ -52,7 +48,7 @@ namespace sensore{
                 QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
                 connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                 sensorLayout->addWidget(visualizza);
-                scrollayout->addWidget(sensorInfo, 0, Qt::AlignTop);
+                scrollayout->addWidget(sensorInfo, 1, Qt::AlignTop);
             }
         }
         connect(searchButton, &QPushButton::pressed, this, &searchBarPanel::StartSearch);
@@ -109,7 +105,29 @@ namespace sensore{
                     QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
                     connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
-                    scrollayout->addWidget(sensorInfo, 0, Qt::AlignTop);
+                    scrollayout->addWidget(sensorInfo, 1, Qt::AlignTop);
+                    trovato = true;
+                }
+                if(search == "")
+                {
+                    QWidget *sensorInfo = new QWidget();
+                    sensorInfo->setObjectName("sensorInfo");
+                    sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black;}"
+                                              "QWidget#sensorInfo:hover {background-color: lightgrey;}");
+                    sensorInfo->setFixedHeight(150);
+                    QVBoxLayout *sensorLayout = new QVBoxLayout();
+                    sensorInfo->setLayout(sensorLayout);
+                    QLabel *nome = new QLabel("Nome: " + QString::fromStdString(searchVet[i]->getNome()));
+                    nome->setStyleSheet("font: bold 14px;");
+                    sensorLayout->addWidget(nome);
+                    QLabel *tipo = new QLabel("Tipo: " + QString::fromStdString(searchVet[i]->getTipo()));
+                    sensorLayout->addWidget(tipo);
+                    QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(searchVet[i]->getDescrizione()));
+                    sensorLayout->addWidget(descrizione);
+                    QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
+                    connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
+                    sensorLayout->addWidget(visualizza);
+                    scrollayout->addWidget(sensorInfo, 1, Qt::AlignTop);
                     trovato = true;
                 }
             }

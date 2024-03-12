@@ -2,6 +2,8 @@
 #define SENSORPANEL_H
 
 #include "Info.h"
+#include <QHBoxLayout>
+#include <QPushButton>
 
 namespace sensore{
     class SensorPanel: public QWidget{

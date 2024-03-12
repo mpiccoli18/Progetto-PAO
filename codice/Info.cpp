@@ -1,7 +1,4 @@
 #include "Info.h"
-#include <QVBoxLayout>
-#include <QString>
-#include "SensorInfoVisitor.h"
 
 namespace sensore {
     Info::Info(Sensore& sensor, QWidget* parent)

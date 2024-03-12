@@ -6,6 +6,10 @@
 #include <QScrollArea>
 #include <QLineEdit>
 #include <QVBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QScrollArea>
 #include "sensore.h"
 #include "modello.h"
 

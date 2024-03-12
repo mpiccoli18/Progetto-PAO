@@ -1,12 +1,4 @@
-
-#include "modello.h"
 #include "homePanel.h"
-#include <QString>
-#include <QVBoxLayout>
-#include <QSplineSeries>
-#include <QtCharts>
-#include <QLineEdit>
-#include <vector>
 
 namespace sensore{
     homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr)
@@ -18,23 +10,29 @@ namespace sensore{
         layoutApp = new QHBoxLayout();
         layout->addLayout(layoutApp);
 
-        QPushButton* save = new QPushButton("Salva");
+        QPushButton* save = new QPushButton("Salva con nome");
         menu->addWidget(save, 0, 0, 1, 1);
         connect(save, &QPushButton::pressed, this, &homePanel::StartSave);
         connect(this, &homePanel::StartSave, this, &homePanel::Save);
 
+        saveStessoFile = new QPushButton("Salva");
+        menu->addWidget(saveStessoFile, 0, 2, 1, 1);
+        saveStessoFile->setEnabled(false);
+        connect(saveStessoFile, &QPushButton::pressed, this, &homePanel::StartSaveStessoFile);
+        connect(this, &homePanel::StartSaveStessoFile, this, &homePanel::SaveStessoFile);
+
         QPushButton* open = new QPushButton("Apri");
-        menu->addWidget(open, 0, 2, 1, 1);
+        menu->addWidget(open, 0, 3, 1, 1);
         connect(open, &QPushButton::pressed, this, &homePanel::StartOpen);
         connect(this, &homePanel::StartOpen, this, &homePanel::Open);
 
         QPushButton* create = new QPushButton("Crea");
-        menu->addWidget(create, 0, 3, 1, 1);
+        menu->addWidget(create, 0, 4, 1, 1);
         connect(create, &QPushButton::pressed, this, &homePanel::StartCreate);
         connect(this, &homePanel::StartCreate, this, &homePanel::Create);
 
         QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-        menu->addItem(spacer, 0, 4, 1, 1);
+        menu->addItem(spacer, 0, 5, 1, 1);
 
         mod = new modello();
         barraRicerca = new searchBarPanel(mod);// barra di ricerca
@@ -71,7 +69,8 @@ namespace sensore{
             connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
         }
 
-        QString filePath = QFileDialog::getOpenFileName(this, tr("Apri file JSON"), "", tr("File JSON (*, *.json)"));
+        QString filePath = QFileDialog::getOpenFileName(this, tr("Apri file JSON"), "", tr("File JSON (*.json)"));
+        nomeFile = filePath;
         int warning = mod->apriSens(filePath);
         if(warning == 1)
         {
@@ -112,12 +111,35 @@ namespace sensore{
 
         int warning = mod->salvaSens(filePath);
 
+        if(warning == 1)
+        {
+            QMessageBox::warning(this, tr("Errore"), tr("Il file selezionato è vuoto!"));
+            return;
+        }
         if(warning == 2)
         {
             QMessageBox::warning(this, tr("Errore"), tr("Impossibile creare il file!"));
             return;
         }
         QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);
+    }
+
+    void homePanel::SaveStessoFile(){
+
+        int warning = mod->salvaSens(nomeFile);
+
+        if(warning == 1)
+        {
+            QMessageBox::warning(this, tr("Errore"), tr("Il file selezionato è vuoto!"));
+            return;
+        }
+        if(warning == 2)
+        {
+            QMessageBox::warning(this, tr("Errore"), tr("Impossibile creare il file!"));
+            return;
+        }
+        QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + nomeFile);
+        saveStessoFile->setEnabled(false);
     }
 
     void homePanel::Create() {
@@ -151,10 +173,10 @@ namespace sensore{
         QLabel* labeldescr = new QLabel("Descrizione:");
         QLineEdit* lineDescr = new QLineEdit(creazione);
 
-        QLabel* labelmin = new QLabel("Valore Min:");
+        QLabel* labelmin = new QLabel("Valore minimo:");
         QLineEdit* lineMin = new QLineEdit(creazione);
 
-        QLabel* labelmax = new QLabel("Valore Max:");
+        QLabel* labelmax = new QLabel("Valore massimo:");
         QLineEdit* lineMax = new QLineEdit(creazione);
 
         QLabel* labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
@@ -187,7 +209,8 @@ namespace sensore{
 
         connect(sensorTypeComboBox, QOverload<int>::of(&QComboBox::activated), [=](int index) {
                 QString selectedOption = sensorTypeComboBox->itemText(index);
-                emit StartSensorSelected(lineType, lineDescr, lineMin, lineMax, lineVal, selectedOption, createLayout); });
+                emit StartSensorSelected(lineType, lineDescr, lineMin, lineMax, lineVal, selectedOption, createLayout);
+        });
 
         layoutApp->addWidget(barraRicerca, 1);
         layoutApp->addWidget(creazione, 2);
@@ -228,6 +251,10 @@ namespace sensore{
                     connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
                     connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
                 }
+                if(!nomeFile.isEmpty())
+                {
+                    saveStessoFile->setEnabled(true);
+                }
                 QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
@@ -256,6 +283,10 @@ namespace sensore{
                     connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
                     connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
                     connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                }
+                if(!nomeFile.isEmpty())
+                {
+                    saveStessoFile->setEnabled(true);
                 }
                 QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
@@ -286,6 +317,10 @@ namespace sensore{
                     connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
                     connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
                 }
+                if(!nomeFile.isEmpty())
+                {
+                    saveStessoFile->setEnabled(true);
+                }
                 QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
@@ -314,6 +349,10 @@ namespace sensore{
                     connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
                     connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
                     connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                }
+                if(!nomeFile.isEmpty())
+                {
+                    saveStessoFile->setEnabled(true);
                 }
                 QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
@@ -348,6 +387,10 @@ namespace sensore{
                     connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
                     connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
 
+                }
+                if(!nomeFile.isEmpty())
+                {
+                    saveStessoFile->setEnabled(true);
                 }
                 QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
@@ -449,6 +492,7 @@ namespace sensore{
                 connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
             }
             QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato aggiornato!"));
+            saveStessoFile->setEnabled(true);
         });
 
         QPushButton *exitButton = new QPushButton("Annulla", this->pannello);

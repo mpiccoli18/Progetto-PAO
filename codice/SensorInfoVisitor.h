@@ -2,7 +2,16 @@
 #define SENSORINFOVISITOR_H
 
 #include <QWidget>
+#include <QLabel>
+#include <QString>
+#include <QPushButton>
+#include <QVBoxLayout>
 #include "SensorVisitorInterface.h"
+#include "sensorePneumatico.h"
+#include "sensoreConsumo.h"
+#include "sensoreMotore.h"
+#include "sensoreBatteria.h"
+#include "sensoreGas.h"
 
 namespace sensore{
 

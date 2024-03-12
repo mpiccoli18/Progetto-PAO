@@ -1,6 +1,3 @@
-#include <string>
-#include <vector>
-
 #include "sensorePneumatico.h"
 
 namespace sensore{

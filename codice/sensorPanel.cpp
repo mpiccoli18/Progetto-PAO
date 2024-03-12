@@ -1,6 +1,4 @@
 #include "sensorPanel.h"
-#include <QHBoxLayout>
-#include <QPushButton>
 
 namespace sensore{
     SensorPanel::SensorPanel(sensore::Sensore* s, QWidget* parent) : QWidget(parent), info(nullptr)

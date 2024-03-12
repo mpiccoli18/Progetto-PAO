@@ -1,14 +1,4 @@
-#include <QLabel>
-#include <QString>
-#include <QPushButton>
-#include <QVBoxLayout>
 #include "SensorInfoVisitor.h"
-#include "sensorePneumatico.h"
-#include "sensoreConsumo.h"
-#include "sensoreMotore.h"
-#include "sensoreBatteria.h"
-#include "sensoreGas.h"
-
 
 namespace sensore{
 
@@ -48,7 +38,7 @@ namespace sensore{
 
 
     void SensorInfoVisitor::saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob){
-        (*ob)["Materiale Pneumatico"] = QString::fromStdString(sPneumatico.getMarcaPneu());
+        (*ob)["Marca Pneumatico"] = QString::fromStdString(sPneumatico.getMarcaPneu());
         (*ob)["Eta Pneumatico"] = QString::number(sPneumatico.getEta());
     }
     void SensorInfoVisitor::saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob){

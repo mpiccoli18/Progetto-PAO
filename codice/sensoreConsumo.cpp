@@ -1,6 +1,3 @@
-#include <string>
-#include <vector>
-
 #include "sensoreConsumo.h"
 
 namespace sensore{

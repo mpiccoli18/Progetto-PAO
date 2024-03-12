@@ -3,7 +3,6 @@
 
 #include "sensore.h"
 
-
 namespace sensore{
     class SensorePneumatico: public Sensore{
         private:

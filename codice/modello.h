@@ -1,7 +1,21 @@
 #ifndef MODELLO_H
 #define MODELLO_H
+
 #include "sensore.h"
+#include "sensoreBatteria.h"
+#include "sensoreConsumo.h"
+#include "sensorePneumatico.h"
+#include "sensoreGas.h"
+#include "sensoreMotore.h"
+#include "SensorInfoVisitor.h"
 #include <vector>
+#include <iostream>
+#include <QFileDialog>
+#include <QString>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QMessageBox>
+#include <QJsonArray>
 
 namespace sensore{
     class modello{

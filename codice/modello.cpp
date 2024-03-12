@@ -1,17 +1,4 @@
 #include "modello.h"
-#include "sensoreBatteria.h"
-#include "sensoreConsumo.h"
-#include "sensorePneumatico.h"
-#include "sensoreGas.h"
-#include "sensoreMotore.h"
-#include "SensorInfoVisitor.h"
-#include <iostream>
-#include <QFileDialog>
-#include <QString>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QMessageBox>
-#include <QJsonArray>
 
 namespace sensore{
     modello::modello(){};
@@ -89,32 +76,32 @@ namespace sensore{
         double valueMin = sensorObject["Minimo"].toDouble();
         double valueMax = sensorObject["Massimo"].toDouble();
 
-        if (sensorName == "SensoreConsumo" || sensorName == "Sensore Consumo") {
+        if (sensorName == "SensoreConsumo" || sensorName == "Sensore Consumo" || sensorName.contains("Sensore Consumo")) {
             double ottano = sensorObject["Ottano"].toDouble();
             std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensoreConsumo(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, ottano);
         }
 
-        else if (sensorName == "SensoreGas" || sensorName == "Sensore Gas") {
+        else if (sensorName == "SensoreGas" || sensorName == "Sensore Gas" || sensorName.contains("Sensore Gas")) {
             double footprint = sensorObject["Impronta"].toDouble();
             std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensoreGas(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, footprint);
         }
 
-        else if (sensorName == "SensoreMotore" || sensorName == "Sensore Motore") {
+        else if (sensorName == "SensoreMotore" || sensorName == "Sensore Motore" || sensorName.contains("Sensore Motore")) {
             double cavalli = sensorObject["Cavalli"].toDouble();
             std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensoreMotore(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, cavalli);
         }
 
-        else if (sensorName == "SensorePneumatico" || sensorName == "Sensore Pneumatico") {
+        else if (sensorName == "SensorePneumatico" || sensorName == "Sensore Pneumatico" || sensorName.contains("Sensore Pneumatico")) {
             QString brand = sensorObject["Marca Pneumatico"].toString();
             double age = sensorObject["Eta Pneumatico"].toDouble();
             std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensorePneumatico(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, brand.toStdString(), age);
         }
 
-        else if (sensorName == "SensoreBatteria" || sensorName == "Sensore Batteria"){
+        else if (sensorName == "SensoreBatteria" || sensorName == "Sensore Batteria" || sensorName.contains("Sensore Batteria")){
             QString materials = sensorObject["Materiale"].toString();
             std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensoreBatteria(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, materials.toStdString());
@@ -149,7 +136,10 @@ namespace sensore{
         }
 
         QJsonObject jsonObject;
-        for (Sensore* sensore : getInsiemeSens()) {
+        Sensore* sensore;
+        int j = 1;
+        for (auto i = InsiemeSensori.begin(); i != InsiemeSensori.end(); i++) {
+            sensore = *i;
             QJsonObject sensorObject;
             sensorObject["Nome"] = QString::fromStdString(sensore->getNome());
             sensorObject["Tipo"] = QString::fromStdString(sensore->getTipo());
@@ -165,15 +155,15 @@ namespace sensore{
             SensorInfoVisitor visit;
             QJsonObject* p = &sensorObject;
             sensore->acceptSave(visit,p);
-
-            jsonObject[sensore->getNome().c_str()] = sensorObject;
+            jsonObject[(sensore->getNome().c_str() + (QString::number(j)))] = sensorObject;
+            j++;
         }
         QJsonDocument jsonDoc(jsonObject);
 
         file.write(jsonDoc.toJson());
         file.close();
         return 3;
-    }
+}
 
     void modello::creaSensGas(const QString& selectedSensor, QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineVal, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineImp){
         QString numString = lineVal->text();

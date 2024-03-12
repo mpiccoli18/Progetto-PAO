@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QLabel>
+#include <QVBoxLayout>
+#include <QString>
 #include "sensore.h"
 #include "SensorInfoVisitor.h"
 

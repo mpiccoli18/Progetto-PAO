@@ -12,7 +12,6 @@ namespace sensore{
     class Sensore
     {
         private:
-
             std::string nome;
             std::string tipo;
             std::string descrizione;
