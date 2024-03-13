@@ -1,4 +1,5 @@
 #include "modello.h"
+#include "SensorInfoVisitor.h"
 
 namespace sensore{
     modello::modello(){};
@@ -298,6 +299,25 @@ namespace sensore{
         s->setMin(min->text().toDouble());
         s->setMax(max->text().toDouble());
     }
+
+    void modello::modificaSensorePneumatico(SensorePneumatico* s, QLineEdit * marca, QLineEdit * eta ){
+        s->setMarcaPneu(marca->text().toStdString());
+        s->setEta(eta->text().toDouble());
+    }
+
+    void modello::modificaSensoreGas(SensoreGas* s,QLineEdit * impronta){
+        s->setImpronta(impronta->text().toDouble());
+    }
+    void modello::modificaSensoreMotore(SensoreMotore* s,QLineEdit * cavalli){
+        s->setCavalli(cavalli->text().toUInt());
+    }
+    void modello::modificaSensoreBatteria(SensoreBatteria* s,QLineEdit * materiale){
+         s->setMateriale(materiale->text().toStdString());
+    }
+    void modello::modificaSensoreConsumo(SensoreConsumo* s,QLineEdit * ottano){
+        s->setOttano(ottano->text().toInt());
+    }
+
 
     void modello::pulisciInsieme(){
         InsiemeSensori.clear();

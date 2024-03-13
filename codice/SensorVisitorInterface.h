@@ -2,7 +2,6 @@
 #define SENSORVISITORINTERFACE_H
 
 #include <QJsonObject>
-#include "modello.h"
 namespace sensore{
 
     class SensoreConsumo;
@@ -11,8 +10,8 @@ namespace sensore{
     class SensoreBatteria;
     class SensoreGas;
     class Sensore;
-    class SensorVisitorInterface{
 
+    class SensorVisitorInterface{
         public:
             virtual ~SensorVisitorInterface() = default;
             virtual void visitSPneumatico(SensorePneumatico& sPneumatico) = 0;
@@ -21,11 +20,11 @@ namespace sensore{
             virtual void visitSBatteria(SensoreBatteria& sBatteria) = 0;
             virtual void visitSGas(SensoreGas& sGas) = 0;
 
-            virtual void modSPneumatico(SensorePneumatico& sPneumatico, modello* m) = 0;
-            virtual void modSConsumo(SensoreConsumo& sConsumo, modello* m) = 0;
-            virtual void modSMotore(SensoreMotore& sMotore, modello* m) = 0;
-            virtual void modSBatteria(SensoreBatteria& sBatteria, modello* m) = 0;
-            virtual void modSGas(SensoreGas& sGas, modello* m) = 0;
+            virtual void modSPneumatico(SensorePneumatico* sPneumatico) = 0;
+            virtual void modSConsumo(SensoreConsumo* sConsumo) = 0;
+            virtual void modSMotore(SensoreMotore* sMotore) = 0;
+            virtual void modSBatteria(SensoreBatteria* sBatteria) = 0;
+            virtual void modSGas(SensoreGas* sGas) = 0;
 
             virtual void saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob) = 0;
             virtual void saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob) = 0;

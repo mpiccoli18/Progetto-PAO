@@ -14,24 +14,27 @@
 #include "sensoreGas.h"
 
 namespace sensore{
+    class modello;
 
-    class SensorInfoVisitor: public sensore::SensorVisitorInterface {
+    class SensorInfoVisitor : public SensorVisitorInterface {
         private:
             QWidget* widget;
+            modello* mod;
 
         public:
             QWidget* getWidget();
+            void setMod(modello* m);
             virtual void visitSPneumatico(SensorePneumatico& sPneumatico);
             virtual void visitSConsumo(SensoreConsumo& sConsumo);
             virtual void visitSMotore(SensoreMotore& sMotore);
             virtual void visitSBatteria(SensoreBatteria& sBatteria);
             virtual void visitSGas(SensoreGas& sGas);
 
-            virtual void modSPneumatico(SensorePneumatico& sPneumatico, modello* m);
-            virtual void modSConsumo(SensoreConsumo& sConsumo, modello* m);
-            virtual void modSMotore(SensoreMotore& sMotore, modello* m);
-            virtual void modSBatteria(SensoreBatteria& sBatteria, modello* m);
-            virtual void modSGas(SensoreGas& sGas, modello* m);
+            virtual void modSPneumatico(SensorePneumatico* sPneumatico);
+            virtual void modSConsumo(SensoreConsumo* sConsumo);
+            virtual void modSMotore(SensoreMotore* sMotore);
+            virtual void modSBatteria(SensoreBatteria* sBatteria);
+            virtual void modSGas(SensoreGas* sGas);
 
             virtual void saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob);
             virtual void saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob);

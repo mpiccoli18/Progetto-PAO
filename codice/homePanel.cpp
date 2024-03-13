@@ -470,68 +470,13 @@ namespace sensore{
             delete modifica;
             modifica = nullptr;
         }
+
         SensorInfoVisitor visitor;
+        visitor.setMod(mod);
         s->acceptMod(visitor);
         modifica = visitor.getWidget();
 
-        //QVBoxLayout* modLayout = new QVBoxLayout(visitor.getWidget());
-/*
-        QLabel *labeltype = new QLabel("Tipologia:");
-        QLineEdit *lineType = new QLineEdit(this->pannello);
-
-        QLabel *labeldescr = new QLabel("Descrizione:");
-        QLineEdit *lineDescr = new QLineEdit(this->pannello);
-
-        QLabel *labelmin = new QLabel("Valore Min:");
-        QLineEdit *lineMin = new QLineEdit(this->pannello);
-
-        QLabel *labelmax = new QLabel("Valore Max:");
-        QLineEdit *lineMax = new QLineEdit(this->pannello);
-
-        QLabel *labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
-        QLineEdit *lineVal = new QLineEdit(this->pannello);
-
-        std::vector<double> v = s->getValori();
-
-        QString qval = "";
-        for(auto i = v.begin(); i != v.end(); ++i){
-            qval += QString::number(*i) + ' ';
-        }
-
-        lineType->setText(QString::fromStdString(s->getTipo()));
-        lineDescr->setText(QString::fromStdString(s->getDescrizione()));
-        lineMin->setText(QString::number(s->getMin()));
-        lineMax->setText(QString::number(s->getMax()));
-        lineVal->setText(qval);
-
-        modLayout->addWidget(lineType);
-        modLayout->addWidget(lineDescr);
-        modLayout->addWidget(lineMin);
-        modLayout->addWidget(lineMax);
-        modLayout->addWidget(lineVal);
-
-        int fieldWidth = this->pannello->width() /3;
-        lineType->setFixedWidth(fieldWidth);
-        lineDescr->setFixedWidth(fieldWidth);
-        lineMin->setFixedWidth(fieldWidth);
-        lineMax->setFixedWidth(fieldWidth);
-        lineVal->setFixedWidth(fieldWidth);
-
-        modLayout->addWidget(labeltype);
-        modLayout->addWidget(lineType, 0, Qt::AlignLeft);
-
-        modLayout->addWidget(labeldescr);
-        modLayout->addWidget(lineDescr, 0, Qt::AlignLeft);
-
-        modLayout->addWidget(labelmin);
-        modLayout->addWidget(lineMin, 0, Qt::AlignLeft);
-
-        modLayout->addWidget(labelmax);
-        modLayout->addWidget(lineMax, 0, Qt::AlignLeft);
-
-        modLayout->addWidget(labelval);
-        modLayout->addWidget(lineVal, 0, Qt::AlignLeft);
-
+        /*
         QPushButton *confirmButton = new QPushButton("Conferma", this->pannello);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
         connect(confirmButton, &QPushButton::pressed, this, [this, s, lineType, lineDescr, lineVal, lineMin, lineMax]() {
@@ -558,14 +503,35 @@ namespace sensore{
             saveStessoFile->setEnabled(true);
             modificato = true;
         });
-*/
+        */
 
         QPushButton *exitButton = new QPushButton("Annulla", modifica);
         modifica->layout()->addWidget(exitButton);
         connect(exitButton, &QPushButton::pressed, this, &homePanel::StartExit);
         connect(this, &homePanel::StartExit, this, &homePanel::Exit);
 
-        pannello->layout()->addWidget(modifica);
+        pannello->layout()->addWidget(visitor.getWidget());
+        /*
+        if(modifica){
+            this->pannello->layout()->removeWidget(modifica);
+            //delete modifica;
+            //modifica = nullptr;
+
+            delete barraRicerca;
+            barraRicerca = new searchBarPanel(mod);
+            delete pannello;
+            pannello = new SensorPanel();
+            layoutApp->addWidget(barraRicerca, 1);
+            layoutApp->addWidget(pannello, 2);
+            layoutApp->setStretch(0, 1);
+            layoutApp->setStretch(1, 2);
+            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+            connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+        }*/
+
+
     }
 
     void homePanel::Simulation(){

@@ -5,11 +5,9 @@ namespace sensore{
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->setAlignment(Qt::AlignTop);
 
-        // Campo di testo per la ricerca
         ricerca = new QLineEdit(this);
         layout->addWidget(ricerca);
 
-        // Pulsante per confermare la ricerca
         QPushButton* searchButton = new QPushButton("Cerca", this);
         layout->addWidget(searchButton);
 
@@ -60,9 +58,7 @@ namespace sensore{
         connect(this, &searchBarPanel::StartSearch, this, &searchBarPanel::Search);
     }
 
-    void searchBarPanel::Search()
-    {
-        // Rimuovi i widget precedenti dalla scroll area
+    void searchBarPanel::Search(){
         QLayoutItem* item;
         while ((item = scrollayout->takeAt(0)) != nullptr) {
             delete item->widget();

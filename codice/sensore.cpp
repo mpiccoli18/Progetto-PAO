@@ -1,7 +1,6 @@
 #include "sensore.h"
 
 namespace sensore{
-
     Sensore::Sensore(
         const std::string n,
         const std::string t,

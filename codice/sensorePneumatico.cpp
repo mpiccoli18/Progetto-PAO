@@ -16,7 +16,7 @@ namespace sensore{
     }
 
     void SensorePneumatico::acceptMod(SensorVisitorInterface& visitor){
-        visitor.modSPneumatico(*this);
+        visitor.modSPneumatico(this);
     }
 
     void SensorePneumatico::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){

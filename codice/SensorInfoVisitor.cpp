@@ -1,9 +1,13 @@
 #include "SensorInfoVisitor.h"
+#include "modello.h"
 
 namespace sensore{
-
     QWidget* SensorInfoVisitor::getWidget() {
         return widget;
+    }
+
+    void SensorInfoVisitor::setMod(modello *m){
+        mod = m;
     }
 
     void SensorInfoVisitor::visitSPneumatico(SensorePneumatico& sPneumatico) {
@@ -36,7 +40,7 @@ namespace sensore{
         widget = new QLabel("Impronta: " +  QString::number(sGas.getImpronta()));
     }
 
-    void SensorInfoVisitor::modSPneumatico(SensorePneumatico& sPneumatico, modello* m){
+    void SensorInfoVisitor::modSPneumatico(SensorePneumatico* sPneumatico){
         widget = new QWidget();
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
@@ -61,20 +65,20 @@ namespace sensore{
         QLabel *labelEta = new QLabel("Tempo di vita:");
         QLineEdit *lineEta = new QLineEdit(widget);
 
-        std::vector<double> v = sPneumatico.getValori();
+        std::vector<double> v = sPneumatico->getValori();
 
         QString qval = "";
         for(auto i = v.begin(); i != v.end(); ++i){
             qval += QString::number(*i) + ' ';
         }
 
-        lineType->setText(QString::fromStdString(sPneumatico.getTipo()));
-        lineDescr->setText(QString::fromStdString(sPneumatico.getDescrizione()));
-        lineMin->setText(QString::number(sPneumatico.getMin()));
-        lineMax->setText(QString::number(sPneumatico.getMax()));
+        lineType->setText(QString::fromStdString(sPneumatico->getTipo()));
+        lineDescr->setText(QString::fromStdString(sPneumatico->getDescrizione()));
+        lineMin->setText(QString::number(sPneumatico->getMin()));
+        lineMax->setText(QString::number(sPneumatico->getMax()));
         lineVal->setText(qval);
-        lineMarca->setText(QString::fromStdString(sPneumatico.getMarcaPneu()));
-        lineEta->setText(QString::number(sPneumatico.getEta()));
+        lineMarca->setText(QString::fromStdString(sPneumatico->getMarcaPneu()));
+        lineEta->setText(QString::number(sPneumatico->getEta()));
 
         modLayout->addWidget(lineType);
         modLayout->addWidget(lineDescr);
@@ -116,12 +120,16 @@ namespace sensore{
 
         QPushButton *confirmButton = new QPushButton("Conferma", widget);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
-        connect(confirmButton, &QPushButton::pressed, this, [this, sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax]() {
-            m->aggiornaSens(s, lineType, lineDescr, lineVal, lineMin, lineMax);
+
+        confirmButton->setCheckable(false);
+        QObject::connect(confirmButton, &QPushButton::clicked, [this, sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax, lineMarca, lineEta]() {
+            mod->aggiornaSens(sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax);
+            mod->modificaSensorePneumatico(sPneumatico, lineMarca, lineEta);
         });
+
     }
 
-    void SensorInfoVisitor::modSConsumo(SensoreConsumo& sConsumo, modello* m){
+    void SensorInfoVisitor::modSConsumo(SensoreConsumo* sConsumo){
         widget = new QWidget();
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
@@ -143,19 +151,19 @@ namespace sensore{
         QLabel *labelOtt = new QLabel("Numero di ottano:");
         QLineEdit* lineOtt = new QLineEdit(widget);
 
-        std::vector<double> v = sConsumo.getValori();
+        std::vector<double> v = sConsumo->getValori();
 
         QString qval = "";
         for(auto i = v.begin(); i != v.end(); ++i){
             qval += QString::number(*i) + ' ';
         }
 
-        lineType->setText(QString::fromStdString(sConsumo.getTipo()));
-        lineDescr->setText(QString::fromStdString(sConsumo.getDescrizione()));
-        lineMin->setText(QString::number(sConsumo.getMin()));
-        lineMax->setText(QString::number(sConsumo.getMax()));
+        lineType->setText(QString::fromStdString(sConsumo->getTipo()));
+        lineDescr->setText(QString::fromStdString(sConsumo->getDescrizione()));
+        lineMin->setText(QString::number(sConsumo->getMin()));
+        lineMax->setText(QString::number(sConsumo->getMax()));
         lineVal->setText(qval);
-        lineOtt->setText(QString::number(sConsumo.getOttano()));
+        lineOtt->setText(QString::number(sConsumo->getOttano()));
 
         modLayout->addWidget(lineType);
         modLayout->addWidget(lineDescr);
@@ -192,12 +200,15 @@ namespace sensore{
 
         QPushButton *confirmButton = new QPushButton("Conferma", widget);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
-        /*connect(confirmButton, &QPushButton::pressed, this, [this, s, lineType, lineDescr, lineVal, lineMin, lineMax]() {
-            mod->aggiornaSens(s, lineType, lineDescr, lineVal, lineMin, lineMax);
-        });*/
+
+        confirmButton->setCheckable(false);
+        QObject::connect(confirmButton, &QPushButton::clicked, [this, sConsumo,lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt]() {
+            mod->aggiornaSens(sConsumo, lineType, lineDescr, lineVal, lineMin, lineMax);
+            mod->modificaSensoreConsumo(sConsumo, lineOtt);
+        });
     }
 
-    void SensorInfoVisitor::modSMotore(SensoreMotore& sMotore, modello* m){
+    void SensorInfoVisitor::modSMotore(SensoreMotore* sMotore){
         widget = new QWidget();
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
@@ -219,19 +230,19 @@ namespace sensore{
         QLabel *labelCav = new QLabel("Cavalli:");
         QLineEdit* lineCav = new QLineEdit(widget);
 
-        std::vector<double> v = sMotore.getValori();
+        std::vector<double> v = sMotore->getValori();
 
         QString qval = "";
         for(auto i = v.begin(); i != v.end(); ++i){
             qval += QString::number(*i) + ' ';
         }
 
-        lineType->setText(QString::fromStdString(sMotore.getTipo()));
-        lineDescr->setText(QString::fromStdString(sMotore.getDescrizione()));
-        lineMin->setText(QString::number(sMotore.getMin()));
-        lineMax->setText(QString::number(sMotore.getMax()));
+        lineType->setText(QString::fromStdString(sMotore->getTipo()));
+        lineDescr->setText(QString::fromStdString(sMotore->getDescrizione()));
+        lineMin->setText(QString::number(sMotore->getMin()));
+        lineMax->setText(QString::number(sMotore->getMax()));
         lineVal->setText(qval);
-        lineCav->setText(QString::number(sMotore.getCavalli()));
+        lineCav->setText(QString::number(sMotore->getCavalli()));
 
         modLayout->addWidget(lineType);
         modLayout->addWidget(lineDescr);
@@ -268,12 +279,15 @@ namespace sensore{
 
         QPushButton *confirmButton = new QPushButton("Conferma", widget);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
-        /*connect(confirmButton, &QPushButton::pressed, this, [this, s, lineType, lineDescr, lineVal, lineMin, lineMax]() {
-            mod->aggiornaSens(s, lineType, lineDescr, lineVal, lineMin, lineMax);
-        });*/
+
+        confirmButton->setCheckable(false);
+        QObject::connect(confirmButton, &QPushButton::clicked, [this, sMotore,lineType, lineDescr, lineVal, lineMin, lineMax, lineCav]() {
+            mod->aggiornaSens(sMotore, lineType, lineDescr, lineVal, lineMin, lineMax);
+            mod->modificaSensoreMotore(sMotore, lineCav);
+        });
     }
 
-    void SensorInfoVisitor::modSBatteria(SensoreBatteria& sBatteria, modello* m){
+    void SensorInfoVisitor::modSBatteria(SensoreBatteria* sBatteria){
         widget = new QWidget();
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
@@ -295,19 +309,19 @@ namespace sensore{
         QLabel *labelMat = new QLabel("Materiale:");
         QLineEdit* lineMat = new QLineEdit(widget);
 
-        std::vector<double> v = sBatteria.getValori();
+        std::vector<double> v = sBatteria->getValori();
 
         QString qval = "";
         for(auto i = v.begin(); i != v.end(); ++i){
             qval += QString::number(*i) + ' ';
         }
 
-        lineType->setText(QString::fromStdString(sBatteria.getTipo()));
-        lineDescr->setText(QString::fromStdString(sBatteria.getDescrizione()));
-        lineMin->setText(QString::number(sBatteria.getMin()));
-        lineMax->setText(QString::number(sBatteria.getMax()));
+        lineType->setText(QString::fromStdString(sBatteria->getTipo()));
+        lineDescr->setText(QString::fromStdString(sBatteria->getDescrizione()));
+        lineMin->setText(QString::number(sBatteria->getMin()));
+        lineMax->setText(QString::number(sBatteria->getMax()));
         lineVal->setText(qval);
-        lineMat->setText(QString::fromStdString(sBatteria.getMateriale()));
+        lineMat->setText(QString::fromStdString(sBatteria->getMateriale()));
 
         modLayout->addWidget(lineType);
         modLayout->addWidget(lineDescr);
@@ -344,12 +358,15 @@ namespace sensore{
 
         QPushButton *confirmButton = new QPushButton("Conferma", widget);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
-        /*connect(confirmButton, &QPushButton::pressed, this, [this, s, lineType, lineDescr, lineVal, lineMin, lineMax]() {
-            mod->aggiornaSens(s, lineType, lineDescr, lineVal, lineMin, lineMax);
-        });*/
+
+        confirmButton->setCheckable(false);
+        QObject::connect(confirmButton, &QPushButton::clicked, [this, sBatteria,lineType, lineDescr, lineVal, lineMin, lineMax, lineMat]() {
+            mod->aggiornaSens(sBatteria, lineType, lineDescr, lineVal, lineMin, lineMax);
+            mod->modificaSensoreBatteria(sBatteria, lineMat);
+        });
     }
 
-    void SensorInfoVisitor::modSGas(SensoreGas& sGas, modello* m){
+    void SensorInfoVisitor::modSGas(SensoreGas* sGas){
         widget = new QWidget();
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
@@ -371,19 +388,19 @@ namespace sensore{
         QLabel *labelImpronta = new QLabel("Impronta ecologica:");
         QLineEdit* lineImpronta = new QLineEdit(widget);
 
-        std::vector<double> v = sGas.getValori();
+        std::vector<double> v = sGas->getValori();
 
         QString qval = "";
         for(auto i = v.begin(); i != v.end(); ++i){
             qval += QString::number(*i) + ' ';
         }
 
-        lineType->setText(QString::fromStdString(sGas.getTipo()));
-        lineDescr->setText(QString::fromStdString(sGas.getDescrizione()));
-        lineMin->setText(QString::number(sGas.getMin()));
-        lineMax->setText(QString::number(sGas.getMax()));
+        lineType->setText(QString::fromStdString(sGas->getTipo()));
+        lineDescr->setText(QString::fromStdString(sGas->getDescrizione()));
+        lineMin->setText(QString::number(sGas->getMin()));
+        lineMax->setText(QString::number(sGas->getMax()));
         lineVal->setText(qval);
-        lineImpronta->setText(QString::number(sGas.getImpronta()));
+        lineImpronta->setText(QString::number(sGas->getImpronta()));
 
         modLayout->addWidget(lineType);
         modLayout->addWidget(lineDescr);
@@ -421,10 +438,14 @@ namespace sensore{
 
         QPushButton *confirmButton = new QPushButton("Conferma", widget);
         modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
-        /*connect(confirmButton, &QPushButton::pressed, this, [this, s, lineType, lineDescr, lineVal, lineMin, lineMax]() {
-            mod->aggiornaSens(s, lineType, lineDescr, lineVal, lineMin, lineMax);
-        });*/
+
+        confirmButton->setCheckable(false);
+        QObject::connect(confirmButton, &QPushButton::clicked, [this, sGas,lineType, lineDescr, lineVal, lineMin, lineMax, lineImpronta]() {
+            mod->aggiornaSens(sGas, lineType, lineDescr, lineVal, lineMin, lineMax);
+            mod->modificaSensoreGas(sGas, lineImpronta);
+        });
     }
+
 
     void SensorInfoVisitor::saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob){
         (*ob)["Marca Pneumatico"] = QString::fromStdString(sPneumatico.getMarcaPneu());

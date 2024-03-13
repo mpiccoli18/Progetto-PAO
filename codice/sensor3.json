@@ -1,24 +1,2 @@
 {
-    "Sensore Consumo": {
-        "Descrizione": "Consumo di benza e diesel",
-        "Massimo": 100,
-        "Minimo": 0,
-        "Nome": "Sensore Consumo",
-        "Tipo": "Consumo",
-        "Valori": [
-            10.2,
-            12.2,
-            13.3,
-            15.2,
-            16.5,
-            8.2,
-            45.2,
-            63.5,
-            35.2,
-            61.5,
-            88.8,
-            99.9
-        ],
-        "Ottano": "100"
-    }
 }

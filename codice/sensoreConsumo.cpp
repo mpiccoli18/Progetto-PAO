@@ -14,7 +14,7 @@ namespace sensore{
     }
 
     void SensoreConsumo::acceptMod(SensorVisitorInterface& visitor){
-        visitor.modSConsumo(*this);
+        visitor.modSConsumo(this);
     }
 
     void SensoreConsumo::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
