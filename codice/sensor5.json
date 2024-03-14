@@ -23,7 +23,7 @@
     },
     "Sensore Gas2": {
         "Descrizione": "Impronta ecologica dell'andride carbonica",
-        "Impronta": "0",
+        "Impronta": "85",
         "Massimo": 100,
         "Minimo": 0,
         "Nome": "Sensore Gas",
@@ -41,29 +41,6 @@
             45.4,
             47.6,
             49.8
-        ]
-    },
-    "Sensore Pneumatico3": {
-        "Descrizione": "Misura la pressione delle gomme nell'arco dei 12 mesi",
-        "Eta Pneumatico": "0",
-        "Marca Pneumatico": "Hankook",
-        "Massimo": 25,
-        "Minimo": 0,
-        "Nome": "Sensore Pneumatico",
-        "Tipo": "Pressione",
-        "Valori": [
-            2.2,
-            3.1,
-            4.5,
-            2.1,
-            3.2,
-            3.5,
-            4.5,
-            1.2,
-            3.4,
-            7.2,
-            6.2,
-            4.9
         ]
     }
 }

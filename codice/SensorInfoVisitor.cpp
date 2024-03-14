@@ -6,22 +6,18 @@ namespace sensore{
         return widget;
     }
 
-    void SensorInfoVisitor::setMod(modello *m){
+    void SensorInfoVisitor::setModello(modello *m){
         mod = m;
     }
 
+    QPushButton* SensorInfoVisitor::getButton(){
+        return confirmButton;
+    }
+
+
     void SensorInfoVisitor::visitSPneumatico(SensorePneumatico& sPneumatico) {
-        QLabel *labelMarca = new QLabel("Marca Pneumatico: " + QString::fromStdString(sPneumatico.getMarcaPneu()));
-        QLabel *labelAge = new QLabel("Tempo di vita: " + QString::number(sPneumatico.getEta()));
-
-        QVBoxLayout *layout = new QVBoxLayout();
-        layout->addWidget(labelMarca);
-        layout->addWidget(labelAge);
-
-        QWidget *widgetContainer = new QWidget();
-        widgetContainer->setLayout(layout);
-
-        widget = widgetContainer;
+        widget = new QLabel("Marca Pneumatico: " + QString::fromStdString(sPneumatico.getMarcaPneu()) +
+                            "\nTempo di vita: " + QString::number(sPneumatico.getEta()));
     }
 
     void SensorInfoVisitor::visitSConsumo(SensoreConsumo& sConsumo) {
@@ -118,15 +114,13 @@ namespace sensore{
         modLayout->addWidget(labelEta);
         modLayout->addWidget(lineEta, 0, Qt::AlignLeft);
 
-        QPushButton *confirmButton = new QPushButton("Conferma", widget);
-        modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
+        confirmButton = new QPushButton("Conferma", widget);
+        //modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
 
-        confirmButton->setCheckable(false);
-        QObject::connect(confirmButton, &QPushButton::clicked, [this, sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax, lineMarca, lineEta]() {
+        QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax, lineMarca, lineEta]() {
             mod->aggiornaSens(sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax);
             mod->modificaSensorePneumatico(sPneumatico, lineMarca, lineEta);
         });
-
     }
 
     void SensorInfoVisitor::modSConsumo(SensoreConsumo* sConsumo){
@@ -198,11 +192,10 @@ namespace sensore{
         modLayout->addWidget(labelOtt);
         modLayout->addWidget(lineOtt, 0, Qt::AlignLeft);
 
-        QPushButton *confirmButton = new QPushButton("Conferma", widget);
-        modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
+        confirmButton = new QPushButton("Conferma", widget);
+        //modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
 
-        confirmButton->setCheckable(false);
-        QObject::connect(confirmButton, &QPushButton::clicked, [this, sConsumo,lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt]() {
+        QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sConsumo,lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt]() {
             mod->aggiornaSens(sConsumo, lineType, lineDescr, lineVal, lineMin, lineMax);
             mod->modificaSensoreConsumo(sConsumo, lineOtt);
         });
@@ -277,11 +270,10 @@ namespace sensore{
         modLayout->addWidget(labelCav);
         modLayout->addWidget(lineCav, 0, Qt::AlignLeft);
 
-        QPushButton *confirmButton = new QPushButton("Conferma", widget);
-        modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
+        confirmButton = new QPushButton("Conferma", widget);
+        //modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
 
-        confirmButton->setCheckable(false);
-        QObject::connect(confirmButton, &QPushButton::clicked, [this, sMotore,lineType, lineDescr, lineVal, lineMin, lineMax, lineCav]() {
+        QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sMotore,lineType, lineDescr, lineVal, lineMin, lineMax, lineCav]() {
             mod->aggiornaSens(sMotore, lineType, lineDescr, lineVal, lineMin, lineMax);
             mod->modificaSensoreMotore(sMotore, lineCav);
         });
@@ -356,11 +348,10 @@ namespace sensore{
         modLayout->addWidget(labelMat);
         modLayout->addWidget(lineMat, 0, Qt::AlignLeft);
 
-        QPushButton *confirmButton = new QPushButton("Conferma", widget);
-        modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
+        confirmButton = new QPushButton("Conferma", widget);
+        //modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
 
-        confirmButton->setCheckable(false);
-        QObject::connect(confirmButton, &QPushButton::clicked, [this, sBatteria,lineType, lineDescr, lineVal, lineMin, lineMax, lineMat]() {
+        QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sBatteria,lineType, lineDescr, lineVal, lineMin, lineMax, lineMat]() {
             mod->aggiornaSens(sBatteria, lineType, lineDescr, lineVal, lineMin, lineMax);
             mod->modificaSensoreBatteria(sBatteria, lineMat);
         });
@@ -436,11 +427,10 @@ namespace sensore{
         modLayout->addWidget(lineImpronta, 0, Qt::AlignLeft);
 
 
-        QPushButton *confirmButton = new QPushButton("Conferma", widget);
-        modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
+        confirmButton = new QPushButton("Conferma", widget);
+        //modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
 
-        confirmButton->setCheckable(false);
-        QObject::connect(confirmButton, &QPushButton::clicked, [this, sGas,lineType, lineDescr, lineVal, lineMin, lineMax, lineImpronta]() {
+        QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sGas,lineType, lineDescr, lineVal, lineMin, lineMax, lineImpronta]() {
             mod->aggiornaSens(sGas, lineType, lineDescr, lineVal, lineMin, lineMax);
             mod->modificaSensoreGas(sGas, lineImpronta);
         });

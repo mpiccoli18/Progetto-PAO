@@ -6,7 +6,7 @@
 namespace sensore{
     class SensoreConsumo: public Sensore{
         private:
-            int ottano;
+            unsigned int ottano;
         public:
 
             SensoreConsumo(
@@ -16,12 +16,12 @@ namespace sensore{
                 const std::vector<double> v,
                 const double vMin,
                 const double vMax,
-                const int ot);
+                const unsigned int ot);
 
 
-            int getOttano() const;
+            unsigned int getOttano() const;
 
-            void setOttano(int ot);
+            void setOttano(unsigned int ot);
 
             virtual void accept(SensorVisitorInterface& visitor);
             virtual void acceptMod(SensorVisitorInterface& visitor);

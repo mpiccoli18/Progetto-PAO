@@ -20,10 +20,12 @@ namespace sensore{
         private:
             QWidget* widget;
             modello* mod;
+            QPushButton* confirmButton;
 
         public:
             QWidget* getWidget();
-            void setMod(modello* m);
+            QPushButton* getButton();
+            void setModello(modello* m);
             virtual void visitSPneumatico(SensorePneumatico& sPneumatico);
             virtual void visitSConsumo(SensoreConsumo& sConsumo);
             virtual void visitSMotore(SensoreMotore& sMotore);

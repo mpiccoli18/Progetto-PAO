@@ -78,28 +78,32 @@ namespace sensore{
         double valueMax = sensorObject["Massimo"].toDouble();
 
         if (sensorName == "SensoreConsumo" || sensorName == "Sensore Consumo" || sensorName.contains("Sensore Consumo")) {
-            double ottano = sensorObject["Ottano"].toDouble();
+            QString ott = sensorObject["Ottano"].toString();
+            double ottano = ott.toUInt();
             std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensoreConsumo(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, ottano);
         }
 
         else if (sensorName == "SensoreGas" || sensorName == "Sensore Gas" || sensorName.contains("Sensore Gas")) {
-            double footprint = sensorObject["Impronta"].toDouble();
+            QString footprint = sensorObject["Impronta"].toString();
+            double impronta = footprint.toDouble();
             std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
-            return new SensoreGas(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, footprint);
+            return new SensoreGas(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, impronta);
         }
 
         else if (sensorName == "SensoreMotore" || sensorName == "Sensore Motore" || sensorName.contains("Sensore Motore")) {
-            double cavalli = sensorObject["Cavalli"].toDouble();
+            QString hv = sensorObject["Cavalli"].toString();
+            double cavalli = hv.toDouble();
             std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
             return new SensoreMotore(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, cavalli);
         }
 
         else if (sensorName == "SensorePneumatico" || sensorName == "Sensore Pneumatico" || sensorName.contains("Sensore Pneumatico")) {
             QString brand = sensorObject["Marca Pneumatico"].toString();
-            double age = sensorObject["Eta Pneumatico"].toDouble();
+            QString age = sensorObject["Eta Pneumatico"].toString();
+            double eta = age.toDouble();
             std::vector<double> values = daJsonAdArray(sensorObject["Valori"].toArray());
-            return new SensorePneumatico(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, brand.toStdString(), age);
+            return new SensorePneumatico(name.toStdString(), type.toStdString(), description.toStdString(), values, valueMin, valueMax, brand.toStdString(), eta);
         }
 
         else if (sensorName == "SensoreBatteria" || sensorName == "Sensore Batteria" || sensorName.contains("Sensore Batteria")){
@@ -305,17 +309,17 @@ namespace sensore{
         s->setEta(eta->text().toDouble());
     }
 
-    void modello::modificaSensoreGas(SensoreGas* s,QLineEdit * impronta){
+    void modello::modificaSensoreGas(SensoreGas* s, QLineEdit * impronta){
         s->setImpronta(impronta->text().toDouble());
     }
-    void modello::modificaSensoreMotore(SensoreMotore* s,QLineEdit * cavalli){
+    void modello::modificaSensoreMotore(SensoreMotore* s, QLineEdit * cavalli){
         s->setCavalli(cavalli->text().toUInt());
     }
-    void modello::modificaSensoreBatteria(SensoreBatteria* s,QLineEdit * materiale){
+    void modello::modificaSensoreBatteria(SensoreBatteria* s, QLineEdit * materiale){
          s->setMateriale(materiale->text().toStdString());
     }
-    void modello::modificaSensoreConsumo(SensoreConsumo* s,QLineEdit * ottano){
-        s->setOttano(ottano->text().toInt());
+    void modello::modificaSensoreConsumo(SensoreConsumo* s, QLineEdit * ottano){
+        s->setOttano(ottano->text().toUInt());
     }
 
 

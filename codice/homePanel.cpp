@@ -465,20 +465,48 @@ namespace sensore{
             delete grafico;
             grafico = nullptr;
         }
-        if(modifica){
+        /*if(modifica){
             this->pannello->layout()->removeWidget(modifica);
             delete modifica;
             modifica = nullptr;
-        }
+        }*/
 
         SensorInfoVisitor visitor;
-        visitor.setMod(mod);
+        visitor.setModello(mod);
         s->acceptMod(visitor);
         modifica = visitor.getWidget();
 
-        /*
-        QPushButton *confirmButton = new QPushButton("Conferma", this->pannello);
-        modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
+        QPushButton* confirmButton = visitor.getButton();
+        QPushButton *exitButton = new QPushButton("Annulla", modifica);
+
+        modifica->layout()->addWidget(exitButton);
+        modifica->layout()->addWidget(confirmButton);
+        modifica->show();
+        connect(confirmButton, &QPushButton::pressed, this, [=](){
+            if(modifica){
+                //this->pannello->layout()->removeWidget(modifica);
+                //delete modifica;
+                //modifica = nullptr;
+
+                delete barraRicerca;
+                barraRicerca = new searchBarPanel(mod);
+                delete pannello;
+                pannello = new SensorPanel(s);
+                layoutApp->addWidget(barraRicerca, 1);
+                layoutApp->addWidget(pannello, 2);
+                layoutApp->setStretch(0, 1);
+                layoutApp->setStretch(1, 2);
+                connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+                connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+                connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+                connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+            }
+            QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato aggiornato!"));
+            saveStessoFile->setEnabled(true);
+            modificato = true;
+            modifica->close();
+        });
+       /*
         connect(confirmButton, &QPushButton::pressed, this, [this, s, lineType, lineDescr, lineVal, lineMin, lineMax]() {
             mod->aggiornaSens(s, lineType, lineDescr, lineVal, lineMin, lineMax);
             if(modifica){
@@ -505,12 +533,12 @@ namespace sensore{
         });
         */
 
-        QPushButton *exitButton = new QPushButton("Annulla", modifica);
-        modifica->layout()->addWidget(exitButton);
-        connect(exitButton, &QPushButton::pressed, this, &homePanel::StartExit);
-        connect(this, &homePanel::StartExit, this, &homePanel::Exit);
-
-        pannello->layout()->addWidget(visitor.getWidget());
+        connect(exitButton, &QPushButton::pressed, this, [=](){
+            modifica->close();
+            //modifica = nullptr;
+            //Exit();
+        });
+        //pannello->layout()->addWidget(visitor.getWidget());
         /*
         if(modifica){
             this->pannello->layout()->removeWidget(modifica);
@@ -531,7 +559,6 @@ namespace sensore{
             connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
         }*/
 
-
     }
 
     void homePanel::Simulation(){
@@ -540,11 +567,11 @@ namespace sensore{
             delete grafico;
             grafico = nullptr;
         }
-        if(modifica){
+        /*if(modifica){
             this->pannello->layout()->removeWidget(modifica);
             delete modifica;
             modifica = nullptr;
-        }
+        }*/
         QSplineSeries *series = new QSplineSeries();
         std::vector<double> valori = sensoreGenerale->getValori();
 
@@ -579,14 +606,6 @@ namespace sensore{
         grafico = new QChartView(chart);
         grafico->setRenderHint(QPainter::Antialiasing);
         this->pannello->layout()->addWidget(grafico);
-    }
-
-    void homePanel::Exit(){
-        if(modifica){
-            this->pannello->layout()->removeWidget(modifica);
-            delete modifica;
-            modifica = nullptr;
-        }
     }
 
     void homePanel::Elimination(Sensore* s) {
