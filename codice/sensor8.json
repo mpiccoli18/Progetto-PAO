@@ -3,7 +3,7 @@
         "Descrizione": "Misura l'efficienza della batteria di un'auto elettrica",
         "Massimo": 100,
         "Materiale": "Litio",
-        "Minimo": 75,
+        "Minimo": 50,
         "Nome": "Sensore Batteria",
         "Tipo": "Efficienza",
         "Valori": [
@@ -24,7 +24,7 @@
     "Sensore Consumo2": {
         "Descrizione": "Misura il consumo di benzina di un'auto",
         "Massimo": 100,
-        "Minimo": 0,
+        "Minimo": 25,
         "Nome": "Sensore Consumo",
         "Ottano": "95",
         "Tipo": "Benzina",

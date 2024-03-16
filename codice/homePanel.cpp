@@ -1,7 +1,7 @@
 #include "homePanel.h"
 
 namespace sensore{
-    homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr)
+homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr), sceltaGrafico(nullptr)
     {
         QVBoxLayout* layout = new QVBoxLayout(this);
         QGridLayout* menu = new QGridLayout();
@@ -460,17 +460,15 @@ namespace sensore{
     }
 
     void homePanel::Modify(Sensore *s){
-        if (grafico) {
+        /*if (grafico) {
             this->pannello->layout()->removeWidget(grafico);
             delete grafico;
             grafico = nullptr;
-        }
-        /*if(modifica){
-            this->pannello->layout()->removeWidget(modifica);
-            delete modifica;
-            modifica = nullptr;
         }*/
-
+        if(modifica)
+        {
+            modifica->close();
+        }
         SensorInfoVisitor visitor;
         visitor.setModello(mod);
         s->acceptMod(visitor);
@@ -482,12 +480,14 @@ namespace sensore{
         modifica->layout()->addWidget(exitButton);
         modifica->layout()->addWidget(confirmButton);
         modifica->show();
-        connect(confirmButton, &QPushButton::pressed, this, [=](){
-            if(modifica){
-                //this->pannello->layout()->removeWidget(modifica);
-                //delete modifica;
-                //modifica = nullptr;
 
+        connect(confirmButton, &QPushButton::pressed, this, [=](){
+            if (grafico) {
+                this->pannello->layout()->removeWidget(grafico);
+                delete grafico;
+                grafico = nullptr;
+            }
+            if(modifica){
                 delete barraRicerca;
                 barraRicerca = new searchBarPanel(mod);
                 delete pannello;
@@ -506,83 +506,26 @@ namespace sensore{
             modificato = true;
             modifica->close();
         });
-       /*
-        connect(confirmButton, &QPushButton::pressed, this, [this, s, lineType, lineDescr, lineVal, lineMin, lineMax]() {
-            mod->aggiornaSens(s, lineType, lineDescr, lineVal, lineMin, lineMax);
-            if(modifica){
-                this->pannello->layout()->removeWidget(modifica);
-                delete modifica;
-                modifica = nullptr;
-
-                delete barraRicerca;
-                barraRicerca = new searchBarPanel(mod);
-                delete pannello;
-                pannello = new SensorPanel();
-                layoutApp->addWidget(barraRicerca, 1);
-                layoutApp->addWidget(pannello, 2);
-                layoutApp->setStretch(0, 1);
-                layoutApp->setStretch(1, 2);
-                connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
-            }
-            QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato aggiornato!"));
-            saveStessoFile->setEnabled(true);
-            modificato = true;
-        });
-        */
 
         connect(exitButton, &QPushButton::pressed, this, [=](){
             modifica->close();
-            //modifica = nullptr;
-            //Exit();
         });
-        //pannello->layout()->addWidget(visitor.getWidget());
-        /*
-        if(modifica){
-            this->pannello->layout()->removeWidget(modifica);
-            //delete modifica;
-            //modifica = nullptr;
-
-            delete barraRicerca;
-            barraRicerca = new searchBarPanel(mod);
-            delete pannello;
-            pannello = new SensorPanel();
-            layoutApp->addWidget(barraRicerca, 1);
-            layoutApp->addWidget(pannello, 2);
-            layoutApp->setStretch(0, 1);
-            layoutApp->setStretch(1, 2);
-            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-            connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
-        }*/
-
     }
 
     void homePanel::Simulation(){
+        if (sceltaGrafico) {
+            this->pannello->layout()->removeWidget(sceltaGrafico);
+            delete sceltaGrafico;
+            sceltaGrafico = nullptr;
+        }
         if (grafico) {
             this->pannello->layout()->removeWidget(grafico);
             delete grafico;
             grafico = nullptr;
         }
-        /*if(modifica){
-            this->pannello->layout()->removeWidget(modifica);
-            delete modifica;
-            modifica = nullptr;
-        }*/
-        QSplineSeries *series = new QSplineSeries();
         std::vector<double> valori = sensoreGenerale->getValori();
 
-        std::vector<int> xAxisValues;
-        int xValue = 1;
-        for (auto it = valori.begin(); it != valori.end(); ++it) {
-            series->append(xValue++, *it);
-        }
-
         QChart *chart = new QChart();
-        chart->addSeries(series);
         chart->legend()->hide();
         chart->setTitle("" + QString::fromStdString(sensoreGenerale->getTipo()) + " di: " + QString::fromStdString(sensoreGenerale->getNome()));
 
@@ -600,11 +543,59 @@ namespace sensore{
         axisY->applyNiceNumbers();
         chart->addAxis(axisY, Qt::AlignLeft);
 
-        series->attachAxis(axisX);
-        series->attachAxis(axisY);
+        sceltaGrafico = new QComboBox();
+        sceltaGrafico->setFixedWidth(250);
+        // Aggiungi un elemento vuoto non selezionabile
+        sceltaGrafico->addItem("Scegli una tipologia di grafico");
+        // Aggiungi gli altri tipi di grafico
+        sceltaGrafico->addItem("Spline");
+        sceltaGrafico->addItem("Punti");
+        sceltaGrafico->addItem("Line");
+        connect(sceltaGrafico, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index){
+            switch(index) {
+                case 1: // Spline
+                    chart->removeAllSeries();
+                    {
+                        QSplineSeries* splineGrafico = new QSplineSeries();
+                        for (int i = 0; i < valori.size(); ++i)
+                            splineGrafico->append(i + 1, valori[i]);
+                        chart->addSeries(splineGrafico);
+                        splineGrafico->attachAxis(axisX);
+                        splineGrafico->attachAxis(axisY);
+                    }
+                    break;
+                case 2: // Punti
+                    chart->removeAllSeries();
+                    {
+                        QScatterSeries* scatterGrafico = new QScatterSeries();
+                        for (int i = 0; i < valori.size(); ++i)
+                            scatterGrafico->append(i + 1, valori[i]);
+                        chart->addSeries(scatterGrafico);
+                        scatterGrafico->attachAxis(axisX);
+                        scatterGrafico->attachAxis(axisY);
+                    }
+                    break;
+                case 3: // Linee
+                    chart->removeAllSeries();
+                    {
+                        QLineSeries *lineGrafico = new QLineSeries();
+                        for (int i = 0; i < valori.size(); ++i)
+                            lineGrafico->append(i + 1, valori[i]);
+                        chart->addSeries(lineGrafico);
+                        lineGrafico->attachAxis(axisX);
+                        lineGrafico->attachAxis(axisY);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
 
         grafico = new QChartView(chart);
+        grafico->setStyleSheet("border: 1px solid black; border-radius: 2px; background-color:lightgrey;");
         grafico->setRenderHint(QPainter::Antialiasing);
+        grafico->setMaximumSize(1200, 700);
+        this->pannello->layout()->addWidget(sceltaGrafico);
         this->pannello->layout()->addWidget(grafico);
     }
 
@@ -613,6 +604,8 @@ namespace sensore{
             modifica = nullptr;
         if(grafico)
             grafico = nullptr;
+        if(sceltaGrafico)
+            sceltaGrafico = nullptr;
         mod->eliminaSens(s);
         sensoreGenerale = nullptr;
         s = nullptr;
@@ -645,6 +638,8 @@ namespace sensore{
             this->layout()->removeWidget(pannello);
             if(grafico)
                 grafico = nullptr;
+            if(sceltaGrafico)
+                sceltaGrafico = nullptr;
             if(modifica)
                 modifica = nullptr;
 

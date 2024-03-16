@@ -28,6 +28,8 @@ namespace sensore{
             QString nomeFile;
             QPushButton* saveStessoFile;
             bool modificato = false;
+            QComboBox* sceltaGrafico;
+
         public:
             homePanel(QWidget* parent = 0);
 

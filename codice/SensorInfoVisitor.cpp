@@ -40,6 +40,8 @@ namespace sensore{
         widget = new QWidget();
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
+        QLabel* titolo = new QLabel("Modifica delle informazioni di: " + QString::fromStdString(sPneumatico->getNome()));
+        titolo->setStyleSheet("font: 18px bold;");
         QLabel *labeltype = new QLabel("Tipologia:");
         QLineEdit *lineType = new QLineEdit(widget);
 
@@ -76,14 +78,6 @@ namespace sensore{
         lineMarca->setText(QString::fromStdString(sPneumatico->getMarcaPneu()));
         lineEta->setText(QString::number(sPneumatico->getEta()));
 
-        modLayout->addWidget(lineType);
-        modLayout->addWidget(lineDescr);
-        modLayout->addWidget(lineMin);
-        modLayout->addWidget(lineMax);
-        modLayout->addWidget(lineVal);
-        modLayout->addWidget(lineMarca);
-        modLayout->addWidget(lineEta);
-
         int fieldWidth = widget->width();
         lineType->setFixedWidth(fieldWidth);
         lineDescr->setFixedWidth(fieldWidth);
@@ -93,6 +87,7 @@ namespace sensore{
         lineMarca->setFixedWidth(fieldWidth);
         lineEta->setFixedWidth(fieldWidth);
 
+        modLayout->addWidget(titolo, 0, Qt::AlignCenter);
         modLayout->addWidget(labeltype);
         modLayout->addWidget(lineType, 0, Qt::AlignLeft);
 
@@ -127,6 +122,8 @@ namespace sensore{
         widget = new QWidget();
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
+        QLabel* titolo = new QLabel("Modifica delle informazioni di: " + QString::fromStdString(sConsumo->getNome()));
+        titolo->setStyleSheet("font: 18px bold;");
         QLabel *labeltype = new QLabel("Tipologia:");
         QLineEdit *lineType = new QLineEdit(widget);
 
@@ -159,13 +156,6 @@ namespace sensore{
         lineVal->setText(qval);
         lineOtt->setText(QString::number(sConsumo->getOttano()));
 
-        modLayout->addWidget(lineType);
-        modLayout->addWidget(lineDescr);
-        modLayout->addWidget(lineMin);
-        modLayout->addWidget(lineMax);
-        modLayout->addWidget(lineVal);
-        modLayout->addWidget(lineOtt);
-
         int fieldWidth = widget->width();
         lineType->setFixedWidth(fieldWidth);
         lineDescr->setFixedWidth(fieldWidth);
@@ -174,6 +164,7 @@ namespace sensore{
         lineVal->setFixedWidth(fieldWidth);
         lineOtt->setFixedWidth(fieldWidth);
 
+        modLayout->addWidget(titolo, 0, Qt::AlignCenter);
         modLayout->addWidget(labeltype);
         modLayout->addWidget(lineType, 0, Qt::AlignLeft);
 
@@ -205,6 +196,8 @@ namespace sensore{
         widget = new QWidget();
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
+        QLabel* titolo = new QLabel("Modifica delle informazioni di: " + QString::fromStdString(sMotore->getNome()));
+        titolo->setStyleSheet("font: 18px bold;");
         QLabel *labeltype = new QLabel("Tipologia:");
         QLineEdit *lineType = new QLineEdit(widget);
 
@@ -237,13 +230,6 @@ namespace sensore{
         lineVal->setText(qval);
         lineCav->setText(QString::number(sMotore->getCavalli()));
 
-        modLayout->addWidget(lineType);
-        modLayout->addWidget(lineDescr);
-        modLayout->addWidget(lineMin);
-        modLayout->addWidget(lineMax);
-        modLayout->addWidget(lineVal);
-        modLayout->addWidget(lineCav);
-
         int fieldWidth = widget->width();
         lineType->setFixedWidth(fieldWidth);
         lineDescr->setFixedWidth(fieldWidth);
@@ -252,6 +238,7 @@ namespace sensore{
         lineVal->setFixedWidth(fieldWidth);
         lineCav->setFixedWidth(fieldWidth);
 
+        modLayout->addWidget(titolo, 0, Qt::AlignCenter);
         modLayout->addWidget(labeltype);
         modLayout->addWidget(lineType, 0, Qt::AlignLeft);
 
@@ -271,7 +258,6 @@ namespace sensore{
         modLayout->addWidget(lineCav, 0, Qt::AlignLeft);
 
         confirmButton = new QPushButton("Conferma", widget);
-        //modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
 
         QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sMotore,lineType, lineDescr, lineVal, lineMin, lineMax, lineCav]() {
             mod->aggiornaSens(sMotore, lineType, lineDescr, lineVal, lineMin, lineMax);
@@ -283,6 +269,8 @@ namespace sensore{
         widget = new QWidget();
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
+        QLabel* titolo = new QLabel("Modifica delle informazioni di: " + QString::fromStdString(sBatteria->getNome()));
+        titolo->setStyleSheet("font: 18px bold;");
         QLabel *labeltype = new QLabel("Tipologia:");
         QLineEdit *lineType = new QLineEdit(widget);
 
@@ -315,13 +303,6 @@ namespace sensore{
         lineVal->setText(qval);
         lineMat->setText(QString::fromStdString(sBatteria->getMateriale()));
 
-        modLayout->addWidget(lineType);
-        modLayout->addWidget(lineDescr);
-        modLayout->addWidget(lineMin);
-        modLayout->addWidget(lineMax);
-        modLayout->addWidget(lineVal);
-        modLayout->addWidget(lineMat);
-
         int fieldWidth = widget->width();
         lineType->setFixedWidth(fieldWidth);
         lineDescr->setFixedWidth(fieldWidth);
@@ -330,6 +311,7 @@ namespace sensore{
         lineVal->setFixedWidth(fieldWidth);
         lineMat->setFixedWidth(fieldWidth);
 
+        modLayout->addWidget(titolo, 0, Qt::AlignCenter);
         modLayout->addWidget(labeltype);
         modLayout->addWidget(lineType, 0, Qt::AlignLeft);
 
@@ -361,6 +343,8 @@ namespace sensore{
         widget = new QWidget();
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
+        QLabel* titolo = new QLabel("Modifica delle informazioni di: " + QString::fromStdString(sGas->getNome()));
+        titolo->setStyleSheet("font: 18px bold;");
         QLabel *labeltype = new QLabel("Tipologia:");
         QLineEdit *lineType = new QLineEdit(widget);
 
@@ -393,13 +377,6 @@ namespace sensore{
         lineVal->setText(qval);
         lineImpronta->setText(QString::number(sGas->getImpronta()));
 
-        modLayout->addWidget(lineType);
-        modLayout->addWidget(lineDescr);
-        modLayout->addWidget(lineMin);
-        modLayout->addWidget(lineMax);
-        modLayout->addWidget(lineVal);
-        modLayout->addWidget(lineImpronta);
-
         int fieldWidth = widget->width();
         lineType->setFixedWidth(fieldWidth);
         lineDescr->setFixedWidth(fieldWidth);
@@ -408,6 +385,7 @@ namespace sensore{
         lineVal->setFixedWidth(fieldWidth);
         lineImpronta->setFixedWidth(fieldWidth);
 
+        modLayout->addWidget(titolo, 0, Qt::AlignCenter);
         modLayout->addWidget(labeltype);
         modLayout->addWidget(lineType, 0, Qt::AlignLeft);
 
