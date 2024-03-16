@@ -12,6 +12,7 @@ namespace sensore{
         layout->addWidget(searchButton);
 
         visualizzazione = new QScrollArea();
+        visualizzazione->setMinimumSize(450, 300);
         visualizzazione->setWidgetResizable(true);
         scrollVisua = new QWidget();
         scrollayout = new QVBoxLayout();

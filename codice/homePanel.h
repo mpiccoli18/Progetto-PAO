@@ -7,7 +7,6 @@
 #include <QString>
 #include <QVBoxLayout>
 #include <QSplineSeries>
-#include <QtCharts>
 #include <QLineEdit>
 #include <vector>
 #include <QWidget>
@@ -32,6 +31,7 @@ namespace sensore{
 
         public:
             homePanel(QWidget* parent = 0);
+            void keyPressEvent(QKeyEvent *event);
 
         public slots:
             void Modify(Sensore *s);

@@ -1,4 +1,5 @@
 #include "homePanel.h"
+#include <QChartView>
 
 namespace sensore{
 homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr), sceltaGrafico(nullptr)
@@ -460,11 +461,6 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
     }
 
     void homePanel::Modify(Sensore *s){
-        /*if (grafico) {
-            this->pannello->layout()->removeWidget(grafico);
-            delete grafico;
-            grafico = nullptr;
-        }*/
         if(modifica)
         {
             modifica->close();
@@ -482,6 +478,11 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         modifica->show();
 
         connect(confirmButton, &QPushButton::pressed, this, [=](){
+            if (sceltaGrafico) {
+                this->pannello->layout()->removeWidget(sceltaGrafico);
+                delete sceltaGrafico;
+                sceltaGrafico = nullptr;
+            }
             if (grafico) {
                 this->pannello->layout()->removeWidget(grafico);
                 delete grafico;
@@ -531,8 +532,9 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
 
         // Asse X
         QValueAxis *axisX = new QValueAxis();
-        axisX->setRange(1, valori.size());
-        axisX->setTickCount(valori.size());
+        //qDebug() << valori.size()+1;
+        axisX->setRange(0, valori.size()+1);
+        axisX->setTickCount(valori.size()+2);
         axisX->setLabelFormat("%d");
         chart->addAxis(axisX, Qt::AlignBottom);
 
@@ -542,6 +544,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         axisY->setTickCount(10);
         axisY->applyNiceNumbers();
         chart->addAxis(axisY, Qt::AlignLeft);
+        chart->setAnimationOptions(QChart::SeriesAnimations);
 
         sceltaGrafico = new QComboBox();
         sceltaGrafico->setFixedWidth(250);
@@ -550,7 +553,8 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         // Aggiungi gli altri tipi di grafico
         sceltaGrafico->addItem("Spline");
         sceltaGrafico->addItem("Punti");
-        sceltaGrafico->addItem("Line");
+        sceltaGrafico->addItem("Linee");
+        sceltaGrafico->addItem("Barra");
         connect(sceltaGrafico, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int index){
             switch(index) {
                 case 1: // Spline
@@ -586,6 +590,22 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                         lineGrafico->attachAxis(axisY);
                     }
                     break;
+                case 4: // Barra
+                    chart->removeAllSeries();
+                    {
+                        QBarSeries *barraGrafico = new QBarSeries();
+                        QBarSet* set = new QBarSet("Valori");
+                        for (int i = 0; i < valori.size(); i++) {
+                            if(i == 0) *set << 0;
+                            *set << valori[i];
+                            barraGrafico->append(set);
+                        }
+                        //barraGrafico->append(set);
+                        chart->addSeries(barraGrafico);
+                        barraGrafico->attachAxis(axisX);
+                        barraGrafico->attachAxis(axisY);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -597,6 +617,18 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         grafico->setMaximumSize(1200, 700);
         this->pannello->layout()->addWidget(sceltaGrafico);
         this->pannello->layout()->addWidget(grafico);
+    }
+
+    void homePanel::keyPressEvent(QKeyEvent *event)
+    {
+        switch (event->key()) {
+        case Qt::Key_Plus:
+            grafico->chart()->zoomIn();
+            break;
+        case Qt::Key_Minus:
+            grafico->chart()->zoomOut();
+            break;
+        }
     }
 
     void homePanel::Elimination(Sensore* s) {
