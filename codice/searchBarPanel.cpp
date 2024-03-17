@@ -88,29 +88,7 @@ namespace sensore{
         {
             for(int i = 0; i < searchVet.size(); i++) {
                 QString searchStr = QString::fromStdString(searchVet[i]->getNome());
-                if(searchVet[i]->getNome() == search || (searchStr.contains(QString::fromStdString(search), Qt::CaseInsensitive) && search != ""))
-                {
-                    QWidget *sensorInfo = new QWidget();
-                    sensorInfo->setObjectName("sensorInfo");
-                    sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black;}"
-                                              "QWidget#sensorInfo:hover {background-color: lightgrey;}");
-                    sensorInfo->setFixedHeight(150);
-                    QVBoxLayout *sensorLayout = new QVBoxLayout();
-                    sensorInfo->setLayout(sensorLayout);
-                    QLabel *nome = new QLabel("Nome: " + QString::fromStdString(searchVet[i]->getNome()));
-                    nome->setStyleSheet("font: bold 14px;");
-                    sensorLayout->addWidget(nome);
-                    QLabel *tipo = new QLabel("Tipo: " + QString::fromStdString(searchVet[i]->getTipo()));
-                    sensorLayout->addWidget(tipo);
-                    QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(searchVet[i]->getDescrizione()));
-                    sensorLayout->addWidget(descrizione);
-                    QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
-                    connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
-                    sensorLayout->addWidget(visualizza);
-                    scrollayout->addWidget(sensorInfo, 0, Qt::AlignTop);
-                    trovato = true;
-                }
-                if(search == "")
+                if(search != "" && (searchVet[i]->getNome() == search || searchStr.contains(QString::fromStdString(search), Qt::CaseInsensitive)))
                 {
                     QWidget *sensorInfo = new QWidget();
                     sensorInfo->setObjectName("sensorInfo");
@@ -133,15 +111,9 @@ namespace sensore{
                     trovato = true;
                 }
             }
-            if(trovato == false && !mod->getInsiemeSens().empty())
+            if(search != "" && trovato == false && !mod->getInsiemeSens().empty())
             {
-                QWidget *sensorInfo = new QWidget();
-                QVBoxLayout *sensorLayout = new QVBoxLayout();
-                sensorInfo->setLayout(sensorLayout);
-                QLabel *errore = new QLabel("La ricerca non ha prodotto risultati!");
-                errore->setStyleSheet("font: bold 14px;");
-                sensorLayout->addWidget(errore, 0, Qt::AlignTop);
-                scrollayout->addWidget(sensorInfo);
+                QMessageBox::warning(this, tr("Attenzione:"), tr("La ricerca non ha prodotto risultati!"));
             }
         }
         this->layout()->addWidget(risultati);

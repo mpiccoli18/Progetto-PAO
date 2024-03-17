@@ -1,5 +1,6 @@
 #include "homePanel.h"
 #include <QChartView>
+#include <vector>
 
 namespace sensore{
 homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr), sceltaGrafico(nullptr)
@@ -12,22 +13,38 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         layout->addLayout(layoutApp);
 
         QPushButton* save = new QPushButton("Salva con nome");
+        save->setObjectName("buttonSave");
+        save->setStyleSheet("QPushButton#buttonSave {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                            "QPushButton#buttonSave:hover{background-color: lightgrey;}");
+        save->setFixedWidth(125);
         menu->addWidget(save, 0, 0, 1, 1);
         connect(save, &QPushButton::pressed, this, &homePanel::StartSave);
         connect(this, &homePanel::StartSave, this, &homePanel::Save);
 
         saveStessoFile = new QPushButton("Salva");
+        saveStessoFile->setObjectName("buttonSaveStesso");
+        saveStessoFile->setStyleSheet("QPushButton#buttonSaveStesso {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                      "QPushButton#buttonSaveStesso:hover{background-color: lightgrey;}");
+        saveStessoFile->setFixedWidth(125);
         menu->addWidget(saveStessoFile, 0, 2, 1, 1);
         saveStessoFile->setEnabled(false);
         connect(saveStessoFile, &QPushButton::pressed, this, &homePanel::StartSaveStessoFile);
         connect(this, &homePanel::StartSaveStessoFile, this, &homePanel::SaveStessoFile);
 
         QPushButton* open = new QPushButton("Apri");
+        open->setObjectName("buttonOpen");
+        open->setStyleSheet("QPushButton#buttonOpen {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                            "QPushButton#buttonOpen:hover{background-color: lightgrey;}");
+        open->setFixedWidth(125);
         menu->addWidget(open, 0, 3, 1, 1);
         connect(open, &QPushButton::pressed, this, &homePanel::StartOpen);
         connect(this, &homePanel::StartOpen, this, &homePanel::Open);
 
         QPushButton* create = new QPushButton("Crea");
+        create->setObjectName("buttonCreate");
+        create->setStyleSheet("QPushButton#buttonCreate {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                              "QPushButton#buttonCreate:hover{background-color: lightgrey;}");
+        create->setFixedWidth(125);
         menu->addWidget(create, 0, 4, 1, 1);
         connect(create, &QPushButton::pressed, this, &homePanel::StartCreate);
         connect(this, &homePanel::StartCreate, this, &homePanel::Create);
@@ -532,7 +549,6 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
 
         // Asse X
         QValueAxis *axisX = new QValueAxis();
-        //qDebug() << valori.size()+1;
         axisX->setRange(0, valori.size()+1);
         axisX->setTickCount(valori.size()+2);
         axisX->setLabelFormat("%d");
@@ -619,16 +635,85 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         this->pannello->layout()->addWidget(grafico);
     }
 
-    void homePanel::keyPressEvent(QKeyEvent *event)
+    void homePanel::keyPressEvent(QKeyEvent* event)
     {
-        switch (event->key()) {
-        case Qt::Key_Plus:
-            grafico->chart()->zoomIn();
-            break;
-        case Qt::Key_Minus:
-            grafico->chart()->zoomOut();
-            break;
+        switch (event->key())
+        {
+            case Qt::Key_Plus:
+                grafico->chart()->zoomIn();
+                break;
+            case Qt::Key_Minus:
+                grafico->chart()->zoomOut();
+                break;
+            case Qt::Key_A:
+                moveChart(-1);
+                break;
+            case Qt::Key_D:
+                moveChart(1);
+                break;
+            case Qt::Key_W:
+                moveVChart(1);
+                break;
+            case Qt::Key_S:
+                moveVChart(-1);
+                break;
         }
+    }
+
+    void homePanel::moveChart(int direzione)
+    {
+        QValueAxis* asseX = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Horizontal).at(0));
+        if (!asseX)
+            return;
+        double min = asseX->min();
+        double max = asseX->max();
+        double tickCount = asseX->tickCount();
+
+        if(grafico->chart()->isZoomed())
+        {
+            double valD = 0;
+            asseX->setLabelFormat("%.1f");
+            if(min == 0)
+                valD = (max + 1) / tickCount * direzione;
+            else if(min < 0)
+                valD = (max - min + 1) / tickCount * direzione;
+            else
+                valD = (max + min + 1) / tickCount * direzione;
+            asseX->setRange(min + valD, max + valD);
+        }
+        else
+        {
+            int val = 0;
+            if(min == 0)
+                val = (max + 1) / tickCount * direzione;
+            else if(min < 0)
+                val = (max - min + 1) / tickCount * direzione;
+            else
+                val = (max + min + 1) / tickCount * direzione;
+            asseX->setRange(min + val, max + val);
+        }
+        //qDebug() << val;
+    }
+
+    void homePanel::moveVChart(int direzione)
+    {
+        QValueAxis* asseY = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Vertical).at(0));
+        QValueAxis* asseX = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Horizontal).at(0));
+        if (!asseY)
+            return;
+
+        int val = 0;
+        if(grafico->chart()->isZoomed())
+        {
+            asseX->setLabelFormat("%.1f");
+            val = 5 * direzione;
+        }
+        else
+        {
+            val = 10 * direzione;
+        }
+
+        asseY->setRange(asseY->min() + val, asseY->max() + val);
     }
 
     void homePanel::Elimination(Sensore* s) {

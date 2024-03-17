@@ -110,19 +110,5 @@
             6.2,
             4.9
         ]
-    },
-    "Sensore Pneumatico6": {
-        "Descrizione": "asdasdas",
-        "Eta Pneumatico": "10",
-        "Marca Pneumatico": "Pirelli",
-        "Massimo": 100,
-        "Minimo": 0,
-        "Nome": "Sensore Pneumatico",
-        "Tipo": "asdasda",
-        "Valori": [
-            10,
-            20,
-            30
-        ]
     }
 }

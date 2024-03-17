@@ -8,7 +8,6 @@
 #include <QVBoxLayout>
 #include <QSplineSeries>
 #include <QLineEdit>
-#include <vector>
 #include <QWidget>
 #include <QtCharts>
 
@@ -32,6 +31,8 @@ namespace sensore{
         public:
             homePanel(QWidget* parent = 0);
             void keyPressEvent(QKeyEvent *event);
+            void moveChart(int direzione);
+            void moveVChart(int direzione);
 
         public slots:
             void Modify(Sensore *s);
