@@ -29,13 +29,11 @@ namespace sensore{
         }
         else
         {
-            QVBoxLayout* sensorContainerLayout = new QVBoxLayout();
             std::vector<Sensore*> searchVet = mod->getInsiemeSens();
             for(int i = 0; i < searchVet.size(); i++) {
                 QWidget *sensorInfo = new QWidget();
                 sensorInfo->setObjectName("sensorInfo");
-                sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black;}"
-                                          "QWidget#sensorInfo:hover {background-color: lightgrey;}");
+                sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black;}");
                 sensorInfo->setFixedHeight(150);
                 QVBoxLayout *sensorLayout = new QVBoxLayout();
                 sensorLayout->setContentsMargins(10, 10, 10, 10);
@@ -44,15 +42,19 @@ namespace sensore{
                 nome->setStyleSheet("font: bold 14px;");
                 sensorLayout->addWidget(nome);
                 QLabel *tipo = new QLabel("Tipo: " + QString::fromStdString(searchVet[i]->getTipo()));
+                tipo->setStyleSheet("font: italic 14px;");
                 sensorLayout->addWidget(tipo);
                 QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(searchVet[i]->getDescrizione()));
+                descrizione->setStyleSheet("font: italic 14px;");
                 sensorLayout->addWidget(descrizione);
                 QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
+                visualizza->setObjectName("buttonVisualizza");
+                visualizza->setStyleSheet("QPushButton#buttonVisualizza{border: 1px solid black; border-radius: 16px; padding: 8px;}"
+                                          "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
                 connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                 sensorLayout->addWidget(visualizza);
-                sensorContainerLayout->addWidget(sensorInfo);
+                scrollayout->addWidget(sensorInfo);
             }
-            scrollayout->addLayout(sensorContainerLayout);
             scrollayout->addStretch();
         }
         connect(searchButton, &QPushButton::pressed, this, &searchBarPanel::StartSearch);
@@ -88,23 +90,28 @@ namespace sensore{
         {
             for(int i = 0; i < searchVet.size(); i++) {
                 QString searchStr = QString::fromStdString(searchVet[i]->getNome());
-                if(search != "" && (searchVet[i]->getNome() == search || searchStr.contains(QString::fromStdString(search), Qt::CaseInsensitive)))
+                if((searchVet[i]->getNome() == search || searchStr.contains(QString::fromStdString(search), Qt::CaseInsensitive)))
                 {
                     QWidget *sensorInfo = new QWidget();
                     sensorInfo->setObjectName("sensorInfo");
-                    sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black;}"
-                                              "QWidget#sensorInfo:hover {background-color: lightgrey;}");
+                    sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black;}");
                     sensorInfo->setFixedHeight(150);
                     QVBoxLayout *sensorLayout = new QVBoxLayout();
+                    sensorLayout->setContentsMargins(10, 10, 10, 10);
                     sensorInfo->setLayout(sensorLayout);
                     QLabel *nome = new QLabel("Nome: " + QString::fromStdString(searchVet[i]->getNome()));
                     nome->setStyleSheet("font: bold 14px;");
                     sensorLayout->addWidget(nome);
                     QLabel *tipo = new QLabel("Tipo: " + QString::fromStdString(searchVet[i]->getTipo()));
+                    tipo->setStyleSheet("font: italic 14px;");
                     sensorLayout->addWidget(tipo);
                     QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(searchVet[i]->getDescrizione()));
+                    descrizione->setStyleSheet("font: italic 14px;");
                     sensorLayout->addWidget(descrizione);
                     QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
+                    visualizza->setObjectName("buttonVisualizza");
+                    visualizza->setStyleSheet("QPushButton#buttonVisualizza{border: 1px solid black; border-radius: 16px; padding: 8px;}"
+                                              "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
                     connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
                     scrollayout->addWidget(sensorInfo, 0, Qt::AlignTop);

@@ -18,22 +18,32 @@ namespace sensore{
     void SensorInfoVisitor::visitSPneumatico(SensorePneumatico& sPneumatico) {
         widget = new QLabel("Marca Pneumatico: " + QString::fromStdString(sPneumatico.getMarcaPneu()) +
                             "\nTempo di vita: " + QString::number(sPneumatico.getEta()));
+        widget->setObjectName("pneumatico");
+        widget->setStyleSheet("QLabel#pneumatico {font: italic 16px;}");
     }
 
     void SensorInfoVisitor::visitSConsumo(SensoreConsumo& sConsumo) {
         widget = new QLabel("Numero di Ottano: " +  QString::number(sConsumo.getOttano()));
+        widget->setObjectName("consumo");
+        widget->setStyleSheet("QLabel#consumo {font: italic 16px;}");
     }
 
     void SensorInfoVisitor::visitSMotore(SensoreMotore& sMotore) {
         widget = new QLabel("Numero di cavalli: " +  QString::number(sMotore.getCavalli()));
+        widget->setObjectName("motore");
+        widget->setStyleSheet("QLabel#motore {font: italic 16px;}");
     }
 
     void SensorInfoVisitor::visitSBatteria(SensoreBatteria& sBatteria) {
         widget = new QLabel("Materiali: " +  QString::fromStdString(sBatteria.getMateriale()));
+        widget->setObjectName("batteria");
+        widget->setStyleSheet("QLabel#batteria {font: italic 16px;}");
     }
 
     void SensorInfoVisitor::visitSGas(SensoreGas& sGas) {
         widget = new QLabel("Impronta: " +  QString::number(sGas.getImpronta()));
+        widget->setObjectName("gas");
+        widget->setStyleSheet("QLabel#gas {font: italic 16px;}");
     }
 
     void SensorInfoVisitor::modSPneumatico(SensorePneumatico* sPneumatico){
@@ -41,26 +51,33 @@ namespace sensore{
         QVBoxLayout* modLayout = new QVBoxLayout(widget);
 
         QLabel* titolo = new QLabel("Modifica delle informazioni di: " + QString::fromStdString(sPneumatico->getNome()));
-        titolo->setStyleSheet("font: 18px bold;");
+        titolo->setStyleSheet("font: bold 20px;");
         QLabel *labeltype = new QLabel("Tipologia:");
+        labeltype->setStyleSheet("font: italic 14px;");
         QLineEdit *lineType = new QLineEdit(widget);
 
         QLabel *labeldescr = new QLabel("Descrizione:");
+        labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit *lineDescr = new QLineEdit(widget);
 
         QLabel *labelmin = new QLabel("Valore Min:");
+        labelmin->setStyleSheet("font: italic 14px;");
         QLineEdit *lineMin = new QLineEdit(widget);
 
         QLabel *labelmax = new QLabel("Valore Max:");
+        labelmax->setStyleSheet("font: italic 14px;");
         QLineEdit *lineMax = new QLineEdit(widget);
 
         QLabel *labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
+        labelval->setStyleSheet("font: italic 14px;");
         QLineEdit *lineVal = new QLineEdit(widget);
 
         QLabel *labelMarca = new QLabel("Marca:");
+        labelMarca->setStyleSheet("font: italic 14px;");
         QLineEdit* lineMarca = new QLineEdit(widget);
 
         QLabel *labelEta = new QLabel("Tempo di vita:");
+        labelEta->setStyleSheet("font: italic 14px;");
         QLineEdit *lineEta = new QLineEdit(widget);
 
         std::vector<double> v = sPneumatico->getValori();
@@ -125,21 +142,27 @@ namespace sensore{
         QLabel* titolo = new QLabel("Modifica delle informazioni di: " + QString::fromStdString(sConsumo->getNome()));
         titolo->setStyleSheet("font: 18px bold;");
         QLabel *labeltype = new QLabel("Tipologia:");
+        labeltype->setStyleSheet("font: italic 14px;");
         QLineEdit *lineType = new QLineEdit(widget);
 
         QLabel *labeldescr = new QLabel("Descrizione:");
+        labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit *lineDescr = new QLineEdit(widget);
 
         QLabel *labelmin = new QLabel("Valore Min:");
+        labelmin->setStyleSheet("font: italic 14px;");
         QLineEdit *lineMin = new QLineEdit(widget);
 
         QLabel *labelmax = new QLabel("Valore Max:");
+        labelmax->setStyleSheet("font: italic 14px;");
         QLineEdit *lineMax = new QLineEdit(widget);
 
         QLabel *labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
+        labelval->setStyleSheet("font: italic 14px;");
         QLineEdit *lineVal = new QLineEdit(widget);
 
         QLabel *labelOtt = new QLabel("Numero di ottano:");
+        labelOtt->setStyleSheet("font: italic 14px;");
         QLineEdit* lineOtt = new QLineEdit(widget);
 
         std::vector<double> v = sConsumo->getValori();
@@ -199,21 +222,27 @@ namespace sensore{
         QLabel* titolo = new QLabel("Modifica delle informazioni di: " + QString::fromStdString(sMotore->getNome()));
         titolo->setStyleSheet("font: 18px bold;");
         QLabel *labeltype = new QLabel("Tipologia:");
+        labeltype->setStyleSheet("font: italic 14px;");
         QLineEdit *lineType = new QLineEdit(widget);
 
         QLabel *labeldescr = new QLabel("Descrizione:");
+        labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit *lineDescr = new QLineEdit(widget);
 
         QLabel *labelmin = new QLabel("Valore Min:");
+        labelmin->setStyleSheet("font: italic 14px;");
         QLineEdit *lineMin = new QLineEdit(widget);
 
         QLabel *labelmax = new QLabel("Valore Max:");
+        labelmax->setStyleSheet("font: italic 14px;");
         QLineEdit *lineMax = new QLineEdit(widget);
 
         QLabel *labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
+        labelval->setStyleSheet("font: italic 14px;");
         QLineEdit *lineVal = new QLineEdit(widget);
 
         QLabel *labelCav = new QLabel("Cavalli:");
+        labelCav->setStyleSheet("font: italic 14px;");
         QLineEdit* lineCav = new QLineEdit(widget);
 
         std::vector<double> v = sMotore->getValori();
@@ -272,21 +301,27 @@ namespace sensore{
         QLabel* titolo = new QLabel("Modifica delle informazioni di: " + QString::fromStdString(sBatteria->getNome()));
         titolo->setStyleSheet("font: 18px bold;");
         QLabel *labeltype = new QLabel("Tipologia:");
+        labeltype->setStyleSheet("font: italic 14px;");
         QLineEdit *lineType = new QLineEdit(widget);
 
         QLabel *labeldescr = new QLabel("Descrizione:");
+        labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit *lineDescr = new QLineEdit(widget);
 
         QLabel *labelmin = new QLabel("Valore Min:");
+        labelmin->setStyleSheet("font: italic 14px;");
         QLineEdit *lineMin = new QLineEdit(widget);
 
         QLabel *labelmax = new QLabel("Valore Max:");
+        labelmax->setStyleSheet("font: italic 14px;");
         QLineEdit *lineMax = new QLineEdit(widget);
 
         QLabel *labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
+        labelval->setStyleSheet("font: italic 14px;");
         QLineEdit *lineVal = new QLineEdit(widget);
 
         QLabel *labelMat = new QLabel("Materiale:");
+        labelMat->setStyleSheet("font: italic 14px;");
         QLineEdit* lineMat = new QLineEdit(widget);
 
         std::vector<double> v = sBatteria->getValori();
@@ -346,21 +381,27 @@ namespace sensore{
         QLabel* titolo = new QLabel("Modifica delle informazioni di: " + QString::fromStdString(sGas->getNome()));
         titolo->setStyleSheet("font: 18px bold;");
         QLabel *labeltype = new QLabel("Tipologia:");
+        labeltype->setStyleSheet("font: italic 14px;");
         QLineEdit *lineType = new QLineEdit(widget);
 
         QLabel *labeldescr = new QLabel("Descrizione:");
+        labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit *lineDescr = new QLineEdit(widget);
 
         QLabel *labelmin = new QLabel("Valore Min:");
+        labelmin->setStyleSheet("font: italic 14px;");
         QLineEdit *lineMin = new QLineEdit(widget);
 
         QLabel *labelmax = new QLabel("Valore Max:");
+        labelmax->setStyleSheet("font: italic 14px;");
         QLineEdit *lineMax = new QLineEdit(widget);
 
         QLabel *labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
+        labelval->setStyleSheet("font: italic 14px;");
         QLineEdit *lineVal = new QLineEdit(widget);
 
         QLabel *labelImpronta = new QLabel("Impronta ecologica:");
+        labelImpronta->setStyleSheet("font: italic 14px;");
         QLineEdit* lineImpronta = new QLineEdit(widget);
 
         std::vector<double> v = sGas->getValori();

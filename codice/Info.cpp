@@ -30,10 +30,18 @@ namespace sensore {
     void Info::show() {
         nome_label->setText(QString::fromStdString(sensore.getNome()));
         nome_label->setObjectName("nome");
-        nome_label->setStyleSheet("QLabel#nome {font: bold 14px;}");
+        nome_label->setStyleSheet("QLabel#nome {font: bold 20px;}");
         tipo_label->setText("Tipo: " + QString::fromStdString(sensore.getTipo()));
+        tipo_label->setObjectName("tipo");
+        tipo_label->setStyleSheet("QLabel#tipo {font: italic 16px;}");
         descrizione_label->setText("Descrizione: " + QString::fromStdString(sensore.getDescrizione()));
+        descrizione_label->setObjectName("descrizione");
+        descrizione_label->setStyleSheet("QLabel#descrizione {font: italic 16px;}");
         min_label->setText("Val. minimo: " + QString::number(sensore.getMin()));
+        min_label->setObjectName("min");
+        min_label->setStyleSheet("QLabel#min {font: italic 16px;}");
         max_label->setText("Val. massimo: " + QString::number(sensore.getMax()));
+        max_label->setObjectName("max");
+        max_label->setStyleSheet("QLabel#max {font: italic 16px;}");
     }
 }

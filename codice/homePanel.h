@@ -27,12 +27,16 @@ namespace sensore{
             QPushButton* saveStessoFile;
             bool modificato = false;
             QComboBox* sceltaGrafico;
+            int zoomGrafico = 0;
 
         public:
             homePanel(QWidget* parent = 0);
             void keyPressEvent(QKeyEvent *event);
             void moveChart(int direzione);
             void moveVChart(int direzione);
+            void resetChart();
+            void zoomIn();
+            void zoomOut();
 
         public slots:
             void Modify(Sensore *s);

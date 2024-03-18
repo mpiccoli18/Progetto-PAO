@@ -14,20 +14,33 @@ namespace sensore{
             infoSensor->addWidget(info);
             QGridLayout* comandi = new QGridLayout();
             infoSensor->addLayout(comandi,Qt::AlignRight);
+            QSpacerItem *spazio = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+            comandi->addItem(spazio, 0, 0, 1, 1);
+            QPushButton* modifica = new QPushButton("Modifica");
+            modifica->setObjectName("buttonMod");
+            modifica->setStyleSheet("QPushButton#buttonMod {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                "QPushButton#buttonMod:hover{background-color: lightgrey;}");
+            modifica->setFixedWidth(100);
+            comandi->addWidget(modifica, 0, 2, 1, 1);
+            connect(modifica, &QPushButton::pressed, this, [this, s]{ emit StartModify(s);});
 
-            QPushButton* modify = new QPushButton("Modifica");
-            comandi->addWidget(modify, 0, 0, 1, 1);
-            connect(modify, &QPushButton::pressed, this, [this, s]{ emit StartModify(s);});
+            QPushButton* simula = new QPushButton("Simula");
+            simula->setObjectName("buttonSimula");
+            simula->setStyleSheet("QPushButton#buttonSimula {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                "QPushButton#buttonSimula:hover{background-color: lightgrey;}");
+            simula->setFixedWidth(100);
+            comandi->addWidget(simula, 0, 3, 1, 1);
+            connect(simula, &QPushButton::pressed, this, &SensorPanel::StartSimulation);
 
-            QPushButton* simulation = new QPushButton("Simula");
-            comandi->addWidget(simulation, 0, 1, 1, 1);
-            connect(simulation, &QPushButton::pressed, this, &SensorPanel::StartSimulation);
-
-            QPushButton* elimination = new QPushButton("Elimina");
-            comandi->addWidget(elimination, 0, 2, 1, 1);
-            connect(elimination, &QPushButton::pressed, this, [this, s]() { emit StartElimination(s); });
-            QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-            comandi->addItem(spacer, 0, 4, 1, 1);
+            QPushButton* elimina = new QPushButton("Elimina");
+            elimina->setObjectName("buttonElimina");
+            elimina->setStyleSheet("QPushButton#buttonElimina {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                "QPushButton#buttonElimina:hover{background-color: red;}");
+            elimina->setFixedWidth(100);
+            comandi->addWidget(elimina, 0, 4, 1, 1);
+            connect(elimina, &QPushButton::pressed, this, [this, s]() { emit StartElimination(s); });
+            /*QSpacerItem *spazio = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+            comandi->addItem(spazio, 0, 4, 1, 1);*/
         }
     }
 }

@@ -637,13 +637,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
 
     void homePanel::keyPressEvent(QKeyEvent* event)
     {
+
         switch (event->key())
         {
             case Qt::Key_Plus:
-                grafico->chart()->zoomIn();
+                zoomIn();
                 break;
             case Qt::Key_Minus:
-                grafico->chart()->zoomOut();
+                zoomOut();
                 break;
             case Qt::Key_A:
                 moveChart(-1);
@@ -657,7 +658,27 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             case Qt::Key_S:
                 moveVChart(-1);
                 break;
+            case Qt::Key_Escape:
+                resetChart();
+                break;
         }
+    }
+
+    void homePanel::zoomIn()
+    {
+        QValueAxis* asseX = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Horizontal).at(0));
+        grafico->chart()->zoomIn();
+        asseX->setTickCount(asseX->tickCount() / 2 + zoomGrafico);
+        //qDebug() << asseX->tickCount();
+        zoomGrafico++;
+    }
+
+    void homePanel::zoomOut()
+    {
+        QValueAxis* asseX = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Horizontal).at(0));
+        grafico->chart()->zoomOut();
+        asseX->setTickCount(asseX->tickCount() * 2 + zoomGrafico);
+        zoomGrafico--;
     }
 
     void homePanel::moveChart(int direzione)
@@ -667,32 +688,31 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             return;
         double min = asseX->min();
         double max = asseX->max();
-        double tickCount = asseX->tickCount();
-
-        if(grafico->chart()->isZoomed())
+        int val = 0;
+        asseX->setLabelFormat("%d");
+        if(zoomGrafico > 0)
         {
-            double valD = 0;
-            asseX->setLabelFormat("%.1f");
             if(min == 0)
-                valD = (max + 1) / tickCount * direzione;
+                val = (max + 1 + zoomGrafico) / 14 * direzione;
             else if(min < 0)
-                valD = (max - min + 1) / tickCount * direzione;
+                val = (max - min + 1 + zoomGrafico) / 14 * direzione;
             else
-                valD = (max + min + 1) / tickCount * direzione;
-            asseX->setRange(min + valD, max + valD);
+                val = (max + min + 1 + zoomGrafico) / 14 * direzione;
         }
         else
         {
-            int val = 0;
             if(min == 0)
-                val = (max + 1) / tickCount * direzione;
+                val = (max + 1) / 14 * direzione;
             else if(min < 0)
-                val = (max - min + 1) / tickCount * direzione;
+                val = (max - min + 1) / 14 * direzione;
             else
-                val = (max + min + 1) / tickCount * direzione;
-            asseX->setRange(min + val, max + val);
+                val = (max + min + 1) / 14 * direzione;
         }
-        //qDebug() << val;
+        asseX->setRange(min + val, max + val);
+        /*qDebug() << min;
+        qDebug() << max;
+        qDebug() << val;
+        qDebug() << zoomGrafico;*/
     }
 
     void homePanel::moveVChart(int direzione)
@@ -703,17 +723,25 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             return;
 
         int val = 0;
+        asseX->setLabelFormat("%d");
         if(grafico->chart()->isZoomed())
         {
-            asseX->setLabelFormat("%.1f");
             val = 5 * direzione;
         }
         else
-        {
+        { 
             val = 10 * direzione;
         }
-
         asseY->setRange(asseY->min() + val, asseY->max() + val);
+    }
+
+    void homePanel::resetChart()
+    {
+        grafico->chart()->zoomReset();
+        QValueAxis* asseX = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Horizontal).at(0));
+        asseX->setLabelFormat("%d");
+        asseX->setTickCount(14);
+        zoomGrafico = 1;
     }
 
     void homePanel::Elimination(Sensore* s) {
