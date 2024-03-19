@@ -27,6 +27,8 @@ namespace sensore{
             QPushButton* saveStessoFile;
             bool modificato = false;
             QComboBox* sceltaGrafico;
+            QPushButton* comandiZoom;
+            QLabel* legenda;
             int zoomGrafico = 0;
 
         public:
@@ -48,7 +50,7 @@ namespace sensore{
             void Create();
             void View(Sensore* sensore);
             void SensorSelected(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor,QVBoxLayout* createLayout);
-
+            void mostraNascondiLeg();
         signals:
             void StartSave();
             void StartSaveStessoFile();
