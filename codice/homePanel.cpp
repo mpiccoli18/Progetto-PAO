@@ -3,7 +3,7 @@
 #include <vector>
 
 namespace sensore{
-homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr), sceltaGrafico(nullptr)
+homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr), sceltaGrafico(nullptr), comandiZoom(nullptr), legenda(nullptr)
     {
         QVBoxLayout* layout = new QVBoxLayout(this);
         QGridLayout* menu = new QGridLayout();
@@ -12,6 +12,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         layoutApp = new QHBoxLayout();
         layout->addLayout(layoutApp);
 
+        QShortcut* s = new QShortcut(QKeySequence(tr("Ctrl+S","File|Save")), this);
         QPushButton* save = new QPushButton("Salva con nome");
         save->setObjectName("buttonSave");
         save->setStyleSheet("QPushButton#buttonSave {border: 1px solid black; border-radius: 16px; padding: 8px;} "
@@ -132,7 +133,6 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         }
         else
         {
-
             QString filePath = QFileDialog::getOpenFileName(this, tr("Apri file JSON"), "", tr("File JSON (*.json)"));
             nomeFile = filePath;
             if(!(nomeFile.isEmpty()))
@@ -220,6 +220,21 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
     void homePanel::Create() {
         if(barraRicerca){
             layoutApp->layout()->removeWidget(barraRicerca);
+            if (grafico) {
+                pannello->layout()->removeWidget(grafico);
+                if (comandiZoom) {
+                    pannello->layout()->removeWidget(comandiZoom);
+                    delete comandiZoom;
+                    comandiZoom = nullptr;
+                }
+                if (sceltaGrafico) {
+                    pannello->layout()->removeWidget(sceltaGrafico);
+                    delete sceltaGrafico;
+                    sceltaGrafico = nullptr;
+                }
+                delete grafico;
+                grafico = nullptr;
+            }
             delete pannello;
             pannello = nullptr;
             delete barraRicerca;
@@ -495,11 +510,6 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         modifica->show();
 
         connect(confirmButton, &QPushButton::pressed, this, [=](){
-            if (comandiZoom) {
-                this->pannello->layout()->removeWidget(comandiZoom);
-                delete comandiZoom;
-                comandiZoom = nullptr;
-            }
             if (sceltaGrafico) {
                 this->pannello->layout()->removeWidget(sceltaGrafico);
                 delete sceltaGrafico;
@@ -507,6 +517,11 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             }
             if (grafico) {
                 this->pannello->layout()->removeWidget(grafico);
+                if (comandiZoom) {
+                    this->pannello->layout()->removeWidget(comandiZoom);
+                    delete comandiZoom;
+                    comandiZoom = nullptr;
+                }
                 delete grafico;
                 grafico = nullptr;
             }
@@ -536,18 +551,18 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
     }
 
     void homePanel::Simulation(){
-        if (comandiZoom) {
-            this->pannello->layout()->removeWidget(comandiZoom);
-            delete comandiZoom;
-            comandiZoom = nullptr;
-        }
-        if (sceltaGrafico) {
-            this->pannello->layout()->removeWidget(sceltaGrafico);
-            delete sceltaGrafico;
-            sceltaGrafico = nullptr;
-        }
         if (grafico) {
-            this->pannello->layout()->removeWidget(grafico);
+            pannello->layout()->removeWidget(grafico);
+            if (comandiZoom) {
+                pannello->layout()->removeWidget(comandiZoom);
+                delete comandiZoom;
+                comandiZoom = nullptr;
+            }
+            if (sceltaGrafico) {
+                pannello->layout()->removeWidget(sceltaGrafico);
+                delete sceltaGrafico;
+                sceltaGrafico = nullptr;
+            }
             delete grafico;
             grafico = nullptr;
         }
@@ -574,9 +589,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
 
         sceltaGrafico = new QComboBox();
         sceltaGrafico->setFixedWidth(250);
-        // Aggiungi un elemento vuoto non selezionabile
         sceltaGrafico->addItem("Scegli una tipologia di grafico");
-        // Aggiungi gli altri tipi di grafico
         sceltaGrafico->addItem("Spline");
         sceltaGrafico->addItem("Punti");
         sceltaGrafico->addItem("Linee");
@@ -641,18 +654,18 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         grafico->setStyleSheet("border: 1px solid black; border-radius: 2px; background-color:lightgrey;");
         grafico->setRenderHint(QPainter::Antialiasing);
         grafico->setMaximumSize(1200, 700);
-        comandiZoom = new QPushButton("Mostra/nascondi comandi zoom");
+        comandiZoom = new QPushButton("Mostra/nascondi comandi grafico");
         comandiZoom->setFixedWidth(250);
-        connect(comandiZoom, &QPushButton::clicked, this, &homePanel::toggleLegenda);
+        connect(comandiZoom, &QPushButton::clicked, this, &homePanel::mostraNascondiLegenda);
         legenda = new QLabel();
         QString infoText = "Informazioni sui tasti bindati:\n";
-        infoText += "Zoom in:          +        ";
-        infoText += "Zoom out:         -\n";
-        infoText += "Move left:        A        ";
-        infoText += "Move right:       D\n";
-        infoText += "Move up:         W       ";
-        infoText += "Move down:      S\n";
-        infoText += "Reset chart:     Esc\n";
+        infoText += "Ingrandisci:                  +        ";
+        infoText += "Rimpicciolisci:            -\n";
+        infoText += "Muoviti a sinistra:        A        ";
+        infoText += "Muoviti a destra:        D\n";
+        infoText += "Muoviti sopra:             W       ";
+        infoText += "Muoviti sotto:             S\n";
+        infoText += "Reset:                         Esc\n";
         legenda = new QLabel(infoText);
         legenda->setStyleSheet("font: italic 14px;");
         legenda->setAlignment(Qt::AlignLeft);
@@ -663,7 +676,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         this->pannello->layout()->addWidget(grafico);
     }
 
-    void homePanel::toggleLegenda(){
+    void homePanel::mostraNascondiLegenda(){
         if (legenda->isVisible()) {
             legenda->hide();
         } else {
@@ -778,11 +791,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         int min = asseX->min();
         int max = asseX->max();
         asseX->setLabelFormat("%d");
-        if(min+direzione < 0)
-        {
-            QMessageBox::warning(this, tr("Attenzione!"), tr("Il grafico non va oltre lo zero"));
-        }
-        else
+        if(min+direzione >= 0)
         {
             asseX->setRange(min + direzione, max + direzione);
         }
@@ -879,7 +888,9 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         }
         if(creazione)
         {
+            layoutApp->layout()->removeWidget(creazione);
             delete creazione;
+            creazione = nullptr;
 
             pannello = new SensorPanel(s);
             sensoreGenerale = s;

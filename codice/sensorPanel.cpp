@@ -39,8 +39,6 @@ namespace sensore{
             elimina->setFixedWidth(100);
             comandi->addWidget(elimina, 0, 4, 1, 1);
             connect(elimina, &QPushButton::pressed, this, [this, s]() { emit StartElimination(s); });
-            /*QSpacerItem *spazio = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-            comandi->addItem(spazio, 0, 4, 1, 1);*/
         }
     }
 }

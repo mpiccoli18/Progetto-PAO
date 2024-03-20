@@ -20,12 +20,16 @@ namespace sensore{
         visualizzazione->setWidget(scrollVisua);
         layout->addWidget(visualizzazione);
         QLabel* empty;
+        QLabel* empty2;
         mod = m;
         if(mod->getInsiemeSens().empty())
         {
             empty = new QLabel("La lista di sensori è vuota, si prega di aggiungerne di nuovi!");
             empty->setStyleSheet("font: bold 16px; color:red;");
+            empty2 = new QLabel("Per aggiungere nuovi sensori premi i pulsanti 'Apri' o 'Crea' in alto!");
+            empty2->setStyleSheet("font: bold 14px; color:black;");
             scrollayout->addWidget(empty, 0, Qt::AlignTop);
+            scrollayout->addWidget(empty2, 1, Qt::AlignTop);
         }
         else
         {
@@ -53,9 +57,8 @@ namespace sensore{
                                           "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
                 connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                 sensorLayout->addWidget(visualizza);
-                scrollayout->addWidget(sensorInfo);
+                scrollayout->addWidget(sensorInfo, i, Qt::AlignTop);
             }
-            scrollayout->addStretch();
         }
         connect(searchButton, &QPushButton::pressed, this, &searchBarPanel::StartSearch);
         connect(this, &searchBarPanel::StartSearch, this, &searchBarPanel::Search);
@@ -80,11 +83,15 @@ namespace sensore{
         std::vector<Sensore*> searchVet = mod->getInsiemeSens();
         bool trovato = false;
         QLabel* empty;
+        QLabel* empty2;
         if(mod->getInsiemeSens().empty())
         {
             empty = new QLabel("La lista di sensori è vuota, si prega di aggiungerne di nuovi!");
             empty->setStyleSheet("font: bold 16px; color:red;");
+            empty2 = new QLabel("Per aggiungere nuovi sensori premi i pulsanti 'Apri' o 'Crea' in alto!");
+            empty2->setStyleSheet("font: bold 14px; color:black;");
             scrollayout->addWidget(empty, 0, Qt::AlignTop);
+            scrollayout->addWidget(empty2, 1, Qt::AlignTop);
         }
         else
         {
@@ -114,7 +121,7 @@ namespace sensore{
                                               "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
                     connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
-                    scrollayout->addWidget(sensorInfo, 0, Qt::AlignTop);
+                    scrollayout->addWidget(sensorInfo, i, Qt::AlignTop);
                     trovato = true;
                 }
             }

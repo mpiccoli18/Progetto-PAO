@@ -14,7 +14,6 @@ namespace sensore{
         return confirmButton;
     }
 
-
     void SensorInfoVisitor::visitSPneumatico(SensorePneumatico& sPneumatico) {
         widget = new QLabel("Marca Pneumatico: " + QString::fromStdString(sPneumatico.getMarcaPneu()) +
                             "\nTempo di vita: " + QString::number(sPneumatico.getEta()));
@@ -127,7 +126,6 @@ namespace sensore{
         modLayout->addWidget(lineEta, 0, Qt::AlignLeft);
 
         confirmButton = new QPushButton("Conferma", widget);
-        //modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
 
         QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax, lineMarca, lineEta]() {
             mod->aggiornaSens(sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax);
@@ -207,7 +205,6 @@ namespace sensore{
         modLayout->addWidget(lineOtt, 0, Qt::AlignLeft);
 
         confirmButton = new QPushButton("Conferma", widget);
-        //modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
 
         QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sConsumo,lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt]() {
             mod->aggiornaSens(sConsumo, lineType, lineDescr, lineVal, lineMin, lineMax);
@@ -366,7 +363,6 @@ namespace sensore{
         modLayout->addWidget(lineMat, 0, Qt::AlignLeft);
 
         confirmButton = new QPushButton("Conferma", widget);
-        //modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
 
         QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sBatteria,lineType, lineDescr, lineVal, lineMin, lineMax, lineMat]() {
             mod->aggiornaSens(sBatteria, lineType, lineDescr, lineVal, lineMin, lineMax);
@@ -447,7 +443,6 @@ namespace sensore{
 
 
         confirmButton = new QPushButton("Conferma", widget);
-        //modLayout->addWidget(confirmButton, 0, Qt::AlignLeft);
 
         QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sGas,lineType, lineDescr, lineVal, lineMin, lineMax, lineImpronta]() {
             mod->aggiornaSens(sGas, lineType, lineDescr, lineVal, lineMin, lineMax);
