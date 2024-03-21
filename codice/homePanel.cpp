@@ -3,7 +3,7 @@
 #include <vector>
 
 namespace sensore{
-homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr), sceltaGrafico(nullptr), comandiZoom(nullptr), legenda(nullptr)
+homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr), sceltaGrafico(nullptr), comandiZoom(nullptr), legenda(nullptr), elimina(nullptr)
     {
         QVBoxLayout* layout = new QVBoxLayout(this);
         QGridLayout* menu = new QGridLayout();
@@ -12,8 +12,8 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         layoutApp = new QHBoxLayout();
         layout->addLayout(layoutApp);
 
-        QShortcut* s = new QShortcut(QKeySequence(tr("Ctrl+S","File|Save")), this);
         QPushButton* save = new QPushButton("Salva con nome");
+        save->setShortcut(QKeySequence("Ctrl+N"));
         save->setObjectName("buttonSave");
         save->setStyleSheet("QPushButton#buttonSave {border: 1px solid black; border-radius: 16px; padding: 8px;} "
                             "QPushButton#buttonSave:hover{background-color: lightgrey;}");
@@ -23,6 +23,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         connect(this, &homePanel::StartSave, this, &homePanel::Save);
 
         saveStessoFile = new QPushButton("Salva");
+        saveStessoFile->setShortcut(QKeySequence("Ctrl+S"));
         saveStessoFile->setObjectName("buttonSaveStesso");
         saveStessoFile->setStyleSheet("QPushButton#buttonSaveStesso {border: 1px solid black; border-radius: 16px; padding: 8px;} "
                                       "QPushButton#buttonSaveStesso:hover{background-color: lightgrey;}");
@@ -33,6 +34,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         connect(this, &homePanel::StartSaveStessoFile, this, &homePanel::SaveStessoFile);
 
         QPushButton* open = new QPushButton("Apri");
+        open->setShortcut(QKeySequence("Ctrl+O"));
         open->setObjectName("buttonOpen");
         open->setStyleSheet("QPushButton#buttonOpen {border: 1px solid black; border-radius: 16px; padding: 8px;} "
                             "QPushButton#buttonOpen:hover{background-color: lightgrey;}");
@@ -42,6 +44,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         connect(this, &homePanel::StartOpen, this, &homePanel::Open);
 
         QPushButton* create = new QPushButton("Crea");
+        create->setShortcut(QKeySequence("Ctrl+C"));
         create->setObjectName("buttonCreate");
         create->setStyleSheet("QPushButton#buttonCreate {border: 1px solid black; border-radius: 16px; padding: 8px;} "
                               "QPushButton#buttonCreate:hover{background-color: lightgrey;}");
@@ -58,6 +61,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         layoutApp->addWidget(barraRicerca,1);
 
         pannello = new SensorPanel();// sensore
+        pannello->setStyleSheet("background-color:darkgrey;");
         layoutApp->addWidget(pannello,2);
 
         layoutApp->setStretch(0, 1);
@@ -92,11 +96,19 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             QWidget *noModifiche = new QWidget();
             QVBoxLayout *modificheLayout = new QVBoxLayout();
             noModifiche->setLayout(modificheLayout);
+            noModifiche->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
             QLabel* mod = new QLabel("Attenzione: hai delle modifiche non salvate!");
-            mod->setStyleSheet("font: bold 16px");
+            mod->setStyleSheet("font: bold 16px; margin-bottom: 8px;");
             modificheLayout->addWidget(mod);
             QPushButton* salva = new QPushButton("Salva");
+            salva->setObjectName("salvaMod");
+            salva->setStyleSheet("QPushButton#salvaMod {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                 "QPushButton#salvaMod:hover{background-color: lightgrey;}");
+
             QPushButton* annulla = new QPushButton("Annulla");
+            annulla->setObjectName("annullaM");
+            annulla->setStyleSheet("QPushButton#annullaM {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                   "QPushButton#annullaM:hover{background-color: red;}");
             modificheLayout->addWidget(salva);
             modificheLayout->addWidget(annulla);
             connect(salva, &QPushButton::pressed, this, [=]{
@@ -115,12 +127,21 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             QVBoxLayout *modificheLayout = new QVBoxLayout();
             noModifiche->setLayout(modificheLayout);
             QLabel* mod = new QLabel("Attenzione: hai delle modifiche non salvate!");
-            mod->setStyleSheet("font: bold 16px");
+            mod->setStyleSheet("font: bold 16px; margin-bottom: 8px;");
             modificheLayout->addWidget(mod);
             QPushButton* salva = new QPushButton("Salva con nome");
+            salva->setObjectName("salvaMod");
+            salva->setStyleSheet("QPushButton#salvaMod {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                 "QPushButton#salvaMod:hover{background-color: lightgrey;}");
+
             QPushButton* annulla = new QPushButton("Annulla");
+            annulla->setObjectName("annullaM");
+            annulla->setStyleSheet("QPushButton#annullaM {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                   "QPushButton#annullaM:hover{background-color: red;}");
+
             modificheLayout->addWidget(salva);
             modificheLayout->addWidget(annulla);
+            noModifiche->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
             connect(salva, &QPushButton::pressed, this, [=]{
                 Save();
                 noModifiche->close();
@@ -507,6 +528,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
 
         modifica->layout()->addWidget(exitButton);
         modifica->layout()->addWidget(confirmButton);
+        modifica->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
         modifica->show();
 
         connect(confirmButton, &QPushButton::pressed, this, [=](){
@@ -563,6 +585,11 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                 delete sceltaGrafico;
                 sceltaGrafico = nullptr;
             }
+            if (legenda) {
+                pannello->layout()->removeWidget(legenda);
+                delete legenda;
+                legenda = nullptr;
+            }
             delete grafico;
             grafico = nullptr;
         }
@@ -600,7 +627,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                     chart->removeAllSeries();
                     {
                         QSplineSeries* splineGrafico = new QSplineSeries();
-                        for (int i = 0; i < valori.size(); ++i)
+                        for (unsigned long long i = 0; i < valori.size(); i++)
                             splineGrafico->append(i + 1, valori[i]);
                         chart->addSeries(splineGrafico);
                         splineGrafico->attachAxis(axisX);
@@ -611,7 +638,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                     chart->removeAllSeries();
                     {
                         QScatterSeries* scatterGrafico = new QScatterSeries();
-                        for (int i = 0; i < valori.size(); ++i)
+                        for (unsigned long long i = 0; i < valori.size(); i++)
                             scatterGrafico->append(i + 1, valori[i]);
                         chart->addSeries(scatterGrafico);
                         scatterGrafico->attachAxis(axisX);
@@ -622,7 +649,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                     chart->removeAllSeries();
                     {
                         QLineSeries *lineGrafico = new QLineSeries();
-                        for (int i = 0; i < valori.size(); ++i)
+                        for (unsigned long long i = 0; i < valori.size(); i++)
                             lineGrafico->append(i + 1, valori[i]);
                         chart->addSeries(lineGrafico);
                         lineGrafico->attachAxis(axisX);
@@ -634,7 +661,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                     {
                         QBarSeries *barraGrafico = new QBarSeries();
                         QBarSet* set = new QBarSet("Valori");
-                        for (int i = 0; i < valori.size(); i++) {
+                        for (unsigned long long i = 0; i < valori.size(); i++) {
                             if(i == 0) *set << 0;
                             *set << valori[i];
                             barraGrafico->append(set);
@@ -686,9 +713,10 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
 
     void homePanel::keyPressEvent(QKeyEvent* event)
     {
-
-        switch (event->key())
+        if(grafico)
         {
+            switch (event->key())
+            {
             case Qt::Key_Plus:
                 zoomIn();
                 break;
@@ -710,6 +738,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             case Qt::Key_Escape:
                 resetChart();
                 break;
+            }
         }
     }
 
@@ -806,6 +835,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
 
         int val = 0;
         asseX->setLabelFormat("%d");
+
         if(grafico->chart()->isZoomed())
         {
             val = 5 * direzione;
@@ -814,7 +844,10 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         { 
             val = 10 * direzione;
         }
-        asseY->setRange(asseY->min() + val, asseY->max() + val);
+        if(asseY->min() + val >= 0)
+        {
+            asseY->setRange(asseY->min() + val, asseY->max() + val);
+        }
     }
 
     void homePanel::resetChart()
@@ -828,37 +861,67 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
     }
 
     void homePanel::Elimination(Sensore* s) {
-        if(modifica)
-            modifica = nullptr;
-        if(grafico)
-            grafico = nullptr;
-        if(sceltaGrafico)
-            sceltaGrafico = nullptr;
-        if(comandiZoom)
-            sceltaGrafico = nullptr;
-        mod->eliminaSens(s);
-        sensoreGenerale = nullptr;
-        s = nullptr;
-        if(pannello)
+        if(elimina)
         {
-            delete barraRicerca;
-            delete pannello;
-            barraRicerca = new searchBarPanel(mod);
-            pannello = new SensorPanel();
-            layoutApp->addWidget(barraRicerca, 1);
-            layoutApp->addWidget(pannello, 2);
-            layoutApp->setStretch(0, 1);
-            layoutApp->setStretch(1, 2);
-            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-            connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+            elimina->close();
         }
-        if(!(nomeFile.isEmpty()))
-        {
-            saveStessoFile->setEnabled(true);
-        }
-        modificato = true;
+        elimina = new QWidget();
+        QVBoxLayout* eliminaL = new QVBoxLayout();
+        QLabel* eliminaLab = new QLabel("Sei sicuro di voler eliminare questo sensore?");
+        eliminaLab->setStyleSheet("font: italic 16px; margin-bottom: 8px;");
+        QPushButton *conferma = new QPushButton("Conferma");
+        conferma->setObjectName("confermaE");
+        conferma->setStyleSheet("QPushButton#confermaE {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                "QPushButton#confermaE:hover{background-color: lightgrey;}");
+        QPushButton *annulla = new QPushButton("Annulla");
+        annulla->setObjectName("annullaE");
+        annulla->setStyleSheet("QPushButton#annullaE {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                               "QPushButton#annullaE:hover{background-color: red;}");
+
+        elimina->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
+        elimina->setLayout(eliminaL);
+        eliminaL->addWidget(eliminaLab);
+        eliminaL->addWidget(conferma);
+        eliminaL->addWidget(annulla);
+
+        connect(conferma, &QPushButton::pressed, this, [=](){
+            if(modifica)
+                modifica = nullptr;
+            if(grafico)
+                grafico = nullptr;
+            if(sceltaGrafico)
+                sceltaGrafico = nullptr;
+            if(comandiZoom)
+                sceltaGrafico = nullptr;
+            mod->eliminaSens(s);
+            sensoreGenerale = nullptr;
+            if(pannello)
+            {
+                delete barraRicerca;
+                delete pannello;
+                barraRicerca = new searchBarPanel(mod);
+                pannello = new SensorPanel();
+                layoutApp->addWidget(barraRicerca, 1);
+                layoutApp->addWidget(pannello, 2);
+                layoutApp->setStretch(0, 1);
+                layoutApp->setStretch(1, 2);
+                connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+                connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+                connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+                connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+            }
+            if(!(nomeFile.isEmpty()))
+            {
+                saveStessoFile->setEnabled(true);
+            }
+            modificato = true;
+            elimina->close();
+        });
+
+        connect(annulla, &QPushButton::pressed, this, [=](){
+            elimina->close();
+        });
+        elimina->show();
     }
 
 

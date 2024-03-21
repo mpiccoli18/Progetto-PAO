@@ -17,6 +17,7 @@ namespace sensore{
             QSpacerItem *spazio = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
             comandi->addItem(spazio, 0, 0, 1, 1);
             QPushButton* modifica = new QPushButton("Modifica");
+            modifica->setShortcut(QKeySequence("Ctrl+M"));
             modifica->setObjectName("buttonMod");
             modifica->setStyleSheet("QPushButton#buttonMod {border: 1px solid black; border-radius: 16px; padding: 8px;} "
                                 "QPushButton#buttonMod:hover{background-color: lightgrey;}");
@@ -25,6 +26,7 @@ namespace sensore{
             connect(modifica, &QPushButton::pressed, this, [this, s]{ emit StartModify(s);});
 
             QPushButton* simula = new QPushButton("Simula");
+            simula->setShortcut(QKeySequence("Ctrl+I"));
             simula->setObjectName("buttonSimula");
             simula->setStyleSheet("QPushButton#buttonSimula {border: 1px solid black; border-radius: 16px; padding: 8px;} "
                                 "QPushButton#buttonSimula:hover{background-color: lightgrey;}");

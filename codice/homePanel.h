@@ -30,6 +30,7 @@ namespace sensore{
             QPushButton* comandiZoom;
             QLabel* legenda;
             int zoomGrafico = 0;
+            QWidget* elimina;
 
         public:
             homePanel(QWidget* parent = 0);

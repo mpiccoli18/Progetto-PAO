@@ -8,7 +8,7 @@ namespace sensore{
         std::vector<Sensore*> sens;
         if(!InsiemeSensori.empty())
         {
-            for(int i = 0; i < InsiemeSensori.size(); i++)
+            for(unsigned long long i = 0; i < InsiemeSensori.size(); i++)
             {
                 sens.push_back(InsiemeSensori[i]);
             }
@@ -22,7 +22,7 @@ namespace sensore{
 
     void modello::eliminaSens(Sensore* s){
         auto j = InsiemeSensori.begin();
-        for(int i = 0; i < InsiemeSensori.size(); i++)
+        for(unsigned long long i = 0; i < InsiemeSensori.size(); i++)
         {
             if(InsiemeSensori[i] == s)
             {

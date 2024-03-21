@@ -34,7 +34,7 @@ namespace sensore{
         else
         {
             std::vector<Sensore*> searchVet = mod->getInsiemeSens();
-            for(int i = 0; i < searchVet.size(); i++) {
+            for(unsigned long long i = 0; i < searchVet.size(); i++) {
                 QWidget *sensorInfo = new QWidget();
                 sensorInfo->setObjectName("sensorInfo");
                 sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black;}");
@@ -57,8 +57,9 @@ namespace sensore{
                                           "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
                 connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                 sensorLayout->addWidget(visualizza);
-                scrollayout->addWidget(sensorInfo, i, Qt::AlignTop);
+                scrollayout->addWidget(sensorInfo);
             }
+            scrollayout->addStretch();
         }
         connect(searchButton, &QPushButton::pressed, this, &searchBarPanel::StartSearch);
         connect(this, &searchBarPanel::StartSearch, this, &searchBarPanel::Search);
@@ -95,7 +96,7 @@ namespace sensore{
         }
         else
         {
-            for(int i = 0; i < searchVet.size(); i++) {
+            for(unsigned long long i = 0; i < searchVet.size(); i++) {
                 QString searchStr = QString::fromStdString(searchVet[i]->getNome());
                 if((searchVet[i]->getNome() == search || searchStr.contains(QString::fromStdString(search), Qt::CaseInsensitive)))
                 {
@@ -121,7 +122,7 @@ namespace sensore{
                                               "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
                     connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
-                    scrollayout->addWidget(sensorInfo, i, Qt::AlignTop);
+                    scrollayout->addWidget(sensorInfo, 0, Qt::AlignTop);
                     trovato = true;
                 }
             }
