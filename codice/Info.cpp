@@ -36,7 +36,9 @@ namespace sensore {
         tipo_label->setStyleSheet("QLabel#tipo {font: italic 16px;}");
         descrizione_label->setText("Descrizione: " + QString::fromStdString(sensore.getDescrizione()));
         descrizione_label->setObjectName("descrizione");
+        descrizione_label->setFixedSize(400, 70);
         descrizione_label->setStyleSheet("QLabel#descrizione {font: italic 16px;}");
+        descrizione_label->setWordWrap(true);
         min_label->setText("Val. minimo: " + QString::number(sensore.getMin()));
         min_label->setObjectName("min");
         min_label->setStyleSheet("QLabel#min {font: italic 16px;}");

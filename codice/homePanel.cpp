@@ -275,22 +275,27 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         creazione->setLayout(createLayout);
         QLabel* labeltitle = new QLabel("Creazione di un Sensore");
         labeltitle->setAlignment(Qt::AlignCenter);
-        labeltitle->setStyleSheet("font: bold 14px;");
+        labeltitle->setStyleSheet("font: bold 18px;");
         createLayout->addWidget(labeltitle);
 
         QLabel* labeltype = new QLabel("Tipologia:");
+        labeltype->setStyleSheet("font: italic 14px;");
         QLineEdit* lineType = new QLineEdit(creazione);
 
-        QLabel* labeldescr = new QLabel("Descrizione:");
+        QLabel* labeldescr = new QLabel("Descrizione (max 100 caratteri):");
+        labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit* lineDescr = new QLineEdit(creazione);
 
         QLabel* labelmin = new QLabel("Valore minimo:");
+        labelmin->setStyleSheet("font: italic 14px;");
         QLineEdit* lineMin = new QLineEdit(creazione);
 
         QLabel* labelmax = new QLabel("Valore massimo:");
+        labelmax->setStyleSheet("font: italic 14px;");
         QLineEdit* lineMax = new QLineEdit(creazione);
 
         QLabel* labelval = new QLabel("Valori del Sensore (separati da uno spazio):");
+        labelval->setStyleSheet("font: italic 14px;");
         QLineEdit* lineVal = new QLineEdit(creazione);
 
         createLayout->addWidget(labeltype, 0, Qt::AlignTop);
@@ -304,11 +309,10 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         createLayout->addWidget(labelval, 0, Qt::AlignTop);
         createLayout->addWidget(lineVal, 0, Qt::AlignTop);
 
-
-        QLabel* labelbox = new QLabel("Scegli il tipo del Sensore:");
-        createLayout->addWidget(labelbox);
-
         QComboBox* sensorTypeComboBox = new QComboBox();
+        sensorTypeComboBox->setObjectName("comboBoxCrea");
+        sensorTypeComboBox->setStyleSheet("QComboBox#comboBoxCrea {border: 1px solid black; padding: 4px; background-color:transparent;}");
+        sensorTypeComboBox->addItem("Scegli il tipo del Sensore:");
         sensorTypeComboBox->addItem("Sensore Consumo");
         sensorTypeComboBox->addItem("Sensore Motore");
         sensorTypeComboBox->addItem("Sensore Batteria");
@@ -316,7 +320,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         sensorTypeComboBox->addItem("Sensore Pneumatico");
 
         createLayout->addWidget(sensorTypeComboBox);
-        creazione->setFixedHeight(500);
+        createLayout->addStretch();
 
         connect(sensorTypeComboBox, QOverload<int>::of(&QComboBox::activated), [=](int index) {
                 QString selectedOption = sensorTypeComboBox->itemText(index);
@@ -331,184 +335,256 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
 
     void homePanel::SensorSelected(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor, QVBoxLayout* createLayout)
     {
-        while (createLayout->count() > 13) {
-            QLayoutItem* item = createLayout->takeAt(13);
+        while (createLayout->count() > 12) {
+            QLayoutItem* item = createLayout->takeAt(12);
             delete item->widget();
             delete item;
         }
 
         if (selectedSensor == "Sensore Batteria") {
             QLabel* labelmat = new QLabel("Materiali:");
+            labelmat->setStyleSheet("font: italic 14px;");
             QLineEdit* lineMat = new QLineEdit(creazione);
-            createLayout->addWidget(labelmat);
-            createLayout->addWidget(lineMat);
+            lineMat->setStyleSheet("border: 1px solid black");
+            createLayout->addWidget(labelmat, 0, Qt::AlignTop);
+            createLayout->addWidget(lineMat, 0, Qt::AlignTop);
             QPushButton* confirmButton = new QPushButton("Conferma");
+            confirmButton->setObjectName("confermaCrea");
+            confirmButton->setStyleSheet("QPushButton#confermaCrea {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                         "QPushButton#confermaCrea:hover{background-color: lightgrey;}");
             createLayout->addWidget(confirmButton);
+            createLayout->addStretch();
             connect(confirmButton, &QPushButton::pressed, this, [this, selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineMat]() {
-                mod->creaSensBatteria(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineMat);
-                if(barraRicerca)
+                QString d = lineDescr->text();
+                if(d.size() > 100)
                 {
-                    delete barraRicerca;
-                    delete creazione;
-                    creazione = nullptr;
-                    barraRicerca = new searchBarPanel(mod);
-                    pannello = new SensorPanel();
-                    layoutApp->addWidget(barraRicerca, 1);
-                    layoutApp->addWidget(pannello, 2);
-                    layoutApp->setStretch(0, 1);
-                    layoutApp->setStretch(1, 2);
-                    connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                    connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                    connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                    connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                    QMessageBox::warning(this, tr("Attenzione"), tr("La descrizione supera i 100 caratteri, riprovare!"));
                 }
-                if(!nomeFile.isEmpty())
+                else
                 {
-                    saveStessoFile->setEnabled(true);
+                    mod->creaSensBatteria(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineMat);
+                    if(barraRicerca)
+                    {
+                        delete barraRicerca;
+                        delete creazione;
+                        creazione = nullptr;
+                        barraRicerca = new searchBarPanel(mod);
+                        pannello = new SensorPanel();
+                        layoutApp->addWidget(barraRicerca, 1);
+                        layoutApp->addWidget(pannello, 2);
+                        layoutApp->setStretch(0, 1);
+                        layoutApp->setStretch(1, 2);
+                        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+                        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+                        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+                        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                    }
+                    if(!nomeFile.isEmpty())
+                    {
+                        saveStessoFile->setEnabled(true);
+                    }
+                    modificato = true;
+                    QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
                 }
-                modificato = true;
-                QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
         if (selectedSensor == "Sensore Consumo") {
             QLabel* labelott = new QLabel("Numero di Ottano:");
+            labelott->setStyleSheet("font: italic 14px;");
             QLineEdit* lineOtt = new QLineEdit(creazione);
-            createLayout->addWidget(labelott);
-            createLayout->addWidget(lineOtt);
+            lineOtt->setStyleSheet("border: 1px solid black");
+            createLayout->addWidget(labelott, 0, Qt::AlignTop);
+            createLayout->addWidget(lineOtt, 0, Qt::AlignTop);
 
             QPushButton* confirmButton = new QPushButton("Conferma");
+            confirmButton->setObjectName("confermaCrea");
+            confirmButton->setStyleSheet("QPushButton#confermaCrea {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                         "QPushButton#confermaCrea:hover{background-color: lightgrey;}");
             createLayout->addWidget(confirmButton);
+            createLayout->addStretch();
             connect(confirmButton, &QPushButton::pressed, this, [this, selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt]() {
-                mod->creaSensConsumo(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt);
-                if(barraRicerca)
+                QString d = lineDescr->text();
+                if(d.size() > 100)
                 {
-                    delete barraRicerca;
-                    delete creazione;
-                    creazione = nullptr;
-                    barraRicerca = new searchBarPanel(mod);
-                    pannello = new SensorPanel();
-                    layoutApp->addWidget(barraRicerca, 1);
-                    layoutApp->addWidget(pannello, 2);
-                    layoutApp->setStretch(0, 1);
-                    layoutApp->setStretch(1, 2);
-                    connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                    connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                    connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                    connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                    QMessageBox::warning(this, tr("Attenzione"), tr("La descrizione supera i 100 caratteri, riprovare!"));
                 }
-                if(!nomeFile.isEmpty())
+                else
                 {
-                    saveStessoFile->setEnabled(true);
+                    mod->creaSensConsumo(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt);
+                    if(barraRicerca)
+                    {
+                        delete barraRicerca;
+                        delete creazione;
+                        creazione = nullptr;
+                        barraRicerca = new searchBarPanel(mod);
+                        pannello = new SensorPanel();
+                        layoutApp->addWidget(barraRicerca, 1);
+                        layoutApp->addWidget(pannello, 2);
+                        layoutApp->setStretch(0, 1);
+                        layoutApp->setStretch(1, 2);
+                        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+                        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+                        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+                        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                    }
+                    if(!nomeFile.isEmpty())
+                    {
+                        saveStessoFile->setEnabled(true);
+                    }
+                    modificato = true;
+                    QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
                 }
-                modificato = true;
-                QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
         if (selectedSensor == "Sensore Motore") {
             QLabel* labelcav = new QLabel("Numero di Cavalli:");
+            labelcav->setStyleSheet("font: italic 14px;");
             QLineEdit* lineCav = new QLineEdit(creazione);
-            createLayout->addWidget(labelcav);
-            createLayout->addWidget(lineCav);
+            lineCav->setStyleSheet("border: 1px solid black");
+            createLayout->addWidget(labelcav, 0, Qt::AlignTop);
+            createLayout->addWidget(lineCav, 0, Qt::AlignTop);
 
             QPushButton* confirmButton = new QPushButton("Conferma");
+            confirmButton->setObjectName("confermaCrea");
+            confirmButton->setStyleSheet("QPushButton#confermaCrea {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                         "QPushButton#confermaCrea:hover{background-color: lightgrey;}");
             createLayout->addWidget(confirmButton);
+            createLayout->addStretch();
             connect(confirmButton, &QPushButton::pressed, this, [this, selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineCav]() {
-                mod->creaSensMotore(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineCav);
-                if(barraRicerca)
+                QString d = lineDescr->text();
+                if(d.size() > 100)
                 {
-                    delete barraRicerca;
-                    delete creazione;
-                    creazione = nullptr;
-                    barraRicerca = new searchBarPanel(mod);
-                    pannello = new SensorPanel();
-                    layoutApp->addWidget(barraRicerca, 1);
-                    layoutApp->addWidget(pannello, 2);
-                    layoutApp->setStretch(0, 1);
-                    layoutApp->setStretch(1, 2);
-                    connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                    connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                    connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                    connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                    QMessageBox::warning(this, tr("Attenzione"), tr("La descrizione supera i 100 caratteri, riprovare!"));
                 }
-                if(!nomeFile.isEmpty())
+                else
                 {
-                    saveStessoFile->setEnabled(true);
+                    mod->creaSensMotore(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineCav);
+                    if(barraRicerca)
+                    {
+                        delete barraRicerca;
+                        delete creazione;
+                        creazione = nullptr;
+                        barraRicerca = new searchBarPanel(mod);
+                        pannello = new SensorPanel();
+                        layoutApp->addWidget(barraRicerca, 1);
+                        layoutApp->addWidget(pannello, 2);
+                        layoutApp->setStretch(0, 1);
+                        layoutApp->setStretch(1, 2);
+                        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+                        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+                        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+                        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                    }
+                    if(!nomeFile.isEmpty())
+                    {
+                        saveStessoFile->setEnabled(true);
+                    }
+                    modificato = true;
+                    QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
                 }
-                modificato = true;
-                QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
         if (selectedSensor == "Sensore Gas") {
             QLabel* labelfootp = new QLabel("Impronta:");
+            labelfootp->setStyleSheet("font: italic 14px;");
             QLineEdit* lineFootp = new QLineEdit(creazione);
-            createLayout->addWidget(labelfootp);
-            createLayout->addWidget(lineFootp);
+            lineFootp->setStyleSheet("border: 1px solid black");
+            createLayout->addWidget(labelfootp, 0, Qt::AlignTop);
+            createLayout->addWidget(lineFootp, 0, Qt::AlignTop);
 
             QPushButton* confirmButton = new QPushButton("Conferma");
+            confirmButton->setObjectName("confermaCrea");
+            confirmButton->setStyleSheet("QPushButton#confermaCrea {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                         "QPushButton#confermaCrea:hover{background-color: lightgrey;}");
             createLayout->addWidget(confirmButton);
+            createLayout->addStretch();
             connect(confirmButton, &QPushButton::pressed, this, [this, selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineFootp]() {
-                mod->creaSensConsumo(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineFootp);
-                if(barraRicerca)
+                QString d = lineDescr->text();
+                if(d.size() > 100)
                 {
-                    delete barraRicerca;
-                    delete creazione;
-                    creazione = nullptr;
-                    barraRicerca = new searchBarPanel(mod);
-                    pannello = new SensorPanel();
-                    layoutApp->addWidget(barraRicerca, 1);
-                    layoutApp->addWidget(pannello, 2);
-                    layoutApp->setStretch(0, 1);
-                    layoutApp->setStretch(1, 2);
-                    connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                    connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                    connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                    connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                    QMessageBox::warning(this, tr("Attenzione"), tr("La descrizione supera i 100 caratteri, riprovare!"));
                 }
-                if(!nomeFile.isEmpty())
+                else
                 {
-                    saveStessoFile->setEnabled(true);
+                    mod->creaSensConsumo(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineFootp);
+                    if(barraRicerca)
+                    {
+                        delete barraRicerca;
+                        delete creazione;
+                        creazione = nullptr;
+                        barraRicerca = new searchBarPanel(mod);
+                        pannello = new SensorPanel();
+                        layoutApp->addWidget(barraRicerca, 1);
+                        layoutApp->addWidget(pannello, 2);
+                        layoutApp->setStretch(0, 1);
+                        layoutApp->setStretch(1, 2);
+                        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+                        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+                        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+                        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                    }
+                    if(!nomeFile.isEmpty())
+                    {
+                        saveStessoFile->setEnabled(true);
+                    }
+                    modificato = true;
+                    QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
                 }
-                modificato = true;
-                QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
         if (selectedSensor == "Sensore Pneumatico") {
             QLabel* labelbr = new QLabel("Marca:");
+            labelbr->setStyleSheet("font: italic 14px;");
             QLineEdit* lineBr = new QLineEdit(creazione);
-            createLayout->addWidget(labelbr);
-            createLayout->addWidget(lineBr);
+            lineBr->setStyleSheet("border: 1px solid black");
+            createLayout->addWidget(labelbr, 0, Qt::AlignTop);
+            createLayout->addWidget(lineBr, 0, Qt::AlignTop);
             QLabel* labelage = new QLabel("Tempo di vita:");
+            labelage->setStyleSheet("font: italic 14px;");
             QLineEdit* lineAge = new QLineEdit(creazione);
-            createLayout->addWidget(labelage);
-            createLayout->addWidget(lineAge);
+            lineAge->setStyleSheet("border: 1px solid black");
+            createLayout->addWidget(labelage, 0, Qt::AlignTop);
+            createLayout->addWidget(lineAge, 0, Qt::AlignTop);
 
             QPushButton* confirmButton = new QPushButton("Conferma");
+            confirmButton->setObjectName("confermaCrea");
+            confirmButton->setStyleSheet("QPushButton#confermaCrea {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                         "QPushButton#confermaCrea:hover{background-color: lightgrey;}");
             createLayout->addWidget(confirmButton);
+            createLayout->addStretch();
             connect(confirmButton, &QPushButton::pressed, this, [this, selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineBr, lineAge]() {
-                mod->creaSensPneumatico(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineAge, lineBr);
-                if(barraRicerca)
+                QString d = lineDescr->text();
+                if(d.size() > 100)
                 {
-                    delete barraRicerca;
-                    delete creazione;
-                    creazione = nullptr;
-                    barraRicerca = new searchBarPanel(mod);
-                    pannello = new SensorPanel();
-                    layoutApp->addWidget(barraRicerca, 1);
-                    layoutApp->addWidget(pannello, 2);
-                    layoutApp->setStretch(0, 1);
-                    layoutApp->setStretch(1, 2);
-                    connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                    connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                    connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                    connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                    QMessageBox::warning(this, tr("Attenzione"), tr("La descrizione supera i 100 caratteri, riprovare!"));
+                }
+                else
+                {
+                    mod->creaSensPneumatico(selectedSensor, lineType, lineDescr, lineVal, lineMin, lineMax, lineAge, lineBr);
+                    if(barraRicerca)
+                    {
+                        delete barraRicerca;
+                        delete creazione;
+                        creazione = nullptr;
+                        barraRicerca = new searchBarPanel(mod);
+                        pannello = new SensorPanel();
+                        layoutApp->addWidget(barraRicerca, 1);
+                        layoutApp->addWidget(pannello, 2);
+                        layoutApp->setStretch(0, 1);
+                        layoutApp->setStretch(1, 2);
+                        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
+                        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
+                        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+                        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
 
+                    }
+                    if(!nomeFile.isEmpty())
+                    {
+                        saveStessoFile->setEnabled(true);
+                    }
+                    modificato = true;
+                    QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
                 }
-                if(!nomeFile.isEmpty())
-                {
-                    saveStessoFile->setEnabled(true);
-                }
-                modificato = true;
-                QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
             });
         }
     }
@@ -615,6 +691,8 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         chart->setAnimationOptions(QChart::SeriesAnimations);
 
         sceltaGrafico = new QComboBox();
+        sceltaGrafico->setObjectName("comboScelta");
+        sceltaGrafico->setStyleSheet("QComboBox#comboScelta {border: 1px solid black; padding: 4px; background-color: transparent;}");
         sceltaGrafico->setFixedWidth(250);
         sceltaGrafico->addItem("Scegli una tipologia di grafico");
         sceltaGrafico->addItem("Spline");
@@ -682,6 +760,9 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         grafico->setRenderHint(QPainter::Antialiasing);
         grafico->setMaximumSize(1200, 700);
         comandiZoom = new QPushButton("Mostra/nascondi comandi grafico");
+        comandiZoom->setObjectName("comandiZoom");
+        comandiZoom->setStyleSheet("QPushButton#comandiZoom {border: 1px solid black; padding: 8px; border-radius: 16px;}"
+                                   "QPushButton#comandiZoom:hover {background-color: lightgrey;}");
         comandiZoom->setFixedWidth(250);
         connect(comandiZoom, &QPushButton::clicked, this, &homePanel::mostraNascondiLegenda);
         legenda = new QLabel();
@@ -694,7 +775,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         infoText += "Muoviti sotto:             S\n";
         infoText += "Reset:                         Esc\n";
         legenda = new QLabel(infoText);
-        legenda->setStyleSheet("font: italic 14px;");
+        legenda->setStyleSheet("font: italic 14px; margin-left: 16px;");
         legenda->setAlignment(Qt::AlignLeft);
         legenda->hide();
         this->pannello->layout()->addWidget(comandiZoom);

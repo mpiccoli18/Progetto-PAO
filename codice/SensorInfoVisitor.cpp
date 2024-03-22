@@ -58,6 +58,7 @@ namespace sensore{
         QLabel *labeldescr = new QLabel("Descrizione:");
         labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit *lineDescr = new QLineEdit(widget);
+        lineDescr->setMaxLength(200);
 
         QLabel *labelmin = new QLabel("Valore Min:");
         labelmin->setStyleSheet("font: italic 14px;");
@@ -146,6 +147,7 @@ namespace sensore{
         QLabel *labeldescr = new QLabel("Descrizione:");
         labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit *lineDescr = new QLineEdit(widget);
+        lineDescr->setMaxLength(100);
 
         QLabel *labelmin = new QLabel("Valore Min:");
         labelmin->setStyleSheet("font: italic 14px;");
@@ -225,6 +227,7 @@ namespace sensore{
         QLabel *labeldescr = new QLabel("Descrizione:");
         labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit *lineDescr = new QLineEdit(widget);
+        lineDescr->setMaxLength(100);
 
         QLabel *labelmin = new QLabel("Valore Min:");
         labelmin->setStyleSheet("font: italic 14px;");
@@ -304,6 +307,7 @@ namespace sensore{
         QLabel *labeldescr = new QLabel("Descrizione:");
         labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit *lineDescr = new QLineEdit(widget);
+        lineDescr->setMaxLength(100);
 
         QLabel *labelmin = new QLabel("Valore Min:");
         labelmin->setStyleSheet("font: italic 14px;");
@@ -383,6 +387,7 @@ namespace sensore{
         QLabel *labeldescr = new QLabel("Descrizione:");
         labeldescr->setStyleSheet("font: italic 14px;");
         QLineEdit *lineDescr = new QLineEdit(widget);
+        lineDescr->setMaxLength(100);
 
         QLabel *labelmin = new QLabel("Valore Min:");
         labelmin->setStyleSheet("font: italic 14px;");

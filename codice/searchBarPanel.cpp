@@ -6,12 +6,18 @@ namespace sensore{
         layout->setAlignment(Qt::AlignTop);
 
         ricerca = new QLineEdit(this);
+        ricerca->setStyleSheet("border: 1px solid black; ");
         layout->addWidget(ricerca);
 
         QPushButton* searchButton = new QPushButton("Cerca", this);
+        searchButton->setObjectName("buttonSearch");
+        searchButton->setStyleSheet("QPushButton#buttonSearch {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                    "QPushButton#buttonSearch:hover{background-color: #c1d8f0;}");
         layout->addWidget(searchButton);
 
         visualizzazione = new QScrollArea();
+        visualizzazione->setObjectName("visualizzazione");
+        visualizzazione->setStyleSheet("QScrollArea#visualizzazione {border: 1px solid black;}");
         visualizzazione->setMinimumSize(450, 300);
         visualizzazione->setWidgetResizable(true);
         scrollVisua = new QWidget();
@@ -48,7 +54,10 @@ namespace sensore{
                 QLabel *tipo = new QLabel("Tipo: " + QString::fromStdString(searchVet[i]->getTipo()));
                 tipo->setStyleSheet("font: italic 14px;");
                 sensorLayout->addWidget(tipo);
-                QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(searchVet[i]->getDescrizione()));
+                std::string d = searchVet[i]->getDescrizione();
+                if(d.size() > 50)
+                    d = d.substr(0, 47) + "...";
+                QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(d));
                 descrizione->setStyleSheet("font: italic 14px;");
                 sensorLayout->addWidget(descrizione);
                 QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
@@ -96,7 +105,8 @@ namespace sensore{
         }
         else
         {
-            for(unsigned long long i = 0; i < searchVet.size(); i++) {
+            for(unsigned long long i = 0; i < searchVet.size(); i++)
+            {
                 QString searchStr = QString::fromStdString(searchVet[i]->getNome());
                 if((searchVet[i]->getNome() == search || searchStr.contains(QString::fromStdString(search), Qt::CaseInsensitive)))
                 {
@@ -113,7 +123,10 @@ namespace sensore{
                     QLabel *tipo = new QLabel("Tipo: " + QString::fromStdString(searchVet[i]->getTipo()));
                     tipo->setStyleSheet("font: italic 14px;");
                     sensorLayout->addWidget(tipo);
-                    QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(searchVet[i]->getDescrizione()));
+                    std::string d = searchVet[i]->getDescrizione();
+                    if(d.size() > 50)
+                        d = d.substr(0, 47) + "...";
+                    QLabel *descrizione = new QLabel("Descrizione: " + QString::fromStdString(d));
                     descrizione->setStyleSheet("font: italic 14px;");
                     sensorLayout->addWidget(descrizione);
                     QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
@@ -122,7 +135,7 @@ namespace sensore{
                                               "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
                     connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
-                    scrollayout->addWidget(sensorInfo, 0, Qt::AlignTop);
+                    scrollayout->addWidget(sensorInfo);
                     trovato = true;
                 }
             }
@@ -130,6 +143,7 @@ namespace sensore{
             {
                 QMessageBox::warning(this, tr("Attenzione:"), tr("La ricerca non ha prodotto risultati!"));
             }
+            scrollayout->addStretch();
         }
         this->layout()->addWidget(risultati);
     }

@@ -20,7 +20,7 @@ namespace sensore{
             modifica->setShortcut(QKeySequence("Ctrl+M"));
             modifica->setObjectName("buttonMod");
             modifica->setStyleSheet("QPushButton#buttonMod {border: 1px solid black; border-radius: 16px; padding: 8px;} "
-                                "QPushButton#buttonMod:hover{background-color: lightgrey;}");
+                                    "QPushButton#buttonMod:hover{background-color: lightgrey;}");
             modifica->setFixedWidth(100);
             comandi->addWidget(modifica, 0, 2, 1, 1);
             connect(modifica, &QPushButton::pressed, this, [this, s]{ emit StartModify(s);});
@@ -29,7 +29,7 @@ namespace sensore{
             simula->setShortcut(QKeySequence("Ctrl+I"));
             simula->setObjectName("buttonSimula");
             simula->setStyleSheet("QPushButton#buttonSimula {border: 1px solid black; border-radius: 16px; padding: 8px;} "
-                                "QPushButton#buttonSimula:hover{background-color: lightgrey;}");
+                                  "QPushButton#buttonSimula:hover{background-color: lightgrey;}");
             simula->setFixedWidth(100);
             comandi->addWidget(simula, 0, 3, 1, 1);
             connect(simula, &QPushButton::pressed, this, &SensorPanel::StartSimulation);
