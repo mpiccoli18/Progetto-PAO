@@ -18,21 +18,21 @@ namespace sensore{
             Q_OBJECT
         private:
             QLineEdit *ricerca;
-            QWidget *risultati = nullptr;
+            QWidget *risultati;
             QScrollArea* visualizzazione;
             QVBoxLayout* layoutV;
-            QVBoxLayout* scrollayout;
+            QVBoxLayout* scrollLayout;
             QWidget* scrollVisua;
             modello* mod;
         public:
             searchBarPanel(modello* m, QWidget *parent = nullptr);
 
         public slots:
-            void Search();
+            void Ricerca();
 
         signals:
-            void StartSearch();
-            void StartView(sensore::Sensore* sensore);
+            void SegnaleRicerca();
+            void SegnaleMostra(sensore::Sensore* sensore);
     };
 }
 

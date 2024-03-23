@@ -9,15 +9,15 @@ namespace sensore{
 
     void SensoreConsumo::setOttano(unsigned int ot) { ottano = ot;}
 
-    void SensoreConsumo::accept(SensorVisitorInterface& visitor){
-        visitor.visitSConsumo(*this);
+    void SensoreConsumo::accetta(SensorVisitorInterface& visitor){
+        visitor.visitaSConsumo(*this);
     }
 
-    void SensoreConsumo::acceptMod(SensorVisitorInterface& visitor){
+    void SensoreConsumo::accettaMod(SensorVisitorInterface& visitor){
         visitor.modSConsumo(this);
     }
 
-    void SensoreConsumo::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
-        visitor.saveSConsumo(*this, ob);
+    void SensoreConsumo::accettaSalva(SensorVisitorInterface& visitor, QJsonObject* ob){
+        visitor.salvaSConsumo(*this, ob);
     }
 }

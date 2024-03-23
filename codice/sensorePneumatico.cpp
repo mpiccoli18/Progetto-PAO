@@ -11,15 +11,15 @@ namespace sensore{
     void SensorePneumatico::setMarcaPneu(std::string br) { marcaPneu = br;}
     void SensorePneumatico::setEta(double a) { eta = a;}
 
-    void SensorePneumatico::accept(SensorVisitorInterface& visitor){
-        visitor.visitSPneumatico(*this);
+    void SensorePneumatico::accetta(SensorVisitorInterface& visitor){
+        visitor.visitaSPneumatico(*this);
     }
 
-    void SensorePneumatico::acceptMod(SensorVisitorInterface& visitor){
+    void SensorePneumatico::accettaMod(SensorVisitorInterface& visitor){
         visitor.modSPneumatico(this);
     }
 
-    void SensorePneumatico::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
-        visitor.saveSPneumatico(*this, ob);
+    void SensorePneumatico::accettaSalva(SensorVisitorInterface& visitor, QJsonObject* ob){
+        visitor.salvaSPneumatico(*this, ob);
     }
 }

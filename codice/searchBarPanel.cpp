@@ -1,7 +1,7 @@
 #include "searchBarPanel.h"
 
 namespace sensore{
-    searchBarPanel::searchBarPanel(modello* m, QWidget* parent): QWidget(parent){
+    searchBarPanel::searchBarPanel(modello* m, QWidget* parent): QWidget(parent), risultati(nullptr){
         QVBoxLayout* layout = new QVBoxLayout(this);
         layout->setAlignment(Qt::AlignTop);
 
@@ -21,8 +21,8 @@ namespace sensore{
         visualizzazione->setMinimumSize(450, 300);
         visualizzazione->setWidgetResizable(true);
         scrollVisua = new QWidget();
-        scrollayout = new QVBoxLayout();
-        scrollVisua->setLayout(scrollayout);
+        scrollLayout = new QVBoxLayout();
+        scrollVisua->setLayout(scrollLayout);
         visualizzazione->setWidget(scrollVisua);
         layout->addWidget(visualizzazione);
         QLabel* empty;
@@ -34,8 +34,8 @@ namespace sensore{
             empty->setStyleSheet("font: bold 16px; color:red;");
             empty2 = new QLabel("Per aggiungere nuovi sensori premi i pulsanti 'Apri' o 'Crea' in alto!");
             empty2->setStyleSheet("font: bold 14px; color:black;");
-            scrollayout->addWidget(empty, 0, Qt::AlignTop);
-            scrollayout->addWidget(empty2, 1, Qt::AlignTop);
+            scrollLayout->addWidget(empty, 0, Qt::AlignTop);
+            scrollLayout->addWidget(empty2, 1, Qt::AlignTop);
         }
         else
         {
@@ -64,19 +64,19 @@ namespace sensore{
                 visualizza->setObjectName("buttonVisualizza");
                 visualizza->setStyleSheet("QPushButton#buttonVisualizza{border: 1px solid black; border-radius: 16px; padding: 8px;}"
                                           "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
-                connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
+                connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit SegnaleMostra(searchVet[i]); });
                 sensorLayout->addWidget(visualizza);
-                scrollayout->addWidget(sensorInfo);
+                scrollLayout->addWidget(sensorInfo);
             }
-            scrollayout->addStretch();
+            scrollLayout->addStretch();
         }
-        connect(searchButton, &QPushButton::pressed, this, &searchBarPanel::StartSearch);
-        connect(this, &searchBarPanel::StartSearch, this, &searchBarPanel::Search);
+        connect(searchButton, &QPushButton::pressed, this, &searchBarPanel::SegnaleRicerca);
+        connect(this, &searchBarPanel::SegnaleRicerca, this, &searchBarPanel::Ricerca);
     }
 
-    void searchBarPanel::Search(){
+    void searchBarPanel::Ricerca(){
         QLayoutItem* item;
-        while ((item = scrollayout->takeAt(0)) != nullptr) {
+        while ((item = scrollLayout->takeAt(0)) != nullptr) {
             delete item->widget();
             delete item;
         }
@@ -100,8 +100,8 @@ namespace sensore{
             empty->setStyleSheet("font: bold 16px; color:red;");
             empty2 = new QLabel("Per aggiungere nuovi sensori premi i pulsanti 'Apri' o 'Crea' in alto!");
             empty2->setStyleSheet("font: bold 14px; color:black;");
-            scrollayout->addWidget(empty, 0, Qt::AlignTop);
-            scrollayout->addWidget(empty2, 1, Qt::AlignTop);
+            scrollLayout->addWidget(empty, 0, Qt::AlignTop);
+            scrollLayout->addWidget(empty2, 1, Qt::AlignTop);
         }
         else
         {
@@ -133,9 +133,9 @@ namespace sensore{
                     visualizza->setObjectName("buttonVisualizza");
                     visualizza->setStyleSheet("QPushButton#buttonVisualizza{border: 1px solid black; border-radius: 16px; padding: 8px;}"
                                               "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
-                    connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit StartView(searchVet[i]); });
+                    connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit SegnaleMostra(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
-                    scrollayout->addWidget(sensorInfo);
+                    scrollLayout->addWidget(sensorInfo);
                     trovato = true;
                 }
             }
@@ -143,7 +143,7 @@ namespace sensore{
             {
                 QMessageBox::warning(this, tr("Attenzione:"), tr("La ricerca non ha prodotto risultati!"));
             }
-            scrollayout->addStretch();
+            scrollLayout->addStretch();
         }
         this->layout()->addWidget(risultati);
     }

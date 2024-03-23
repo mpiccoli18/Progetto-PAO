@@ -45,9 +45,9 @@ namespace sensore{
             void setMax(double vMax);
             void setValori(std::vector<double> v);
 
-            virtual void accept(SensorVisitorInterface& visitor) = 0;
-            virtual void acceptMod(SensorVisitorInterface& visitor) = 0;
-            virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob) = 0;
+            virtual void accetta(SensorVisitorInterface& visitor) = 0;
+            virtual void accettaMod(SensorVisitorInterface& visitor) = 0;
+            virtual void accettaSalva(SensorVisitorInterface& visitor, QJsonObject* ob) = 0;
     };
 }
 

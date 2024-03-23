@@ -9,15 +9,15 @@ namespace sensore{
 
     void SensoreGas::setImpronta(double footp) { impronta = footp;}
 
-    void SensoreGas::accept(SensorVisitorInterface& visitor){
-        visitor.visitSGas(*this);
+    void SensoreGas::accetta(SensorVisitorInterface& visitor){
+        visitor.visitaSGas(*this);
     }
 
-    void SensoreGas::acceptMod(SensorVisitorInterface& visitor){
+    void SensoreGas::accettaMod(SensorVisitorInterface& visitor){
         visitor.modSGas(this);
     }
 
-    void SensoreGas::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
-        visitor.saveSGas(*this, ob);
+    void SensoreGas::accettaSalva(SensorVisitorInterface& visitor, QJsonObject* ob){
+        visitor.salvaSGas(*this, ob);
     }
 }

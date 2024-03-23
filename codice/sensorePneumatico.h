@@ -27,9 +27,9 @@ namespace sensore{
             void setMarcaPneu(std::string br);
             void setEta(double a);
 
-            virtual void accept(SensorVisitorInterface& visitor);
-            virtual void acceptMod(SensorVisitorInterface& visitor);
-            virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob);
+            virtual void accetta(SensorVisitorInterface& visitor);
+            virtual void accettaMod(SensorVisitorInterface& visitor);
+            virtual void accettaSalva(SensorVisitorInterface& visitor, QJsonObject* ob);
 
     };
 }

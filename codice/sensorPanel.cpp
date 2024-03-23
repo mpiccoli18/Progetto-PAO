@@ -23,7 +23,7 @@ namespace sensore{
                                     "QPushButton#buttonMod:hover{background-color: lightgrey;}");
             modifica->setFixedWidth(100);
             comandi->addWidget(modifica, 0, 2, 1, 1);
-            connect(modifica, &QPushButton::pressed, this, [this, s]{ emit StartModify(s);});
+            connect(modifica, &QPushButton::pressed, this, [this, s]{ emit SegnaleModifica(s);});
 
             QPushButton* simula = new QPushButton("Simula");
             simula->setShortcut(QKeySequence("Ctrl+I"));
@@ -32,7 +32,7 @@ namespace sensore{
                                   "QPushButton#buttonSimula:hover{background-color: lightgrey;}");
             simula->setFixedWidth(100);
             comandi->addWidget(simula, 0, 3, 1, 1);
-            connect(simula, &QPushButton::pressed, this, &SensorPanel::StartSimulation);
+            connect(simula, &QPushButton::pressed, this, &SensorPanel::SegnaleSimula);
 
             QPushButton* elimina = new QPushButton("Elimina");
             elimina->setObjectName("buttonElimina");
@@ -40,7 +40,7 @@ namespace sensore{
                                 "QPushButton#buttonElimina:hover{background-color: red;}");
             elimina->setFixedWidth(100);
             comandi->addWidget(elimina, 0, 4, 1, 1);
-            connect(elimina, &QPushButton::pressed, this, [this, s]() { emit StartElimination(s); });
+            connect(elimina, &QPushButton::pressed, this, [this, s]() { emit SegnaleElimina(s); });
         }
     }
 }

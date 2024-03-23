@@ -23,9 +23,9 @@ namespace sensore{
 
             void setOttano(unsigned int ot);
 
-            virtual void accept(SensorVisitorInterface& visitor);
-            virtual void acceptMod(SensorVisitorInterface& visitor);
-            virtual void acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob);
+            virtual void accetta(SensorVisitorInterface& visitor);
+            virtual void accettaMod(SensorVisitorInterface& visitor);
+            virtual void accettaSalva(SensorVisitorInterface& visitor, QJsonObject* ob);
 
        };
 }

@@ -5,6 +5,7 @@
 #include "sensorPanel.h"
 #include "searchBarPanel.h"
 #include <QString>
+#include <QChartView>
 #include <QVBoxLayout>
 #include <QSplineSeries>
 #include <QLineEdit>
@@ -24,40 +25,40 @@ namespace sensore{
             QWidget *creazione;
             modello* mod;
             QString nomeFile;
-            QPushButton* saveStessoFile;
-            bool modificato = false;
+            QPushButton* salvaStessoFile;
+            bool modificato;
             QComboBox* sceltaGrafico;
             QPushButton* comandiZoom;
             QLabel* legenda;
-            int zoomGrafico = 0;
+            int zoomGrafico;
             QWidget* elimina;
 
         public:
             homePanel(QWidget* parent = 0);
-            void keyPressEvent(QKeyEvent *event);
-            void moveChart(int direzione);
-            void moveVChart(int direzione);
-            void resetChart();
+            void comandiTastiera(QKeyEvent *event);
+            void spostamentoAsseX(int direzione);
+            void spostamentoAsseY(int direzione);
+            void rimozioneZoom();
             void zoomIn();
             void zoomOut();
 
         public slots:
-            void Modify(Sensore *s);
-            void Simulation();
-            void Elimination(Sensore* s);
-            void Open();
-            void Save();
-            void SaveStessoFile();
-            void Create();
-            void View(Sensore* sensore);
-            void SensorSelected(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor,QVBoxLayout* createLayout);
-            void mostraNascondiLegenda();
+            void Modifica(sensore::Sensore *s);
+            void Simula();
+            void Elimina(sensore::Sensore* s);
+            void Apri();
+            void Salva();
+            void SalvaStessoFile();
+            void Crea();
+            void Mostra(sensore::Sensore* sensore);
+            void SensoreSelezionato(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor,QVBoxLayout* createLayout);
+            void MostraNascondiLegenda();
         signals:
-            void StartSave();
-            void StartSaveStessoFile();
-            void StartOpen();
-            void StartCreate();
-            void StartSensorSelected(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor,QVBoxLayout* createLayout);
+            void SegnaleSalva();
+            void SegnaleSalvaStessoFile();
+            void SegnaleApri();
+            void SegnaleCrea();
+            void SegnaleSensoreSelezionato(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor,QVBoxLayout* createLayout);
 
     };
 }

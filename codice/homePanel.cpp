@@ -1,9 +1,8 @@
 #include "homePanel.h"
-#include <QChartView>
 #include <vector>
 
 namespace sensore{
-homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr), sceltaGrafico(nullptr), comandiZoom(nullptr), legenda(nullptr), elimina(nullptr)
+homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullptr), creazione(nullptr), modificato(false), sceltaGrafico(nullptr), comandiZoom(nullptr), legenda(nullptr), zoomGrafico(0), elimina(nullptr)
     {
         QVBoxLayout* layout = new QVBoxLayout(this);
         QGridLayout* menu = new QGridLayout();
@@ -19,19 +18,19 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                             "QPushButton#buttonSave:hover{background-color: lightgrey;}");
         save->setFixedWidth(125);
         menu->addWidget(save, 0, 0, 1, 1);
-        connect(save, &QPushButton::pressed, this, &homePanel::StartSave);
-        connect(this, &homePanel::StartSave, this, &homePanel::Save);
+        connect(save, &QPushButton::pressed, this, &homePanel::SegnaleSalva);
+        connect(this, &homePanel::SegnaleSalva, this, &homePanel::Salva);
 
-        saveStessoFile = new QPushButton("Salva");
-        saveStessoFile->setShortcut(QKeySequence("Ctrl+S"));
-        saveStessoFile->setObjectName("buttonSaveStesso");
-        saveStessoFile->setStyleSheet("QPushButton#buttonSaveStesso {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+        salvaStessoFile = new QPushButton("Salva");
+        salvaStessoFile->setShortcut(QKeySequence("Ctrl+S"));
+        salvaStessoFile->setObjectName("buttonSaveStesso");
+        salvaStessoFile->setStyleSheet("QPushButton#buttonSaveStesso {border: 1px solid black; border-radius: 16px; padding: 8px;} "
                                       "QPushButton#buttonSaveStesso:hover{background-color: lightgrey;}");
-        saveStessoFile->setFixedWidth(125);
-        menu->addWidget(saveStessoFile, 0, 2, 1, 1);
-        saveStessoFile->setEnabled(false);
-        connect(saveStessoFile, &QPushButton::pressed, this, &homePanel::StartSaveStessoFile);
-        connect(this, &homePanel::StartSaveStessoFile, this, &homePanel::SaveStessoFile);
+        salvaStessoFile->setFixedWidth(125);
+        menu->addWidget(salvaStessoFile, 0, 2, 1, 1);
+        salvaStessoFile->setEnabled(false);
+        connect(salvaStessoFile, &QPushButton::pressed, this, &homePanel::SegnaleSalvaStessoFile);
+        connect(this, &homePanel::SegnaleSalvaStessoFile, this, &homePanel::SalvaStessoFile);
 
         QPushButton* open = new QPushButton("Apri");
         open->setShortcut(QKeySequence("Ctrl+O"));
@@ -40,8 +39,8 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                             "QPushButton#buttonOpen:hover{background-color: lightgrey;}");
         open->setFixedWidth(125);
         menu->addWidget(open, 0, 3, 1, 1);
-        connect(open, &QPushButton::pressed, this, &homePanel::StartOpen);
-        connect(this, &homePanel::StartOpen, this, &homePanel::Open);
+        connect(open, &QPushButton::pressed, this, &homePanel::SegnaleApri);
+        connect(this, &homePanel::SegnaleApri, this, &homePanel::Apri);
 
         QPushButton* create = new QPushButton("Crea");
         create->setShortcut(QKeySequence("Ctrl+C"));
@@ -50,8 +49,8 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                               "QPushButton#buttonCreate:hover{background-color: lightgrey;}");
         create->setFixedWidth(125);
         menu->addWidget(create, 0, 4, 1, 1);
-        connect(create, &QPushButton::pressed, this, &homePanel::StartCreate);
-        connect(this, &homePanel::StartCreate, this, &homePanel::Create);
+        connect(create, &QPushButton::pressed, this, &homePanel::SegnaleCrea);
+        connect(this, &homePanel::SegnaleCrea, this, &homePanel::Crea);
 
         QSpacerItem *spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
         menu->addItem(spacer, 0, 5, 1, 1);
@@ -67,12 +66,12 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         layoutApp->setStretch(0, 1);
         layoutApp->setStretch(1, 2);
 
-        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
-        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-        connect(this, &homePanel::StartSensorSelected, this, &homePanel::SensorSelected);
+        connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
+        connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
+        connect(this, &homePanel::SegnaleSensoreSelezionato, this, &homePanel::SensoreSelezionato);
     }
 
-    void homePanel::Open(){
+    void homePanel::Apri(){
         if(creazione){
             layoutApp->layout()->removeWidget(creazione);
             delete creazione;
@@ -86,10 +85,10 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             layoutApp->addWidget(pannello, 2);
             layoutApp->setStretch(0, 1);
             layoutApp->setStretch(1, 2);
-            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-            connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+            connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+            connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+            connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
+            connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
         }
         if(modificato == true && !(nomeFile.isEmpty()))
         {
@@ -112,7 +111,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             modificheLayout->addWidget(salva);
             modificheLayout->addWidget(annulla);
             connect(salva, &QPushButton::pressed, this, [=]{
-                SaveStessoFile();
+                SalvaStessoFile();
                 noModifiche->close();
                 modificato = false;
             });
@@ -143,7 +142,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             modificheLayout->addWidget(annulla);
             noModifiche->setWindowFlags(Qt::Dialog | Qt::MSWindowsFixedSizeDialogHint);
             connect(salva, &QPushButton::pressed, this, [=]{
-                Save();
+                Salva();
                 noModifiche->close();
                 modificato = false;
             });
@@ -189,14 +188,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             layoutApp->addWidget(pannello, 2);
             layoutApp->setStretch(0, 1);
             layoutApp->setStretch(1, 2);
-            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-            connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+            connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+            connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+            connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
+            connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
         }
     }
 
-    void homePanel::Save(){
+    void homePanel::Salva(){
 
         QString filePath = QFileDialog::getSaveFileName(this, tr("Salva file JSON"), "", tr("File JSON (*.json)"));
 
@@ -219,7 +218,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + filePath);
     }
 
-    void homePanel::SaveStessoFile(){
+    void homePanel::SalvaStessoFile(){
 
         int warning = mod->salvaSens(nomeFile);
 
@@ -234,11 +233,11 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             return;
         }
         QMessageBox::information(this, tr("Successo"), tr("Dati salvati nel file JSON: ") + nomeFile);
-        saveStessoFile->setEnabled(false);
+        salvaStessoFile->setEnabled(false);
         modificato = false;
     }
 
-    void homePanel::Create() {
+    void homePanel::Crea() {
         if(barraRicerca){
             layoutApp->layout()->removeWidget(barraRicerca);
             if (grafico) {
@@ -268,7 +267,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             creazione = nullptr;
         }
         barraRicerca = new searchBarPanel(mod);
-        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+        connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
 
         creazione = new QWidget();
         QVBoxLayout* createLayout = new QVBoxLayout();
@@ -313,6 +312,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         sensorTypeComboBox->setObjectName("comboBoxCrea");
         sensorTypeComboBox->setStyleSheet("QComboBox#comboBoxCrea {border: 1px solid black; padding: 4px; background-color:transparent;}");
         sensorTypeComboBox->addItem("Scegli il tipo del Sensore:");
+        sensorTypeComboBox->setItemData(0, QVariant(0), Qt::UserRole - 1);
         sensorTypeComboBox->addItem("Sensore Consumo");
         sensorTypeComboBox->addItem("Sensore Motore");
         sensorTypeComboBox->addItem("Sensore Batteria");
@@ -324,7 +324,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
 
         connect(sensorTypeComboBox, QOverload<int>::of(&QComboBox::activated), [=](int index) {
                 QString selectedOption = sensorTypeComboBox->itemText(index);
-                emit StartSensorSelected(lineType, lineDescr, lineMin, lineMax, lineVal, selectedOption, createLayout);
+                emit SegnaleSensoreSelezionato(lineType, lineDescr, lineMin, lineMax, lineVal, selectedOption, createLayout);
         });
 
         layoutApp->addWidget(barraRicerca, 1);
@@ -333,7 +333,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         layoutApp->setStretch(1, 2);
     }
 
-    void homePanel::SensorSelected(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor, QVBoxLayout* createLayout)
+    void homePanel::SensoreSelezionato(QLineEdit* lineType, QLineEdit* lineDescr, QLineEdit* lineMin, QLineEdit* lineMax, QLineEdit* lineVal, const QString& selectedSensor, QVBoxLayout* createLayout)
     {
         while (createLayout->count() > 12) {
             QLayoutItem* item = createLayout->takeAt(12);
@@ -374,14 +374,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                         layoutApp->addWidget(pannello, 2);
                         layoutApp->setStretch(0, 1);
                         layoutApp->setStretch(1, 2);
-                        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                        connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+                        connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+                        connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
+                        connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
                     }
                     if(!nomeFile.isEmpty())
                     {
-                        saveStessoFile->setEnabled(true);
+                        salvaStessoFile->setEnabled(true);
                     }
                     modificato = true;
                     QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
@@ -422,14 +422,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                         layoutApp->addWidget(pannello, 2);
                         layoutApp->setStretch(0, 1);
                         layoutApp->setStretch(1, 2);
-                        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                        connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+                        connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+                        connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
+                        connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
                     }
                     if(!nomeFile.isEmpty())
                     {
-                        saveStessoFile->setEnabled(true);
+                        salvaStessoFile->setEnabled(true);
                     }
                     modificato = true;
                     QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
@@ -470,14 +470,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                         layoutApp->addWidget(pannello, 2);
                         layoutApp->setStretch(0, 1);
                         layoutApp->setStretch(1, 2);
-                        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                        connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+                        connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+                        connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
+                        connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
                     }
                     if(!nomeFile.isEmpty())
                     {
-                        saveStessoFile->setEnabled(true);
+                        salvaStessoFile->setEnabled(true);
                     }
                     modificato = true;
                     QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
@@ -518,14 +518,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                         layoutApp->addWidget(pannello, 2);
                         layoutApp->setStretch(0, 1);
                         layoutApp->setStretch(1, 2);
-                        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                        connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+                        connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+                        connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
+                        connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
                     }
                     if(!nomeFile.isEmpty())
                     {
-                        saveStessoFile->setEnabled(true);
+                        salvaStessoFile->setEnabled(true);
                     }
                     modificato = true;
                     QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
@@ -572,15 +572,15 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                         layoutApp->addWidget(pannello, 2);
                         layoutApp->setStretch(0, 1);
                         layoutApp->setStretch(1, 2);
-                        connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                        connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                        connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                        connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                        connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+                        connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+                        connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
+                        connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
 
                     }
                     if(!nomeFile.isEmpty())
                     {
-                        saveStessoFile->setEnabled(true);
+                        salvaStessoFile->setEnabled(true);
                     }
                     modificato = true;
                     QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato creato !"));
@@ -589,17 +589,17 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         }
     }
 
-    void homePanel::Modify(Sensore *s){
+    void homePanel::Modifica(Sensore *s){
         if(modifica)
         {
             modifica->close();
         }
         SensorInfoVisitor visitor;
         visitor.setModello(mod);
-        s->acceptMod(visitor);
+        s->accettaMod(visitor);
         modifica = visitor.getWidget();
 
-        QPushButton* confirmButton = visitor.getButton();
+        QPushButton* confirmButton = visitor.getPulsante();
         QPushButton *exitButton = new QPushButton("Annulla", modifica);
 
         modifica->layout()->addWidget(exitButton);
@@ -632,13 +632,13 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                 layoutApp->addWidget(pannello, 2);
                 layoutApp->setStretch(0, 1);
                 layoutApp->setStretch(1, 2);
-                connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+                connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+                connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
+                connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
             }
             QMessageBox::information(this, tr("Successo"), tr("Il sensore è stato aggiornato!"));
-            saveStessoFile->setEnabled(true);
+            salvaStessoFile->setEnabled(true);
             modificato = true;
             modifica->close();
         });
@@ -648,7 +648,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         });
     }
 
-    void homePanel::Simulation(){
+    void homePanel::Simula(){
         if (grafico) {
             pannello->layout()->removeWidget(grafico);
             if (comandiZoom) {
@@ -695,6 +695,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         sceltaGrafico->setStyleSheet("QComboBox#comboScelta {border: 1px solid black; padding: 4px; background-color: transparent;}");
         sceltaGrafico->setFixedWidth(250);
         sceltaGrafico->addItem("Scegli una tipologia di grafico");
+        sceltaGrafico->setItemData(0, QVariant(0), Qt::UserRole - 1);
         sceltaGrafico->addItem("Spline");
         sceltaGrafico->addItem("Punti");
         sceltaGrafico->addItem("Linee");
@@ -764,7 +765,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         comandiZoom->setStyleSheet("QPushButton#comandiZoom {border: 1px solid black; padding: 8px; border-radius: 16px;}"
                                    "QPushButton#comandiZoom:hover {background-color: lightgrey;}");
         comandiZoom->setFixedWidth(250);
-        connect(comandiZoom, &QPushButton::clicked, this, &homePanel::mostraNascondiLegenda);
+        connect(comandiZoom, &QPushButton::clicked, this, &homePanel::MostraNascondiLegenda);
         legenda = new QLabel();
         QString infoText = "Informazioni sui tasti bindati:\n";
         infoText += "Ingrandisci:                  +        ";
@@ -784,7 +785,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         this->pannello->layout()->addWidget(grafico);
     }
 
-    void homePanel::mostraNascondiLegenda(){
+    void homePanel::MostraNascondiLegenda(){
         if (legenda->isVisible()) {
             legenda->hide();
         } else {
@@ -792,7 +793,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         }
     }
 
-    void homePanel::keyPressEvent(QKeyEvent* event)
+    void homePanel::comandiTastiera(QKeyEvent* event)
     {
         if(grafico)
         {
@@ -805,19 +806,19 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                 zoomOut();
                 break;
             case Qt::Key_A:
-                moveChart(-1);
+                spostamentoAsseX(-1);
                 break;
             case Qt::Key_D:
-                moveChart(1);
+                spostamentoAsseX(1);
                 break;
             case Qt::Key_W:
-                moveVChart(1);
+                spostamentoAsseY(1);
                 break;
             case Qt::Key_S:
-                moveVChart(-1);
+                spostamentoAsseY(-1);
                 break;
             case Qt::Key_Escape:
-                resetChart();
+                rimozioneZoom();
                 break;
             }
         }
@@ -893,7 +894,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         zoomGrafico--;
     }
 
-    void homePanel::moveChart(int direzione)
+    void homePanel::spostamentoAsseX(int direzione)
     {
         QValueAxis* asseX = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Horizontal).at(0));
         if (!asseX)
@@ -907,7 +908,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         }
     }
 
-    void homePanel::moveVChart(int direzione)
+    void homePanel::spostamentoAsseY(int direzione)
     {
         QValueAxis* asseY = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Vertical).at(0));
         QValueAxis* asseX = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Horizontal).at(0));
@@ -931,7 +932,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         }
     }
 
-    void homePanel::resetChart()
+    void homePanel::rimozioneZoom()
     {
         grafico->chart()->zoomReset();
         QValueAxis* asseX = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Horizontal).at(0));
@@ -941,7 +942,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         zoomGrafico = 0;
     }
 
-    void homePanel::Elimination(Sensore* s) {
+    void homePanel::Elimina(Sensore* s) {
         if(elimina)
         {
             elimina->close();
@@ -986,14 +987,14 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
                 layoutApp->addWidget(pannello, 2);
                 layoutApp->setStretch(0, 1);
                 layoutApp->setStretch(1, 2);
-                connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-                connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-                connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
-                connect(barraRicerca, &searchBarPanel::StartView, this, &homePanel::View);
+                connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+                connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+                connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
+                connect(barraRicerca, &searchBarPanel::SegnaleMostra, this, &homePanel::Mostra);
             }
             if(!(nomeFile.isEmpty()))
             {
-                saveStessoFile->setEnabled(true);
+                salvaStessoFile->setEnabled(true);
             }
             modificato = true;
             elimina->close();
@@ -1006,7 +1007,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
     }
 
 
-    void homePanel::View(Sensore* s){ 
+    void homePanel::Mostra(Sensore* s){
         if(pannello)
         {
             this->layout()->removeWidget(pannello);
@@ -1026,9 +1027,9 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             layoutApp->addWidget(pannello, 2);
             layoutApp->setStretch(0, 1);
             layoutApp->setStretch(1, 2);
-            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+            connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+            connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+            connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
         }
         if(creazione)
         {
@@ -1042,9 +1043,9 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             layoutApp->addWidget(pannello, 2);
             layoutApp->setStretch(0, 1);
             layoutApp->setStretch(1, 2);
-            connect(pannello, &SensorPanel::StartSimulation, this, &homePanel::Simulation);
-            connect(pannello, &SensorPanel::StartModify, this, &homePanel::Modify);
-            connect(pannello, &SensorPanel::StartElimination, this, &homePanel::Elimination);
+            connect(pannello, &SensorPanel::SegnaleSimula, this, &homePanel::Simula);
+            connect(pannello, &SensorPanel::SegnaleModifica, this, &homePanel::Modifica);
+            connect(pannello, &SensorPanel::SegnaleElimina, this, &homePanel::Elimina);
         }
     }
 }

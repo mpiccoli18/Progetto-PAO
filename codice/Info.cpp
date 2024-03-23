@@ -23,7 +23,7 @@ namespace sensore {
         layout->addWidget(max_label);
 
         SensorInfoVisitor visitor;
-        sensor.accept(visitor);
+        sensor.accetta(visitor);
         layout->addWidget(visitor.getWidget());
     }
 

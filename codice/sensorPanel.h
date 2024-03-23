@@ -15,9 +15,9 @@ namespace sensore{
             SensorPanel(Sensore* sensore = nullptr, QWidget* parent = 0);
 
         signals:
-            void StartModify(sensore::Sensore *s);
-            void StartSimulation();
-            void StartElimination(sensore::Sensore *s);
+            void SegnaleModifica(sensore::Sensore *s);
+            void SegnaleSimula();
+            void SegnaleElimina(sensore::Sensore *s);
 
     };
 }

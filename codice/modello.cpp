@@ -159,7 +159,7 @@ namespace sensore{
 
             SensorInfoVisitor visit;
             QJsonObject* p = &sensorObject;
-            sensore->acceptSave(visit,p);
+            sensore->accettaSalva(visit,p);
             jsonObject[(sensore->getNome().c_str() + (QString::number(j)))] = sensorObject;
             j++;
         }

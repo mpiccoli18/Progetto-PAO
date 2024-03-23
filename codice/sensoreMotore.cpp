@@ -9,15 +9,15 @@ namespace sensore{
 
     void SensoreMotore::setCavalli(unsigned int hor) { cavalli = hor;}
 
-    void SensoreMotore::accept(SensorVisitorInterface& visitor){
-        visitor.visitSMotore(*this);
+    void SensoreMotore::accetta(SensorVisitorInterface& visitor){
+        visitor.visitaSMotore(*this);
     }
 
-    void SensoreMotore::acceptMod(SensorVisitorInterface& visitor){
+    void SensoreMotore::accettaMod(SensorVisitorInterface& visitor){
         visitor.modSMotore(this);
     }
 
-    void SensoreMotore::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
-        visitor.saveSMotore(*this, ob);
+    void SensoreMotore::accettaSalva(SensorVisitorInterface& visitor, QJsonObject* ob){
+        visitor.salvaSMotore(*this, ob);
     }
 }

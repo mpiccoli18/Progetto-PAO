@@ -9,16 +9,16 @@ namespace sensore{
 
     void SensoreBatteria::setMateriale(std::string mat) { materiale = mat;}
 
-    void SensoreBatteria::accept(SensorVisitorInterface& visitor){
-        visitor.visitSBatteria(*this);
+    void SensoreBatteria::accetta(SensorVisitorInterface& visitor){
+        visitor.visitaSBatteria(*this);
     }
 
-    void SensoreBatteria::acceptMod(SensorVisitorInterface& visitor){
+    void SensoreBatteria::accettaMod(SensorVisitorInterface& visitor){
         visitor.modSBatteria(this);
     }
 
-    void SensoreBatteria::acceptSave(SensorVisitorInterface& visitor, QJsonObject* ob){
-        visitor.saveSBatteria(*this, ob);
+    void SensoreBatteria::accettaSalva(SensorVisitorInterface& visitor, QJsonObject* ob){
+        visitor.salvaSBatteria(*this, ob);
     }
 
 

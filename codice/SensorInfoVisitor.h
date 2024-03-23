@@ -20,17 +20,17 @@ namespace sensore{
         private:
             QWidget* widget;
             modello* mod;
-            QPushButton* confirmButton;
+            QPushButton* conferma;
 
         public:
             QWidget* getWidget();
-            QPushButton* getButton();
+            QPushButton* getPulsante();
             void setModello(modello* m);
-            virtual void visitSPneumatico(SensorePneumatico& sPneumatico);
-            virtual void visitSConsumo(SensoreConsumo& sConsumo);
-            virtual void visitSMotore(SensoreMotore& sMotore);
-            virtual void visitSBatteria(SensoreBatteria& sBatteria);
-            virtual void visitSGas(SensoreGas& sGas);
+            virtual void visitaSPneumatico(SensorePneumatico& sPneumatico);
+            virtual void visitaSConsumo(SensoreConsumo& sConsumo);
+            virtual void visitaSMotore(SensoreMotore& sMotore);
+            virtual void visitaSBatteria(SensoreBatteria& sBatteria);
+            virtual void visitaSGas(SensoreGas& sGas);
 
             virtual void modSPneumatico(SensorePneumatico* sPneumatico);
             virtual void modSConsumo(SensoreConsumo* sConsumo);
@@ -38,11 +38,11 @@ namespace sensore{
             virtual void modSBatteria(SensoreBatteria* sBatteria);
             virtual void modSGas(SensoreGas* sGas);
 
-            virtual void saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob);
-            virtual void saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob);
-            virtual void saveSMotore(SensoreMotore& sMotore,QJsonObject* ob);
-            virtual void saveSBatteria(SensoreBatteria& sBatteria,QJsonObject* ob);
-            virtual void saveSGas(SensoreGas& sGas,QJsonObject* ob);
+            virtual void salvaSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob);
+            virtual void salvaSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob);
+            virtual void salvaSMotore(SensoreMotore& sMotore,QJsonObject* ob);
+            virtual void salvaSBatteria(SensoreBatteria& sBatteria,QJsonObject* ob);
+            virtual void salvaSGas(SensoreGas& sGas,QJsonObject* ob);
     };
 
 }

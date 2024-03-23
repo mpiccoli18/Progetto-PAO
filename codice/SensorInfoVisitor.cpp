@@ -10,36 +10,36 @@ namespace sensore{
         mod = m;
     }
 
-    QPushButton* SensorInfoVisitor::getButton(){
-        return confirmButton;
+    QPushButton* SensorInfoVisitor::getPulsante(){
+        return conferma;
     }
 
-    void SensorInfoVisitor::visitSPneumatico(SensorePneumatico& sPneumatico) {
+    void SensorInfoVisitor::visitaSPneumatico(SensorePneumatico& sPneumatico) {
         widget = new QLabel("Marca Pneumatico: " + QString::fromStdString(sPneumatico.getMarcaPneu()) +
                             "\nTempo di vita: " + QString::number(sPneumatico.getEta()));
         widget->setObjectName("pneumatico");
         widget->setStyleSheet("QLabel#pneumatico {font: italic 16px;}");
     }
 
-    void SensorInfoVisitor::visitSConsumo(SensoreConsumo& sConsumo) {
+    void SensorInfoVisitor::visitaSConsumo(SensoreConsumo& sConsumo) {
         widget = new QLabel("Numero di Ottano: " +  QString::number(sConsumo.getOttano()));
         widget->setObjectName("consumo");
         widget->setStyleSheet("QLabel#consumo {font: italic 16px;}");
     }
 
-    void SensorInfoVisitor::visitSMotore(SensoreMotore& sMotore) {
+    void SensorInfoVisitor::visitaSMotore(SensoreMotore& sMotore) {
         widget = new QLabel("Numero di cavalli: " +  QString::number(sMotore.getCavalli()));
         widget->setObjectName("motore");
         widget->setStyleSheet("QLabel#motore {font: italic 16px;}");
     }
 
-    void SensorInfoVisitor::visitSBatteria(SensoreBatteria& sBatteria) {
+    void SensorInfoVisitor::visitaSBatteria(SensoreBatteria& sBatteria) {
         widget = new QLabel("Materiali: " +  QString::fromStdString(sBatteria.getMateriale()));
         widget->setObjectName("batteria");
         widget->setStyleSheet("QLabel#batteria {font: italic 16px;}");
     }
 
-    void SensorInfoVisitor::visitSGas(SensoreGas& sGas) {
+    void SensorInfoVisitor::visitaSGas(SensoreGas& sGas) {
         widget = new QLabel("Impronta: " +  QString::number(sGas.getImpronta()));
         widget->setObjectName("gas");
         widget->setStyleSheet("QLabel#gas {font: italic 16px;}");
@@ -126,9 +126,9 @@ namespace sensore{
         modLayout->addWidget(labelEta);
         modLayout->addWidget(lineEta, 0, Qt::AlignLeft);
 
-        confirmButton = new QPushButton("Conferma", widget);
+        conferma = new QPushButton("Conferma", widget);
 
-        QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax, lineMarca, lineEta]() {
+        QPushButton::connect(conferma, &QPushButton::pressed, [this, sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax, lineMarca, lineEta]() {
             mod->aggiornaSens(sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax);
             mod->modificaSensorePneumatico(sPneumatico, lineMarca, lineEta);
         });
@@ -206,9 +206,9 @@ namespace sensore{
         modLayout->addWidget(labelOtt);
         modLayout->addWidget(lineOtt, 0, Qt::AlignLeft);
 
-        confirmButton = new QPushButton("Conferma", widget);
+        conferma = new QPushButton("Conferma", widget);
 
-        QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sConsumo,lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt]() {
+        QPushButton::connect(conferma, &QPushButton::pressed, [this, sConsumo,lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt]() {
             mod->aggiornaSens(sConsumo, lineType, lineDescr, lineVal, lineMin, lineMax);
             mod->modificaSensoreConsumo(sConsumo, lineOtt);
         });
@@ -286,9 +286,9 @@ namespace sensore{
         modLayout->addWidget(labelCav);
         modLayout->addWidget(lineCav, 0, Qt::AlignLeft);
 
-        confirmButton = new QPushButton("Conferma", widget);
+        conferma = new QPushButton("Conferma", widget);
 
-        QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sMotore,lineType, lineDescr, lineVal, lineMin, lineMax, lineCav]() {
+        QPushButton::connect(conferma, &QPushButton::pressed, [this, sMotore,lineType, lineDescr, lineVal, lineMin, lineMax, lineCav]() {
             mod->aggiornaSens(sMotore, lineType, lineDescr, lineVal, lineMin, lineMax);
             mod->modificaSensoreMotore(sMotore, lineCav);
         });
@@ -366,9 +366,9 @@ namespace sensore{
         modLayout->addWidget(labelMat);
         modLayout->addWidget(lineMat, 0, Qt::AlignLeft);
 
-        confirmButton = new QPushButton("Conferma", widget);
+        conferma = new QPushButton("Conferma", widget);
 
-        QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sBatteria,lineType, lineDescr, lineVal, lineMin, lineMax, lineMat]() {
+        QPushButton::connect(conferma, &QPushButton::pressed, [this, sBatteria,lineType, lineDescr, lineVal, lineMin, lineMax, lineMat]() {
             mod->aggiornaSens(sBatteria, lineType, lineDescr, lineVal, lineMin, lineMax);
             mod->modificaSensoreBatteria(sBatteria, lineMat);
         });
@@ -447,33 +447,33 @@ namespace sensore{
         modLayout->addWidget(lineImpronta, 0, Qt::AlignLeft);
 
 
-        confirmButton = new QPushButton("Conferma", widget);
+        conferma = new QPushButton("Conferma", widget);
 
-        QPushButton::connect(confirmButton, &QPushButton::pressed, [this, sGas,lineType, lineDescr, lineVal, lineMin, lineMax, lineImpronta]() {
+        QPushButton::connect(conferma, &QPushButton::pressed, [this, sGas,lineType, lineDescr, lineVal, lineMin, lineMax, lineImpronta]() {
             mod->aggiornaSens(sGas, lineType, lineDescr, lineVal, lineMin, lineMax);
             mod->modificaSensoreGas(sGas, lineImpronta);
         });
     }
 
 
-    void SensorInfoVisitor::saveSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob){
+    void SensorInfoVisitor::salvaSPneumatico(SensorePneumatico& sPneumatico, QJsonObject* ob){
         (*ob)["Marca Pneumatico"] = QString::fromStdString(sPneumatico.getMarcaPneu());
         (*ob)["Eta Pneumatico"] = QString::number(sPneumatico.getEta());
     }
 
-    void SensorInfoVisitor::saveSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob){
+    void SensorInfoVisitor::salvaSConsumo(SensoreConsumo& sConsumo,QJsonObject* ob){
         (*ob)["Ottano"] = QString::number(sConsumo.getOttano());
     }
 
-    void SensorInfoVisitor::saveSMotore(SensoreMotore& sMotore,QJsonObject* ob){
+    void SensorInfoVisitor::salvaSMotore(SensoreMotore& sMotore,QJsonObject* ob){
         (*ob)["Cavalli"] = QString::number(sMotore.getCavalli());
     }
 
-    void SensorInfoVisitor::saveSBatteria(SensoreBatteria& sBatteria,QJsonObject* ob){
+    void SensorInfoVisitor::salvaSBatteria(SensoreBatteria& sBatteria,QJsonObject* ob){
         (*ob)["Materiale"] = QString::fromStdString(sBatteria.getMateriale());
     }
 
-    void SensorInfoVisitor::saveSGas(SensoreGas& sGas,QJsonObject* ob){
+    void SensorInfoVisitor::salvaSGas(SensoreGas& sGas,QJsonObject* ob){
         (*ob)["Impronta"] = QString::number(sGas.getImpronta());
     }
 
