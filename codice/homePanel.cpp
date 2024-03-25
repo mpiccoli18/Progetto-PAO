@@ -793,7 +793,7 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         }
     }
 
-    void homePanel::comandiTastiera(QKeyEvent* event)
+    void homePanel::comandiGrafico(QKeyEvent* event)
     {
         if(grafico)
         {
