@@ -688,8 +688,8 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         // Asse Y
         QValueAxis *axisY = new QValueAxis();
         axisY->setRange(sensoreGenerale->getMin(), sensoreGenerale->getMax());
-        axisY->setTickCount(10);
-        axisY->applyNiceNumbers();
+        axisY->setTickCount(15);
+        axisY->setLabelFormat("%.1f");
         chart->addAxis(axisY, Qt::AlignLeft);
         chart->setAnimationOptions(QChart::SeriesAnimations);
 
@@ -867,11 +867,17 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             QMessageBox::warning(this, tr("Attenzione!"), tr("Limite dello zoom raggiunto"));
             zoomGrafico--;
         }
-        else
+        else if(zoomGrafico == -1)
         {
             grafico->chart()->zoomIn();
             asseX->setTickCount(14);
             asseX->setRange(0, 13);
+        }
+        else if(zoomGrafico == -2)
+        {
+            grafico->chart()->zoomIn();
+            asseX->setTickCount(28);
+            asseX->setRange(0, 27);
         }
         zoomGrafico++;
     }
@@ -897,16 +903,22 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
             asseX->setTickCount(14);
             asseX->setRange(0, 13);
         }
-        else if(zoomGrafico <= -2)
-        {
-            QMessageBox::warning(this, tr("Attenzione!"), tr("Limite dello zoom raggiunto"));
-            zoomGrafico++;
-        }
-        else
+        else if(zoomGrafico == 0)
         {
             grafico->chart()->zoomOut();
             asseX->setTickCount(28);
             asseX->setRange(0, 27);
+        }
+        else if(zoomGrafico == -1)
+        {
+            grafico->chart()->zoomOut();
+            asseX->setTickCount(40);
+            asseX->setRange(0, 39);
+        }
+        else if(zoomGrafico <= -2)
+        {
+            QMessageBox::warning(this, tr("Attenzione!"), tr("Limite dello zoom raggiunto"));
+            zoomGrafico++;
         }
         zoomGrafico--;
     }
@@ -932,30 +944,37 @@ homePanel::homePanel(QWidget* p):  QWidget(p), grafico(nullptr), modifica(nullpt
         if (!asseY)
             return;
 
-        int val = 0;
+        double val = 0;
         asseX->setLabelFormat("%d");
 
-        if(grafico->chart()->isZoomed())
+        if(zoomGrafico == 1)
         {
-            val = 5 * direzione;
+            val = 2 * direzione;
+        }
+        else if(zoomGrafico == 2)
+        {
+            val = direzione;
+        }
+        else if(zoomGrafico == 3)
+        {
+            val = 0.5 * (direzione);
         }
         else
         { 
             val = 10 * direzione;
         }
-        if(asseY->min() + val >= 0)
-        {
-            asseY->setRange(asseY->min() + val, asseY->max() + val);
-        }
+        asseY->setRange(asseY->min() + val, asseY->max() + val);
     }
 
     void homePanel::rimozioneZoom()
     {
         grafico->chart()->zoomReset();
         QValueAxis* asseX = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Horizontal).at(0));
+        QValueAxis* asseY = qobject_cast<QValueAxis*>(grafico->chart()->axes(Qt::Vertical).at(0));
         asseX->setLabelFormat("%d");
         asseX->setTickCount(14);
         asseX->setRange(0, 13);
+        asseY->setRange(sensoreGenerale->getMin(), sensoreGenerale->getMax());
         zoomGrafico = 0;
     }
 
