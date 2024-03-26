@@ -127,6 +127,9 @@ namespace sensore{
         modLayout->addWidget(lineEta, 0, Qt::AlignLeft);
 
         conferma = new QPushButton("Conferma", widget);
+        conferma->setObjectName("confermaM");
+        conferma->setStyleSheet("QPushButton#confermaM {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                  "QPushButton#confermaM:hover{background-color: lightgrey;}");
 
         QPushButton::connect(conferma, &QPushButton::pressed, [this, sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax, lineMarca, lineEta]() {
             mod->aggiornaSens(sPneumatico, lineType, lineDescr, lineVal, lineMin, lineMax);
@@ -207,6 +210,9 @@ namespace sensore{
         modLayout->addWidget(lineOtt, 0, Qt::AlignLeft);
 
         conferma = new QPushButton("Conferma", widget);
+        conferma->setObjectName("confermaM");
+        conferma->setStyleSheet("QPushButton#confermaM {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                  "QPushButton#confermaM:hover{background-color: lightgrey;}");
 
         QPushButton::connect(conferma, &QPushButton::pressed, [this, sConsumo,lineType, lineDescr, lineVal, lineMin, lineMax, lineOtt]() {
             mod->aggiornaSens(sConsumo, lineType, lineDescr, lineVal, lineMin, lineMax);
@@ -287,6 +293,9 @@ namespace sensore{
         modLayout->addWidget(lineCav, 0, Qt::AlignLeft);
 
         conferma = new QPushButton("Conferma", widget);
+        conferma->setObjectName("confermaM");
+        conferma->setStyleSheet("QPushButton#confermaM {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                  "QPushButton#confermaM:hover{background-color: lightgrey;}");
 
         QPushButton::connect(conferma, &QPushButton::pressed, [this, sMotore,lineType, lineDescr, lineVal, lineMin, lineMax, lineCav]() {
             mod->aggiornaSens(sMotore, lineType, lineDescr, lineVal, lineMin, lineMax);
@@ -367,6 +376,9 @@ namespace sensore{
         modLayout->addWidget(lineMat, 0, Qt::AlignLeft);
 
         conferma = new QPushButton("Conferma", widget);
+        conferma->setObjectName("confermaM");
+        conferma->setStyleSheet("QPushButton#confermaM {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                  "QPushButton#confermaM:hover{background-color: lightgrey;}");
 
         QPushButton::connect(conferma, &QPushButton::pressed, [this, sBatteria,lineType, lineDescr, lineVal, lineMin, lineMax, lineMat]() {
             mod->aggiornaSens(sBatteria, lineType, lineDescr, lineVal, lineMin, lineMax);
@@ -448,6 +460,9 @@ namespace sensore{
 
 
         conferma = new QPushButton("Conferma", widget);
+        conferma->setObjectName("confermaM");
+        conferma->setStyleSheet("QPushButton#confermaM {border: 1px solid black; border-radius: 16px; padding: 8px;} "
+                                  "QPushButton#confermaM:hover{background-color: lightgrey;}");
 
         QPushButton::connect(conferma, &QPushButton::pressed, [this, sGas,lineType, lineDescr, lineVal, lineMin, lineMax, lineImpronta]() {
             mod->aggiornaSens(sGas, lineType, lineDescr, lineVal, lineMin, lineMax);

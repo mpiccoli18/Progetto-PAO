@@ -35,7 +35,7 @@ namespace sensore{
 
         public:
             homePanel(QWidget* parent = 0);
-            void comandiGrafico(QKeyEvent *event);
+            void keyPressEvent(QKeyEvent *event);
             void spostamentoAsseX(int direzione);
             void spostamentoAsseY(int direzione);
             void rimozioneZoom();

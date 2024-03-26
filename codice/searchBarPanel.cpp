@@ -7,12 +7,20 @@ namespace sensore{
 
         ricerca = new QLineEdit(this);
         ricerca->setStyleSheet("border: 1px solid black; ");
+        int altezzaCorrente = ricerca->height();
+        ricerca->setFixedHeight(altezzaCorrente * 1.2);
+
+        QFont font = ricerca->font();
+        font.setPointSize(12); // Imposta la dimensione del font desiderata
+
+        // Imposta il nuovo font sulla QLineEdit
+        ricerca->setFont(font);
         layout->addWidget(ricerca);
 
         QPushButton* searchButton = new QPushButton("Cerca", this);
         searchButton->setObjectName("buttonSearch");
         searchButton->setStyleSheet("QPushButton#buttonSearch {border: 1px solid black; border-radius: 16px; padding: 8px;} "
-                                    "QPushButton#buttonSearch:hover{background-color: #c1d8f0;}");
+                                    "QPushButton#buttonSearch:hover{background-color: #5DDAF9;}");
         layout->addWidget(searchButton);
 
         visualizzazione = new QScrollArea();
@@ -43,7 +51,7 @@ namespace sensore{
             for(unsigned long long i = 0; i < searchVet.size(); i++) {
                 QWidget *sensorInfo = new QWidget();
                 sensorInfo->setObjectName("sensorInfo");
-                sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black;}");
+                sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black; background-color: white;}");
                 sensorInfo->setFixedHeight(150);
                 QVBoxLayout *sensorLayout = new QVBoxLayout();
                 sensorLayout->setContentsMargins(10, 10, 10, 10);
@@ -63,7 +71,7 @@ namespace sensore{
                 QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
                 visualizza->setObjectName("buttonVisualizza");
                 visualizza->setStyleSheet("QPushButton#buttonVisualizza{border: 1px solid black; border-radius: 16px; padding: 8px;}"
-                                          "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
+                                          "QPushButton#buttonVisualizza:hover{background-color: #5DDAF9;}");
                 connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit SegnaleMostra(searchVet[i]); });
                 sensorLayout->addWidget(visualizza);
                 scrollLayout->addWidget(sensorInfo);
@@ -112,7 +120,7 @@ namespace sensore{
                 {
                     QWidget *sensorInfo = new QWidget();
                     sensorInfo->setObjectName("sensorInfo");
-                    sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black;}");
+                    sensorInfo->setStyleSheet("QWidget#sensorInfo {border: 1px solid black; background-color: white;}");
                     sensorInfo->setFixedHeight(150);
                     QVBoxLayout *sensorLayout = new QVBoxLayout();
                     sensorLayout->setContentsMargins(10, 10, 10, 10);
@@ -132,7 +140,7 @@ namespace sensore{
                     QPushButton *visualizza = new QPushButton("Visualizza " + QString::fromStdString(searchVet[i]->getNome()));
                     visualizza->setObjectName("buttonVisualizza");
                     visualizza->setStyleSheet("QPushButton#buttonVisualizza{border: 1px solid black; border-radius: 16px; padding: 8px;}"
-                                              "QPushButton#buttonVisualizza:hover{background-color: lightgrey;}");
+                                              "QPushButton#buttonVisualizza:hover{background-color: #5DDAF9;}");
                     connect(visualizza, &QPushButton::pressed, this, [this, searchVet, i](){ emit SegnaleMostra(searchVet[i]); });
                     sensorLayout->addWidget(visualizza);
                     scrollLayout->addWidget(sensorInfo);
